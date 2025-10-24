@@ -6,6 +6,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { COORDS } from "@/constants/geo";
 import TopRightControls from "@/components/mapBox/topRightControls";
 import changeCameraView from "@/utils/map/changeCameraView";
+import RegionMarkers from "./regionMarkers";
 
 export default function MapView() {
   const mapRef = useRef(null);
@@ -88,6 +89,9 @@ export default function MapView() {
       });
     });
 
+    map.on("click", (e) => {
+      console.log("Clicked coords:", e.lngLat.lng, e.lngLat.lat);
+    });
     // 언마운트 시 메모리 정리
     return () => {
       map.remove();
@@ -114,6 +118,12 @@ export default function MapView() {
           width: "100%",
           height: "100%",
         }}
+      />
+
+      <RegionMarkers
+        mapRef={mapRef}
+        currentLocation={currentLocation}
+        workingArea={workingArea}
       />
 
       <TopRightControls

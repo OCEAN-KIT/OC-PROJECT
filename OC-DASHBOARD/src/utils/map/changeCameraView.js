@@ -12,14 +12,14 @@ export default function changeCameraView(map, newLocation) {
   const [lng, lat] = newLocation.center;
 
   const isArea = newLocation.id?.includes("-");
-  const zoom = newLocation.zoom ?? (isArea ? 20 : 16);
+  const zoom = newLocation.zoom ?? (isArea ? 11 : 10.3);
 
   // 애니메이션 효과
   map.flyTo({
     center: [lng, lat],
     zoom,
     pitch: 55, // 약간 기울여서 입체감
-    bearing: isArea ? -15 : 0, // 작업영역일 땐 약간 회전
+    bearing: isArea ? -90 : 0, // 작업영역일 땐 약간 회전
     speed: 1.5, // 기본 1.2보다 약간 느리게 → 부드러움
     curve: 1.8, // 궤적 곡률
     easing: (t) => t, // 자연스럽게 (기본 easeInOut)
