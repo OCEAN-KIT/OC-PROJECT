@@ -1,7 +1,6 @@
-// src/components/mapBox/MapView.jsx
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { COORDS } from "@/constants/geo";
@@ -10,6 +9,10 @@ import TopRightControls from "@/components/mapBox/topRightControls";
 export default function MapView() {
   const mapRef = useRef(null);
   const containerRef = useRef(null);
+
+  // 지역(포항, 울산 등) / 작업영역(세부 구역)
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [workingArea, setWorkingArea] = useState(null);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -26,12 +29,10 @@ export default function MapView() {
     });
     mapRef.current = map;
 
-    // 회전 제스처 허용
     map.dragRotate.enable();
     map.touchZoomRotate.enableRotation();
 
     map.on("load", () => {
-      // 포항~울진 뷰 & 마커만 설정 (스타일 관련 추가 작업 X)
       const bounds = new mapboxgl.LngLatBounds(
         COORDS.POHANG,
         COORDS.POHANG
@@ -55,6 +56,14 @@ export default function MapView() {
     };
   }, []);
 
+  // 선택된 값 콘솔 확인
+  useEffect(() => {
+    if (currentLocation)
+      console.log("현재 지역:", currentLocation.label ?? currentLocation.id);
+    if (workingArea)
+      console.log("작업 영역:", workingArea.label ?? workingArea.id);
+  }, [currentLocation, workingArea]);
+
   return (
     <div style={{ position: "absolute", inset: 0 }}>
       <div
@@ -67,7 +76,12 @@ export default function MapView() {
           height: "100%",
         }}
       />
-      <TopRightControls />
+      <TopRightControls
+        currentLocation={currentLocation}
+        setCurrentLocation={setCurrentLocation}
+        workingArea={workingArea}
+        setWorkingArea={setWorkingArea}
+      />
     </div>
   );
 }
