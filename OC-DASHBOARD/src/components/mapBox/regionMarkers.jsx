@@ -19,30 +19,28 @@ export default function RegionMarkers({
     if (currentLocation) {
       const baseColor = currentLocation.color ?? "#10b981";
 
-      timer = setTimeout(() => {
-        const regionAreas = currentLocation.areas ?? [];
+      const regionAreas = currentLocation.areas ?? [];
 
-        regionAreas.forEach((a) => {
-          // ✅ 선택된 작업영역인지 확인
-          const isSelected = workingArea?.id === a.id;
+      regionAreas.forEach((a) => {
+        // ✅ 선택된 작업영역인지 확인
+        const isSelected = workingArea?.id === a.id;
 
-          // ✅ 마커 크기 및 색상 조정
-          const marker = new mapboxgl.Marker({
-            color: baseColor,
-            scale: isSelected ? 1.6 : 0.9, // 선택된 건 크게, 나머지는 작게
-          })
-            .setLngLat(a.center)
-            .addTo(map);
+        // ✅ 마커 크기 및 색상 조정
+        const marker = new mapboxgl.Marker({
+          color: baseColor,
+          scale: isSelected ? 1.6 : 0.9, // 선택된 건 크게, 나머지는 작게
+        })
+          .setLngLat(a.center)
+          .addTo(map);
 
-          // ✅ 클릭 시 해당 영역으로 카메라 이동
-          marker.getElement().addEventListener("click", () => {
-            console.log(`Marker clicked: ${a.label}`);
-            changeCameraView(map, a);
-          });
-
-          markers.push(marker);
+        // ✅ 클릭 시 해당 영역으로 카메라 이동
+        marker.getElement().addEventListener("click", () => {
+          console.log(`Marker clicked: ${a.label}`);
+          changeCameraView(map, a);
         });
-      }); // 카메라 이동 약간 기다렸다가 표시
+
+        markers.push(marker);
+      });
     }
 
     // cleanup
