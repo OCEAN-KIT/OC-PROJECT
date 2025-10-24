@@ -1,16 +1,35 @@
-// src/components/mapBox/MapView.jsx
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { COORDS } from "@/constants/geo";
 import TopRightControls from "@/components/mapBox/topRightControls";
+import changeCameraView from "@/utils/map/changeCameraView";
+import RegionMarkers from "./regionMarkers";
 
 export default function MapView() {
   const mapRef = useRef(null);
   const containerRef = useRef(null);
 
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [workingArea, setWorkingArea] = useState(null);
+
+  // 지역 선택 시 카메라 이동
+  useEffect(() => {
+    if (mapRef.current && currentLocation) {
+      changeCameraView(mapRef.current, currentLocation);
+    }
+  }, [currentLocation]);
+
+  // 작업영역 선택 시 카메라 이동
+  useEffect(() => {
+    if (mapRef.current && workingArea) {
+      changeCameraView(mapRef.current, workingArea);
+    }
+  }, [workingArea]);
+
+  // 지도 초기화
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
@@ -26,12 +45,11 @@ export default function MapView() {
     });
     mapRef.current = map;
 
-    // 회전 제스처 허용
     map.dragRotate.enable();
     map.touchZoomRotate.enableRotation();
 
     map.on("load", () => {
-      // 포항~울진 뷰 & 마커만 설정 (스타일 관련 추가 작업 X)
+      // 포항~울진 초기 뷰 설정
       const bounds = new mapboxgl.LngLatBounds(
         COORDS.POHANG,
         COORDS.POHANG
@@ -47,13 +65,47 @@ export default function MapView() {
         pitch: 45,
         bearing: -15,
       });
+
+      // ✅ DEM(지형 데이터) 추가
+      map.addSource("mapbox-dem", {
+        type: "raster-dem",
+        url: "mapbox://mapbox.mapbox-terrain-dem-v1",
+        tileSize: 512,
+        maxzoom: 14,
+      });
+
+      // ✅ 지형 활성화
+      map.setTerrain({ source: "mapbox-dem", exaggeration: 1.3 });
+
+      // ✅ 하늘 레이어 추가 (3D 구형 느낌)
+      map.addLayer({
+        id: "sky",
+        type: "sky",
+        paint: {
+          "sky-type": "atmosphere",
+          "sky-atmosphere-sun": [0.0, 0.0],
+          "sky-atmosphere-sun-intensity": 15,
+        },
+      });
     });
 
+    map.on("click", (e) => {
+      console.log("Clicked coords:", e.lngLat.lng, e.lngLat.lat);
+    });
+    // 언마운트 시 메모리 정리
     return () => {
       map.remove();
       mapRef.current = null;
     };
   }, []);
+
+  // 선택 상태 콘솔 확인용
+  useEffect(() => {
+    if (currentLocation)
+      console.log("현재 지역:", currentLocation.label ?? currentLocation.id);
+    if (workingArea)
+      console.log("작업 영역:", workingArea.label ?? workingArea.id);
+  }, [currentLocation, workingArea]);
 
   return (
     <div style={{ position: "absolute", inset: 0 }}>
@@ -67,7 +119,20 @@ export default function MapView() {
           height: "100%",
         }}
       />
-      <TopRightControls />
+
+      <RegionMarkers
+        mapRef={mapRef}
+        currentLocation={currentLocation}
+        workingArea={workingArea}
+      />
+
+      <TopRightControls
+        currentLocation={currentLocation}
+        setCurrentLocation={setCurrentLocation}
+        workingArea={workingArea}
+        setWorkingArea={setWorkingArea}
+        mapRef={mapRef}
+      />
     </div>
   );
 }

@@ -1,0 +1,19 @@
+language: "ko-KR"
+
+reviews:
+  profile: "balanced" # balanced | strict | creative
+  auto_review:
+    enabled: true
+    base_branches: ["main", "develop"]
+
+path_instructions:
+  - path: "src/components/**.tsx"
+    instructions: |
+      - Enforce PascalCase for React component names.
+      - Encourage using functional components and hooks.
+      - Tailwind class names should be ordered logically (layout → spacing → color).
+  - path: "src/app/**.tsx"
+    instructions: |
+      - Follow Next.js App Router conventions (server/client component distinction).
+      - Prefer async server components when fetching data.
+      - Avoid inline styles — use Tailwind utilities.
