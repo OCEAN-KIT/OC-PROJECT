@@ -2,12 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { REGIONS } from "@/constants/regions";
+import changeCameraView from "@/utils/map/changeCameraView";
 
 export default function TopRightControls({
   currentLocation,
   setCurrentLocation,
   workingArea,
   setWorkingArea,
+  mapRef, // <- MapView에서 전달받도록 (flyTo 실행용)
 }) {
   const [open, setOpen] = useState(true);
 
@@ -17,19 +19,51 @@ export default function TopRightControls({
     return REGIONS.find((r) => r.id === currentLocation.id) ?? null;
   }, [currentLocation]);
 
+  // 전체 초기화용 기본 뷰 (포항~울진 전체)
+  const resetView = () => {
+    if (!mapRef?.current) return;
+    changeCameraView(mapRef.current, {
+      center: [129.38, 36.5],
+      zoom: 6.5,
+      id: "overview",
+    });
+  };
+
   // 지역 선택
   const handleRegion = (id) => {
+    // 이미 선택된 지역 다시 누르면 해제 + 전체 뷰로
+    if (currentLocation?.id === id) {
+      setCurrentLocation(null);
+      setWorkingArea(null);
+      resetView();
+      return;
+    }
+
     const selectedRegion = REGIONS.find((r) => r.id === id) ?? null;
     setCurrentLocation(selectedRegion);
-    // 새 지역을 고르면 작업영역은 초기화
     setWorkingArea(null);
+
+    if (mapRef?.current && selectedRegion)
+      changeCameraView(mapRef.current, selectedRegion);
   };
 
   // 작업영역 선택
   const handleArea = (id) => {
     if (!activeRegion) return;
+
+    // 이미 선택된 작업영역 다시 누르면 → 해제 후 지역 뷰로 복귀
+    if (workingArea?.id === id) {
+      setWorkingArea(null);
+      if (mapRef?.current && activeRegion)
+        changeCameraView(mapRef.current, activeRegion);
+      return;
+    }
+
     const selectedArea = activeRegion.areas?.find((a) => a.id === id) ?? null;
     setWorkingArea(selectedArea);
+
+    if (mapRef?.current && selectedArea)
+      changeCameraView(mapRef.current, selectedArea);
   };
 
   return (
@@ -46,9 +80,6 @@ export default function TopRightControls({
       <div className="flex items-center justify-between px-3 py-2">
         <div className="flex items-center gap-2">
           <span className="text-sm font-semibold tracking-wide">해역 선택</span>
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/70">
-            UI
-          </span>
         </div>
         <button
           onClick={() => setOpen((s) => !s)}

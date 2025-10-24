@@ -1,0 +1,28 @@
+/**
+ * 카메라를 지정 위치로 자연스럽게 이동시키는 함수
+ * @param {object} map - mapboxgl.Map 인스턴스
+ * @param {object} newLocation - 이동할 위치 객체 (예: region 또는 area)
+ * @param {Array<number>} newLocation.center - [lng, lat]
+ * @param {number} [newLocation.zoom] - 선택적 커스텀 줌 레벨
+ */
+export default function changeCameraView(map, newLocation) {
+  if (!map || !newLocation?.center) return;
+
+  // 중심 좌표
+  const [lng, lat] = newLocation.center;
+
+  const isArea = newLocation.id?.includes("-");
+  const zoom = newLocation.zoom ?? (isArea ? 20 : 16);
+
+  // 애니메이션 효과
+  map.flyTo({
+    center: [lng, lat],
+    zoom,
+    pitch: 55, // 약간 기울여서 입체감
+    bearing: isArea ? -15 : 0, // 작업영역일 땐 약간 회전
+    speed: 1.5, // 기본 1.2보다 약간 느리게 → 부드러움
+    curve: 1.8, // 궤적 곡률
+    easing: (t) => t, // 자연스럽게 (기본 easeInOut)
+    essential: true, // 유저 설정 무시 방지 옵션
+  });
+}
