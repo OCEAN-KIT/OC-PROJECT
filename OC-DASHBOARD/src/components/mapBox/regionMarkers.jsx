@@ -8,6 +8,7 @@ export default function RegionMarkers({
   mapRef,
   currentLocation,
   workingArea,
+  setWorkingArea,
 }) {
   useEffect(() => {
     if (!mapRef.current) return;
@@ -18,37 +19,36 @@ export default function RegionMarkers({
 
     if (currentLocation) {
       const baseColor = currentLocation.color ?? "#10b981";
-
       const regionAreas = currentLocation.areas ?? [];
 
       regionAreas.forEach((a) => {
-        // ✅ 선택된 작업영역인지 확인
         const isSelected = workingArea?.id === a.id;
 
-        // ✅ 마커 크기 및 색상 조정
         const marker = new mapboxgl.Marker({
           color: baseColor,
-          scale: isSelected ? 1.6 : 0.9, // 선택된 건 크게, 나머지는 작게
+          scale: isSelected ? 1.6 : 0.9,
         })
           .setLngLat(a.center)
           .addTo(map);
 
-        // ✅ 클릭 시 해당 영역으로 카메라 이동
+        // ✅ 호버 시 표시할 텍스트만 심어둠 (UI만)
+        marker.getElement().setAttribute("data-tip", a.label);
+
+        // 클릭 동작 그대로
         marker.getElement().addEventListener("click", () => {
-          console.log(`Marker clicked: ${a.label}`);
           changeCameraView(map, a);
+          setWorkingArea(a);
         });
 
         markers.push(marker);
       });
     }
 
-    // cleanup
     return () => {
       clearTimeout(timer);
       markers.forEach((m) => m.remove());
     };
-  }, [mapRef, currentLocation, workingArea]);
+  }, [mapRef, currentLocation, workingArea, setWorkingArea]);
 
   return null;
 }

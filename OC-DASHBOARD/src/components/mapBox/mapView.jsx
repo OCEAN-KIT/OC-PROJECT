@@ -124,6 +124,7 @@ export default function MapView() {
         mapRef={mapRef}
         currentLocation={currentLocation}
         workingArea={workingArea}
+        setWorkingArea={setWorkingArea}
       />
 
       <TopRightControls

@@ -24,3 +24,51 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* 말풍선 기준을 잡기 위해 relative (지도 좌표엔 영향 X) */
+.mapboxgl-marker {
+  position: relative;
+}
+
+/* 기본은 숨김 */
+.mapboxgl-marker::after,
+.mapboxgl-marker::before {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+/* 본체 말풍선 */
+.mapboxgl-marker::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 40px;
+  transform: translateY(-50%) translateX(0);
+  padding: 6px 10px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.3); /* 흰색 + 불투명도 0.92 */
+  color: #111;
+  font-size: 15px;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+/* 꼬리 */
+
+/* 호버할 때만 텍스트가 주입되어 나타남 */
+.mapboxgl-marker:hover::after {
+  content: attr(data-tip);
+  opacity: 1;
+  transform: translateY(-50%) translateX(4px);
+}
+.mapboxgl-marker:hover::before {
+  opacity: 1;
+}
+
+/* 선택 마커(크게 보이는 애)는 말풍선 간격 살짝 보정 (선택사항) */
+.mapboxgl-marker[style*="scale(1.6)"]::after,
+.mapboxgl-marker[style*="scale(1.6)"]::before {
+  left: 22px;
+}
