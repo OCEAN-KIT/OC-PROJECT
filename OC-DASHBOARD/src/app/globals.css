@@ -47,7 +47,7 @@ body {
   transform: translateY(-50%) translateX(0);
   padding: 6px 10px;
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.3); /* 흰색 + 불투명도 0.92 */
+  background: rgba(255, 255, 255, 0.3);
   color: #111;
   font-size: 15px;
   line-height: 1;
@@ -71,4 +71,54 @@ body {
 .mapboxgl-marker[style*="scale(1.6)"]::after,
 .mapboxgl-marker[style*="scale(1.6)"]::before {
   left: 22px;
+}
+
+/* 마커 호버 라벨 */
+.mapboxgl-marker {
+  position: relative;
+}
+.mapboxgl-marker::after,
+.mapboxgl-marker::before {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s, transform 0.12s;
+}
+.mapboxgl-marker::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 18px;
+  transform: translateY(-50%);
+  padding: 6px 10px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 12px;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+}
+.mapboxgl-marker::before {
+  display: none !important;
+}
+
+.mapboxgl-marker:hover::after {
+  content: attr(data-tip);
+  opacity: 1;
+  transform: translateY(-50%) translateX(-110px);
+}
+.mapboxgl-marker:hover::before {
+  opacity: 1;
+}
+
+/* 말풍선 꼬다리(arrow) 제거 */
+.region-popup .mapboxgl-popup-tip {
+  display: none !important;
+}
+
+/* Mapbox 기본 컨텐츠 박스 스타일 제거 (우린 내부 컴포넌트에서 스타일링함) */
+.region-popup .mapboxgl-popup-content {
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
 }
