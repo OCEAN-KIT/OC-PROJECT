@@ -13,15 +13,17 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "baseUrl": ".", // ⬅ 추가
+    "paths": { "@/*": ["./src/*"] },
+    "plugins": [{ "name": "next" }]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js", // ⬅ 추가
+    "**/*.jsx", // ⬅ 추가
+    ".next/types/**/*.ts"
+  ],
   "exclude": ["node_modules"]
 }
