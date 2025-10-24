@@ -1,11 +1,11 @@
+// src/components/mapBox/MapView.jsx
 "use client";
 
 import { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { COORDS } from "@/constants/geo"; // { POHANG:[lng,lat], ULJIN:[lng,lat] }
-import MapboxLanguage from "@mapbox/mapbox-gl-language";
-import TopRightControls from "./topRightControls";
+import { COORDS } from "@/constants/geo";
+import TopRightControls from "@/components/mapBox/topRightControls";
 
 export default function MapView() {
   const mapRef = useRef(null);
@@ -18,40 +18,34 @@ export default function MapView() {
 
     const map = new mapboxgl.Map({
       container: containerRef.current,
-      style: "mapbox://styles/aryu1217/cmh2v0fch00fb01r5huaq0ra8",
+      style: "/map-styles/camouflage.json",
       projection: "globe",
       antialias: true,
-      // center/zoom 초기값은 대충만 넣고, 로드 후 fitBounds로 조정
       center: COORDS.POHANG,
       zoom: 5,
     });
     mapRef.current = map;
 
-    map.addControl(new mapboxgl.NavigationControl(), "top-right");
-    map.scrollZoom.enable();
+    // 회전 제스처 허용
+    map.dragRotate.enable();
+    map.touchZoomRotate.enableRotation();
 
-    map.on("style.load", () => {
-      map.setFog({});
-      map.addControl(new MapboxLanguage({ defaultLanguage: "ko" }));
+    map.on("load", () => {
+      // 포항~울진 뷰 & 마커만 설정 (스타일 관련 추가 작업 X)
+      const bounds = new mapboxgl.LngLatBounds(
+        COORDS.POHANG,
+        COORDS.POHANG
+      ).extend(COORDS.ULJIN);
 
-      // ✅ 포항~울진 경계 박스 만들고 화면에 맞추기
-      const bounds = new mapboxgl.LngLatBounds(COORDS.POHANG, COORDS.POHANG);
-      bounds.extend(COORDS.ULJIN);
-
-      const PohangMarker = new mapboxgl.Marker()
-        .setLngLat(COORDS.POHANG)
-        .addTo(map);
-
-      const UljinMarker = new mapboxgl.Marker()
-        .setLngLat(COORDS.ULJIN)
-        .addTo(map);
+      new mapboxgl.Marker().setLngLat(COORDS.POHANG).addTo(map);
+      new mapboxgl.Marker().setLngLat(COORDS.ULJIN).addTo(map);
 
       map.fitBounds(bounds, {
-        padding: 80, // 여백(px)
-        maxZoom: 12, // 너무 과하게 확대되지 않게 제한
-        duration: 1200, // 애니메이션(ms)
-        pitch: 45, // (선택) 살짝 기울여서 입체감
-        bearing: -15, // (선택) 약간 회전
+        padding: 80,
+        maxZoom: 12,
+        duration: 1200,
+        pitch: 45,
+        bearing: -15,
       });
     });
 
@@ -62,13 +56,18 @@ export default function MapView() {
   }, []);
 
   return (
-    <>
+    <div style={{ position: "absolute", inset: 0 }}>
       <div
         ref={containerRef}
         id="map"
-        style={{ position: "absolute", top: 0, bottom: 0, width: "100%" }}
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+        }}
       />
       <TopRightControls />
-    </>
+    </div>
   );
 }
