@@ -5,6 +5,7 @@ import mapboxgl from "mapbox-gl";
 import changeCameraView from "@/utils/map/changeCameraView";
 import { createRoot } from "react-dom/client";
 import RegionPopup from "./regionPopup";
+import { STAGE_META } from "@/constants/stageMeta";
 
 export default function RegionMarkers({
   mapRef,
@@ -18,30 +19,35 @@ export default function RegionMarkers({
 
     const map = mapRef.current;
     const markers = [];
+    const popups = [];
+    const roots = [];
+
+    const getMarkerColor = (area, region) =>
+      STAGE_META[area?.stage]?.color ?? region?.color ?? "#10b981";
 
     if (currentLocation) {
-      const baseColor = currentLocation.color ?? "#10b981";
       const regionAreas = currentLocation.areas ?? [];
 
       regionAreas.forEach((a) => {
         const isSelected = workingArea?.id === a.id;
 
-        // 팝업 DOM 만들고 React로 렌더
+        // React로 팝업 DOM 렌더
         const popupNode = document.createElement("div");
         const popupRoot = createRoot(popupNode);
         popupRoot.render(<RegionPopup region={a} />);
+        roots.push(popupRoot);
 
         const popup = new mapboxgl.Popup({
-          offset: 16,
           anchor: "bottom",
           closeButton: false,
           closeOnClick: true,
-          offset: [140, 0, 50, 0],
-          className: "region-popup no-tip", // 꼬다리 제거용 클래스
+          offset: 16, // 중복 옵션 제거
+          className: "region-popup no-tip",
         }).setDOMContent(popupNode);
+        popups.push(popup);
 
         const marker = new mapboxgl.Marker({
-          color: baseColor,
+          color: getMarkerColor(a, currentLocation),
           scale: isSelected ? 1.6 : 0.9,
         })
           .setLngLat(a.center)
@@ -52,7 +58,6 @@ export default function RegionMarkers({
         el.setAttribute("data-tip", a?.label ?? "상세 보기");
 
         el.addEventListener("click", () => {
-          console.log("[RegionMarkers] click:", a?.label);
           setWorkingArea(a);
           setActiveStage?.(a.stage);
           changeCameraView(map, a);
@@ -64,8 +69,10 @@ export default function RegionMarkers({
 
     return () => {
       markers.forEach((m) => m.remove());
+      popups.forEach((p) => p.remove());
+      roots.forEach((r) => r.unmount());
     };
-  }, [mapRef, currentLocation, workingArea, setWorkingArea]);
+  }, [mapRef, currentLocation, workingArea, setWorkingArea, setActiveStage]);
 
   return null;
 }

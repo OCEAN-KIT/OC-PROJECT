@@ -1,20 +1,46 @@
 // RegionPopup.jsx
 "use client";
 
-const STAGE_STYLE = {
-  "이식 완료": { text: "#10b981", bg: "rgba(16,185,129,.15)", dot: "#34d399" },
-  "성장 중": { text: "#60a5fa", bg: "rgba(96,165,250,.15)", dot: "#93c5fd" },
-  "안정화 구역": {
-    text: "#a78bfa",
-    bg: "rgba(167,139,250,.15)",
-    dot: "#c4b5fd",
-  },
-  "모니터링 중": {
-    text: "#94a3b8",
-    bg: "rgba(148,163,184,.15)",
-    dot: "#cbd5e1",
-  },
-};
+import { STAGE_META, getStageColor } from "@/constants/stageMeta";
+
+// ----- 작은 색 유틸: hex → rgba, lighten -----
+function hexToRgb(hex) {
+  if (!hex) return null;
+  const h = hex.replace("#", "");
+  if (![3, 6].includes(h.length)) return null;
+  const v =
+    h.length === 3
+      ? h
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : h;
+  const r = parseInt(v.slice(0, 2), 16);
+  const g = parseInt(v.slice(2, 4), 16);
+  const b = parseInt(v.slice(4, 6), 16);
+  return { r, g, b };
+}
+function rgba(hex, alpha = 1) {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return `rgba(229,231,235,${alpha})`; // fallback slate-200
+  const { r, g, b } = rgb;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+/** 흰색과 섞어서 밝게 만들기 (t: 0~1) */
+function lighten(hex, t = 0.35) {
+  const rgb = hexToRgb(hex) ?? { r: 229, g: 231, b: 235 }; // slate-200 fallback
+  const mix = (c) => Math.round(c + (255 - c) * t);
+  return `rgb(${mix(rgb.r)}, ${mix(rgb.g)}, ${mix(rgb.b)})`;
+}
+
+/** stage → 팝업 스타일 계산 (constants는 그대로) */
+function getPopupStyle(stage) {
+  const base = getStageColor(stage); // STAGE_META의 color 사용
+  const text = base; // 텍스트는 base 컬러
+  const bg = rgba(base, 0.15); // 배경칩은 투명도 0.15
+  const dot = lighten(base, 0.35); // 도트는 살짝 밝게
+  return { text, bg, dot };
+}
 
 function formatDate(iso) {
   if (!iso) return "-";
@@ -33,11 +59,8 @@ export default function RegionPopup({ region }) {
   if (!region) return null;
 
   const { label, startDate, stage, depth, habitat } = region;
-  const stageCfg = STAGE_STYLE[stage] || {
-    text: "#e5e7eb",
-    bg: "rgba(229,231,235,.12)",
-    dot: "#e5e7eb",
-  };
+  // constants는 수정 안 함: 여기서만 계산
+  const stageCfg = getPopupStyle(stage);
 
   return (
     <div
@@ -88,7 +111,9 @@ export default function RegionPopup({ region }) {
             background: stageCfg.bg,
             padding: "4px 8px",
             borderRadius: 999,
-            border: `1px solid ${stageCfg.text}22`,
+            border: `1px solid ${rgba(stageCfg.text, 0.13)
+              .replace("rgb", "rgba")
+              .replace(")", ", 1)")}`, // 살짝 테두리
           }}
         >
           {stage ?? "단계 미지정"}
@@ -146,7 +171,6 @@ export default function RegionPopup({ region }) {
       >
         <button
           type="button"
-          // onClick={() => { /* 연결할 로직 나중에 추가 */ }}
           style={{
             display: "inline-flex",
             alignItems: "center",
@@ -154,7 +178,6 @@ export default function RegionPopup({ region }) {
             fontSize: 12,
             fontWeight: 600,
             color: "#e5e7eb",
-
             cursor: "pointer",
             transition:
               "transform 120ms ease, box-shadow 120ms ease, background 120ms ease",
@@ -169,13 +192,11 @@ export default function RegionPopup({ region }) {
           }}
         >
           <span>자세히 보러가기</span>
-          {/* 화살표 아이콘 (SVG) */}
           <svg
             width="14"
             height="14"
             viewBox="0 0 24 24"
             fill="none"
-            xmlns="http://www.w3.org/2000/svg"
             aria-hidden="true"
           >
             <path d="M5 12h14M13 5l7 7-7 7" stroke="currentColor" />
