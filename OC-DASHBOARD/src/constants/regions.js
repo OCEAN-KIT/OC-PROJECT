@@ -5,14 +5,15 @@ export const REGIONS = [
     color: "#10b981",
     center: [129.343, 36.019],
     areas: [
+      // 기존 4개
       {
         id: "pohang-1",
         label: "작업 영역 1",
         center: [129.44326182424885, 36.076249497155146],
         startDate: "2025-07-15",
         stage: "이식 완료",
-        depth: 8, // m
-        habitat: "암반", // 해역 유형
+        depth: 8,
+        habitat: "암반",
       },
       {
         id: "pohang-2",
@@ -41,6 +42,52 @@ export const REGIONS = [
         depth: 10,
         habitat: "암반",
       },
+      // 추가 5개 (대략 인근 좌표)
+      {
+        id: "pohang-5",
+        label: "작업 영역 5",
+        center: [129.47, 36.05],
+        startDate: "2025-07-28",
+        stage: "성장 중",
+        depth: 9,
+        habitat: "혼합",
+      },
+      {
+        id: "pohang-6",
+        label: "작업 영역 6",
+        center: [129.52, 36.02],
+        startDate: "2025-05-30",
+        stage: "모니터링 중",
+        depth: 14,
+        habitat: "모래",
+      },
+      {
+        id: "pohang-7",
+        label: "작업 영역 7",
+        center: [129.55, 36.1],
+        startDate: "2025-08-12",
+        stage: "이식 완료",
+        depth: 7,
+        habitat: "암반",
+      },
+      {
+        id: "pohang-8",
+        label: "작업 영역 8",
+        center: [129.39, 36.14],
+        startDate: "2024-12-22",
+        stage: "안정화 구역",
+        depth: 11,
+        habitat: "혼합",
+      },
+      {
+        id: "pohang-9",
+        label: "작업 영역 9",
+        center: [129.36, 35.98],
+        startDate: "2025-06-05",
+        stage: "모니터링 중",
+        depth: 16,
+        habitat: "암반",
+      },
     ],
   },
   {
@@ -49,6 +96,7 @@ export const REGIONS = [
     color: "#3b82f6",
     center: [129.409, 36.993],
     areas: [
+      // 기존 3개
       {
         id: "uljin-1",
         label: "작업 영역 1",
@@ -75,6 +123,52 @@ export const REGIONS = [
         stage: "이식 완료",
         depth: 6,
         habitat: "암반",
+      },
+      // 추가 5개
+      {
+        id: "uljin-4",
+        label: "작업 영역 4",
+        center: [129.44, 37.01],
+        startDate: "2025-08-08",
+        stage: "모니터링 중",
+        depth: 13,
+        habitat: "혼합",
+      },
+      {
+        id: "uljin-5",
+        label: "작업 영역 5",
+        center: [129.39, 36.95],
+        startDate: "2025-06-25",
+        stage: "성장 중",
+        depth: 8,
+        habitat: "모래",
+      },
+      {
+        id: "uljin-6",
+        label: "작업 영역 6",
+        center: [129.46, 36.98],
+        startDate: "2025-07-10",
+        stage: "이식 완료",
+        depth: 6,
+        habitat: "암반",
+      },
+      {
+        id: "uljin-7",
+        label: "작업 영역 7",
+        center: [129.42, 37.05],
+        startDate: "2024-11-28",
+        stage: "안정화 구역",
+        depth: 12,
+        habitat: "암반",
+      },
+      {
+        id: "uljin-8",
+        label: "작업 영역 8",
+        center: [129.37, 37.0],
+        startDate: "2025-05-18",
+        stage: "모니터링 중",
+        depth: 15,
+        habitat: "혼합",
       },
     ],
   },

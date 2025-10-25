@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { COORDS } from "@/constants/geo";
-import TopRightControls from "@/components/mapBox/topRightControls";
+import TopRightControls from "@/components/mapBox/topRightControls/topRightControls";
 import changeCameraView from "@/utils/map/changeCameraView";
 import RegionMarkers from "./regionMarkers";
 
@@ -14,6 +14,7 @@ export default function MapView() {
 
   const [currentLocation, setCurrentLocation] = useState(null);
   const [workingArea, setWorkingArea] = useState(null);
+  const [activeStage, setActiveStage] = useState(null);
 
   // 지역 선택 시 카메라 이동
   useEffect(() => {
@@ -66,7 +67,6 @@ export default function MapView() {
         bearing: -15,
       });
 
-      // ✅ DEM(지형 데이터) 추가
       map.addSource("mapbox-dem", {
         type: "raster-dem",
         url: "mapbox://mapbox.mapbox-terrain-dem-v1",
@@ -74,10 +74,8 @@ export default function MapView() {
         maxzoom: 14,
       });
 
-      // ✅ 지형 활성화
       map.setTerrain({ source: "mapbox-dem", exaggeration: 1.3 });
 
-      // ✅ 하늘 레이어 추가 (3D 구형 느낌)
       map.addLayer({
         id: "sky",
         type: "sky",
@@ -92,7 +90,7 @@ export default function MapView() {
     map.on("click", (e) => {
       console.log("Clicked coords:", e.lngLat.lng, e.lngLat.lat);
     });
-    // 언마운트 시 메모리 정리
+
     return () => {
       map.remove();
       mapRef.current = null;
@@ -125,6 +123,7 @@ export default function MapView() {
         currentLocation={currentLocation}
         workingArea={workingArea}
         setWorkingArea={setWorkingArea}
+        setActiveStage={setActiveStage}
       />
 
       <TopRightControls
@@ -133,6 +132,8 @@ export default function MapView() {
         workingArea={workingArea}
         setWorkingArea={setWorkingArea}
         mapRef={mapRef}
+        activeStage={activeStage}
+        setActiveStage={setActiveStage}
       />
     </div>
   );

@@ -115,7 +115,7 @@ body {
   display: none !important;
 }
 
-/* Mapbox 기본 컨텐츠 박스 스타일 제거 (우린 내부 컴포넌트에서 스타일링함) */
+/* Mapbox 기본 컨텐츠 박스 스타일 제거 */
 .region-popup .mapboxgl-popup-content {
   padding: 0 !important;
   background: transparent !important;

@@ -11,6 +11,7 @@ export default function RegionMarkers({
   currentLocation,
   workingArea,
   setWorkingArea,
+  setActiveStage,
 }) {
   useEffect(() => {
     if (!mapRef.current) return;
@@ -52,9 +53,9 @@ export default function RegionMarkers({
 
         el.addEventListener("click", () => {
           console.log("[RegionMarkers] click:", a?.label);
-          setWorkingArea && setWorkingArea(a);
+          setWorkingArea(a);
+          setActiveStage?.(a.stage);
           changeCameraView(map, a);
-          // 필요 시 수동 토글: marker.togglePopup();
         });
 
         markers.push(marker);
