@@ -10,6 +10,7 @@ export default function AreaGroupsList({
   stageMeta,
   daysAgo,
   activeRegion,
+  workingArea,
 }) {
   const defaultExpanded = useMemo(() => {
     const m = {};
@@ -72,6 +73,7 @@ export default function AreaGroupsList({
                         color={stageMeta[a.stage]?.color}
                         onClick={() => onSelectArea(a)}
                         days={daysAgo(a)}
+                        isActive={workingArea?.id === a.id}
                       />
                     ))}
                   </div>

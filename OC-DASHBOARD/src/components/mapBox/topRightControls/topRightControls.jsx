@@ -133,6 +133,7 @@ export default function TopRightControls({
             stageMeta={STAGE_META}
             daysAgo={daysAgo}
             activeRegion={!!activeRegion}
+            workingArea={workingArea}
           />
         </>
       )}

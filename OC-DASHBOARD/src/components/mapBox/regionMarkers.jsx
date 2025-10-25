@@ -38,10 +38,10 @@ export default function RegionMarkers({
         roots.push(popupRoot);
 
         const popup = new mapboxgl.Popup({
-          anchor: "bottom",
+          anchor: "left",
           closeButton: false,
           closeOnClick: true,
-          offset: 16, // 중복 옵션 제거
+          offset: [30, 0, 30, 0],
           className: "region-popup no-tip",
         }).setDOMContent(popupNode);
         popups.push(popup);
