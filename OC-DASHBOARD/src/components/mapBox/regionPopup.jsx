@@ -2,6 +2,7 @@
 "use client";
 
 import { STAGE_META, getStageColor } from "@/constants/stageMeta";
+import { useRouter } from "next/navigation";
 
 // ----- 작은 색 유틸: hex → rgba, lighten -----
 function hexToRgb(hex) {
@@ -55,11 +56,10 @@ function formatDate(iso) {
   }
 }
 
-export default function RegionPopup({ region }) {
+export default function RegionPopup({ region, onOpen }) {
   if (!region) return null;
 
   const { label, startDate, stage, depth, habitat } = region;
-  // constants는 수정 안 함: 여기서만 계산
   const stageCfg = getPopupStyle(stage);
 
   return (
@@ -190,6 +190,7 @@ export default function RegionPopup({ region }) {
             e.currentTarget.style.boxShadow =
               "inset 0 1px 0 rgba(255,255,255,.06), 0 6px 16px rgba(67,56,202,.25)";
           }}
+          onClick={onOpen}
         >
           <span>자세히 보러가기</span>
           <svg

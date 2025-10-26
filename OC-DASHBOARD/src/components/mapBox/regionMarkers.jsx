@@ -6,6 +6,7 @@ import changeCameraView from "@/utils/map/changeCameraView";
 import { createRoot } from "react-dom/client";
 import RegionPopup from "./regionPopup";
 import { STAGE_META } from "@/constants/stageMeta";
+import { useRouter } from "next/navigation";
 
 export default function RegionMarkers({
   mapRef,
@@ -14,6 +15,8 @@ export default function RegionMarkers({
   setWorkingArea,
   setActiveStage,
 }) {
+  const router = useRouter();
+
   useEffect(() => {
     if (!mapRef.current) return;
 
@@ -34,8 +37,12 @@ export default function RegionMarkers({
         // React로 팝업 DOM 렌더
         const popupNode = document.createElement("div");
         const popupRoot = createRoot(popupNode);
-        popupRoot.render(<RegionPopup region={a} />);
-        roots.push(popupRoot);
+        popupRoot.render(
+          <RegionPopup
+            region={a}
+            onOpen={() => router.push(`/detailInfo/${a.id}`)}
+          />
+        );
 
         const popup = new mapboxgl.Popup({
           anchor: "left",
@@ -72,7 +79,14 @@ export default function RegionMarkers({
       popups.forEach((p) => p.remove());
       roots.forEach((r) => r.unmount());
     };
-  }, [mapRef, currentLocation, workingArea, setWorkingArea, setActiveStage]);
+  }, [
+    mapRef,
+    currentLocation,
+    workingArea,
+    setWorkingArea,
+    setActiveStage,
+    router,
+  ]);
 
   return null;
 }
