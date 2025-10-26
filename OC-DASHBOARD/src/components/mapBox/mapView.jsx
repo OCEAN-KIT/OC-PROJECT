@@ -7,6 +7,7 @@ import { COORDS } from "@/constants/geo";
 import TopRightControls from "@/components/mapBox/topRightControls/topRightControls";
 import changeCameraView from "@/utils/map/changeCameraView";
 import RegionMarkers from "./regionMarkers";
+import Image from "next/image";
 
 export default function MapView() {
   const mapRef = useRef(null);
@@ -117,6 +118,18 @@ export default function MapView() {
           height: "100%",
         }}
       />
+
+      {/* 좌상단 (로고) Ocean Campus 라벨 */}
+      <div className="pointer-events-none fixed left-4 top-4 z-50 flex items-center gap-2 mx-1">
+        <Image
+          src="/oceanCampusLogo.png"
+          alt="Ocean Campus"
+          width={80}
+          height={80}
+          className="h-10 w-10 object-contain"
+          priority
+        />
+      </div>
 
       <RegionMarkers
         mapRef={mapRef}
