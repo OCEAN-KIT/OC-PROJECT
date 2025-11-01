@@ -18,8 +18,10 @@ export default function RootLayout({
     <html lang="ko">
       <body>
         <div>
-          <MainHeader />
-          <Providers>{children}</Providers>
+          <Providers>
+            <MainHeader />
+            {children}
+          </Providers>
         </div>
       </body>
     </html>

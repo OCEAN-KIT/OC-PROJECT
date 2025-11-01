@@ -6,7 +6,6 @@ import { registerSchema, RegisterFormData } from "@/lib/validation/register";
 import { signUp1, signUp2, signUp3 } from "@/api/auth";
 import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
-import Image from "next/image";
 
 export default function RegisterPage() {
   const [form, setForm] = useState<RegisterFormData>({
