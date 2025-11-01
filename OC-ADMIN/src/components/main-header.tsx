@@ -14,7 +14,7 @@ export default function MainHeader() {
     : "로그인";
 
   return (
-    <header className="w-full bg-[#34609E] text-white">
+    <header className="w-full bg-[#2C67BC] text-white">
       <div className="mx-auto flex h-16 max-w-[1500px] items-center justify-between px-4">
         <div className="text-3xl font-extrabold tracking-tight">
           OceanCampus
