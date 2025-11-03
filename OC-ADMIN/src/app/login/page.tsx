@@ -1,42 +1,55 @@
-// app/login/page.tsx (또는 사용하는 경로 그대로)
+// app/login/page.tsx
 // 디자인만 변경 — 로그인 로직/함수 시그니처는 절대 수정 안 함
 "use client";
 
 import { logIn } from "@/api/auth";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
+import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginPage() {
   const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoHome" });
-
+  const queryClient = useQueryClient();
   const router = useRouter();
+
   const [form, setForm] = useState({ id: "", password: "" });
   const [errorMsg, setErrorMsg] = useState<string>("");
+  const [syncing, setSyncing] = useState(false); // myInfo 리패치 대기 상태
 
   if (checking || isLoggedIn) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (syncing) return; // 이중 제출 방지
     try {
       setErrorMsg("");
-      await logIn(form.id, form.password); // ← 로직 그대로 유지
+      await logIn(form.id, form.password); // ← 로그인 로직/시그니처 유지
+
+      setSyncing(true);
+      await queryClient.invalidateQueries({
+        queryKey: ["myInfo"] /*, refetchType: "active"(기본)*/,
+      });
+      // 서버 컴포넌트에서 세션을 읽는 UI가 있다면 필요 시 아래도 추가:
+      // router.refresh();
+
       router.push("/home");
     } catch (err) {
       console.error("로그인 에러:", err);
       setErrorMsg("로그인 중 오류가 발생했습니다.");
+    } finally {
+      setSyncing(false);
     }
   };
 
   return (
     <div
       className="min-h-[calc(100dvh-4rem)] bg-gray-50 text-gray-900 flex items-center justify-center px-4 py-10"
-      // 헤더가 h-16(4rem)이므로 그만큼 뺀 높이
       style={{
         paddingTop: "env(safe-area-inset-top)",
         paddingBottom: "env(safe-area-inset-bottom)",
@@ -68,6 +81,7 @@ export default function LoginPage() {
             action="#"
             noValidate
             className="space-y-4"
+            aria-busy={syncing}
           >
             <div className="space-y-2">
               <label className="block text-[13px] font-medium text-gray-700">
@@ -80,8 +94,9 @@ export default function LoginPage() {
                 onChange={handleChange}
                 placeholder="get@ziontutorial.com"
                 autoComplete="username"
+                disabled={syncing}
                 className="h-12 w-full rounded-xl border-0 ring-1 ring-gray-200 bg-white px-4 text-[15px]
-                           placeholder:text-gray-400 focus:ring-2 focus:ring-[#34609E] focus:outline-none"
+                           placeholder:text-gray-400 focus:ring-2 focus:ring-[#34609E] focus:outline-none disabled:opacity-60"
               />
             </div>
 
@@ -96,8 +111,9 @@ export default function LoginPage() {
                 onChange={handleChange}
                 placeholder="Password"
                 autoComplete="current-password"
+                disabled={syncing}
                 className="h-12 w-full rounded-xl border-0 ring-1 ring-gray-200 bg-white px-4 text-[15px]
-                           placeholder:text-gray-400 focus:ring-2 focus:ring-[#34609E] focus:outline-none"
+                           placeholder:text-gray-400 focus:ring-2 focus:ring-[#34609E] focus:outline-none disabled:opacity-60"
               />
             </div>
 
@@ -116,8 +132,9 @@ export default function LoginPage() {
                 type="button"
                 aria-label="구글로 로그인"
                 title="Google"
+                disabled={syncing}
                 className="flex h-14 w-24 items-center justify-center rounded-xl border border-gray-200 bg-gray-50
-                           hover:bg-gray-100 active:translate-y-[1px] transition"
+                           hover:bg-gray-100 active:translate-y-[1px] transition disabled:opacity-60"
               >
                 <Image
                   src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -132,10 +149,11 @@ export default function LoginPage() {
             {/* 제출 버튼 */}
             <button
               type="submit"
+              disabled={syncing}
               className="mt-8 h-12 w-full rounded-xl bg-[#3263F1] text-white text-[15px] font-semibold
-                         shadow-md hover:brightness-105 active:translate-y-[1px] transition"
+                         shadow-md hover:brightness-105 active:translate-y-[1px] transition disabled:opacity-60"
             >
-              Log in
+              {syncing ? "로그인 중…" : "Log in"}
             </button>
           </form>
 
@@ -143,7 +161,8 @@ export default function LoginPage() {
           <div className="mt-6 text-center">
             <button
               onClick={() => router.push("/register")}
-              className="text-[13px] font-medium text-gray-700 underline underline-offset-4 hover:text-gray-900"
+              disabled={syncing}
+              className="text-[13px] font-medium text-gray-700 underline underline-offset-4 hover:text-gray-900 disabled:opacity-60"
             >
               회원가입
             </button>

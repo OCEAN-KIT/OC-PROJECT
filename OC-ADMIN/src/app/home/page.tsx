@@ -6,9 +6,12 @@ import type { FilterState } from "@/components/filter-bar/types";
 import FilterBar from "@/components/filter-bar/filter-bar";
 import { Search } from "lucide-react";
 import LoadintSpinner from "@/components/ui/loading-spinner";
-// import axiosInstance from "@/utils/axiosInstance"; // 나중에 실제 POST에 사용
+import ReviewList from "@/components/review-list/review-list";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 export default function HomePage() {
+  useAuthGuard({ mode: "gotoLogin" });
+
   const [filters, setFilters] = useState<FilterState>({
     status: "all",
     dateFrom: null,
@@ -20,12 +23,7 @@ export default function HomePage() {
   const handleSearch = async () => {
     setLoading(true);
     try {
-      // TODO: API 붙일 때 여기서 POST
-      // const res = await axiosInstance.post("/api/search", filters);
-      // console.log(res.data);
       console.log("검색 요청(실제 POST 예정):", filters);
-    } catch (e) {
-      console.error("검색 에러:", e);
     } finally {
       setLoading(false);
     }
@@ -34,9 +32,8 @@ export default function HomePage() {
   return (
     <div className="p-4">
       <div className="mx-auto max-w-[1500px]">
-        <div className="flex items-center justify-start gap-2">
+        <div className="flex flex-wrap items-center justify-start gap-3">
           <FilterBar value={filters} onChange={setFilters} />
-
           <button
             type="button"
             onClick={handleSearch}
@@ -52,6 +49,11 @@ export default function HomePage() {
             )}
             {loading ? "검색 중…" : "검색"}
           </button>
+        </div>
+
+        {/* 리스트 */}
+        <div className="mt-4">
+          <ReviewList />
         </div>
       </div>
     </div>
