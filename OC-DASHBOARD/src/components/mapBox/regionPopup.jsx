@@ -192,7 +192,7 @@ export default function RegionPopup({ region, onOpen }) {
           }}
           onClick={onOpen}
         >
-          <span>자세히 보러가기</span>
+          <span>상세 보기</span>
           <svg
             width="14"
             height="14"

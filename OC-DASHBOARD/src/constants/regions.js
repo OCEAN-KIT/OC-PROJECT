@@ -5,7 +5,6 @@ export const REGIONS = [
     color: "#10b981",
     center: [129.343, 36.019],
     areas: [
-      // 기존 4개
       {
         id: "pohang-1",
         label: "작업 영역 1",
