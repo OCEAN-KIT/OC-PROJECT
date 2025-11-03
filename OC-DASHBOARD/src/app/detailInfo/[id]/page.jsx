@@ -1,7 +1,7 @@
-import DetailInfoModal from "@/components/detail-info/detail-info-modal";
+import DetailInfo from "@/components/detail-info/detail-info";
 import React from "react";
 
 export default function DetailInfoPage({ params }) {
   const { id } = React.use(params);
-  return <DetailInfoModal areaId={id} />;
+  return <DetailInfo areaId={id} />;
 }

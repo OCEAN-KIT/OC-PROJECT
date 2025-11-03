@@ -92,7 +92,7 @@
       "type": "vector"
     }
   },
-  "sprite": "mapbox://sprites/maper/cihq0gzfn001wb0kpzha7wkm9",
+  "sprite": "mapbox://sprites/mapbox/streets-v12",
   "glyphs": "mapbox://fonts/maper/{fontstack}/{range}.pbf",
   "layers": [
     {

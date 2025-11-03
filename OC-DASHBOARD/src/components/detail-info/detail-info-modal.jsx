@@ -15,7 +15,7 @@ import MediaTab from "./tabs/media-tab";
 export default function DetailInfoModal({ areaId }) {
   const router = useRouter();
   const [tab, setTab] = useState("overview");
-  const [aiOn, setAiOn] = useState(true);
+  const [aiOn, setAiOn] = useState(false);
   const [frame, setFrame] = useState(0);
 
   const data = AREA_DETAILS[areaId] ?? DEFAULT_DETAIL;

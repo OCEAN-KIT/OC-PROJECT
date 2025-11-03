@@ -88,10 +88,6 @@ export default function MapView() {
       });
     });
 
-    map.on("click", (e) => {
-      console.log("Clicked coords:", e.lngLat.lng, e.lngLat.lat);
-    });
-
     return () => {
       map.remove();
       mapRef.current = null;
