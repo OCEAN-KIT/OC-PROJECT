@@ -3,54 +3,90 @@
 import { useEffect } from "react";
 import mapboxgl from "mapbox-gl";
 import changeCameraView from "@/utils/map/changeCameraView";
+import { createRoot } from "react-dom/client";
+import RegionPopup from "./regionPopup";
+import { STAGE_META } from "@/constants/stageMeta";
+import { useRouter } from "next/navigation";
 
 export default function RegionMarkers({
   mapRef,
   currentLocation,
   workingArea,
+  setWorkingArea,
+  setActiveStage,
 }) {
+  const router = useRouter();
+
   useEffect(() => {
     if (!mapRef.current) return;
 
     const map = mapRef.current;
     const markers = [];
-    let timer;
+    const popups = [];
+    const roots = [];
+
+    const getMarkerColor = (area, region) =>
+      STAGE_META[area?.stage]?.color ?? region?.color ?? "#10b981";
 
     if (currentLocation) {
-      const baseColor = currentLocation.color ?? "#10b981";
+      const regionAreas = currentLocation.areas ?? [];
 
-      timer = setTimeout(() => {
-        const regionAreas = currentLocation.areas ?? [];
+      regionAreas.forEach((a) => {
+        const isSelected = workingArea?.id === a.id;
 
-        regionAreas.forEach((a) => {
-          // ✅ 선택된 작업영역인지 확인
-          const isSelected = workingArea?.id === a.id;
+        // React로 팝업 DOM 렌더
+        const popupNode = document.createElement("div");
+        const popupRoot = createRoot(popupNode);
+        popupRoot.render(
+          <RegionPopup
+            region={a}
+            onOpen={() => router.push(`/detailInfo/${a.id}`)}
+          />
+        );
 
-          // ✅ 마커 크기 및 색상 조정
-          const marker = new mapboxgl.Marker({
-            color: baseColor,
-            scale: isSelected ? 1.6 : 0.9, // 선택된 건 크게, 나머지는 작게
-          })
-            .setLngLat(a.center)
-            .addTo(map);
+        const popup = new mapboxgl.Popup({
+          anchor: "left",
+          closeButton: false,
+          closeOnClick: true,
+          offset: [30, 0, 30, 0],
+          className: "region-popup no-tip",
+        }).setDOMContent(popupNode);
+        popups.push(popup);
 
-          // ✅ 클릭 시 해당 영역으로 카메라 이동
-          marker.getElement().addEventListener("click", () => {
-            console.log(`Marker clicked: ${a.label}`);
-            changeCameraView(map, a);
-          });
+        const marker = new mapboxgl.Marker({
+          color: getMarkerColor(a, currentLocation),
+          scale: isSelected ? 1.6 : 0.9,
+        })
+          .setLngLat(a.center)
+          .setPopup(popup)
+          .addTo(map);
 
-          markers.push(marker);
+        const el = marker.getElement();
+        el.setAttribute("data-tip", a?.label ?? "상세 보기");
+
+        el.addEventListener("click", () => {
+          setWorkingArea(a);
+          setActiveStage?.(a.stage);
+          changeCameraView(map, a);
         });
-      }); // 카메라 이동 약간 기다렸다가 표시
+
+        markers.push(marker);
+      });
     }
 
-    // cleanup
     return () => {
-      clearTimeout(timer);
       markers.forEach((m) => m.remove());
+      popups.forEach((p) => p.remove());
+      roots.forEach((r) => r.unmount());
     };
-  }, [mapRef, currentLocation, workingArea]);
+  }, [
+    mapRef,
+    currentLocation,
+    workingArea,
+    setWorkingArea,
+    setActiveStage,
+    router,
+  ]);
 
   return null;
 }
