@@ -1,4 +1,4 @@
-// src/constants/areaDetails.js
+// src/constants/area-details.js
 
 // 모든 이미지 임시로 동일 경로 사용
 const IMG = "/images/underSea.jpg";
@@ -14,22 +14,26 @@ export const DEFAULT_DETAIL = {
     stage: "안정화 구역",
   },
   transplant: [
+    //*이식 해조류 - 종류별이식개채수: 막대차트, 이식면적분포: 도넛차트
     { name: "감태", count: 2300, area: "1,200㎡" },
     { name: "다시마", count: 800, area: "700㎡" },
     { name: "곰피", count: 450, area: "400㎡" },
   ],
   growth: {
+    //*성장 - 착생률, 생존률, 성장률: 시계열 그래프
     attachment: [62, 66, 72, 78, 80, 82],
     survival: [90, 89, 88, 86, 85, 84],
     growthMM: [1.1, 1.3, 1.6, 1.9, 2.2, 2.4],
     months: ["‘25.01", "02", "03", "04", "05", "06"],
   },
   biodiversity: {
+    //*생물다양성 - 전후종수비교: 막대그래프, 샤논지수: 지수비교차트
     before: { fish: 6, inverts: 11 },
     after: { fish: 12, inverts: 19 },
     shannon: { before: 1.21, after: 1.84 },
   },
   water: [
+    //*수질 - 수온: 라인차트, 용존산소: 라인차트, 영얌염류: 라인차트
     { month: "‘25.01", temp: 9.8, do: 8.5, nutrient: 0.28 },
     { month: "02", temp: 10.1, do: 8.3, nutrient: 0.25 },
     { month: "03", temp: 11.5, do: 8.1, nutrient: 0.23 },
@@ -37,10 +41,10 @@ export const DEFAULT_DETAIL = {
     { month: "05", temp: 16.4, do: 7.7, nutrient: 0.21 },
   ],
   media: [
-    { label: "2025.07", url: IMG },
-    { label: "2025.08", url: IMG },
-    { label: "2025.09", url: IMG },
-    { label: "2025.10", url: IMG },
+    { label: "2025.07", url: "/images/sea1.jpeg" },
+    { label: "2025.08", url: "/images/sea2.jpeg" },
+    { label: "2025.09", url: "/images/sea3.jpeg" },
+    { label: "2025.10", url: "/images/sea4.jpeg" },
   ],
 };
 
