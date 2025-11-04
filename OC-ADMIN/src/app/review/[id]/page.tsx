@@ -48,7 +48,7 @@ export default function ReviewPage() {
 
   if (!review) {
     return (
-      <div className="mx-auto max-w-[1100px] p-6">
+      <div className="mx-auto max-w-[1100px] p-2">
         <button
           onClick={() => router.back()}
           className="inline-flex items-center gap-2 text-[#34609E] hover:underline"

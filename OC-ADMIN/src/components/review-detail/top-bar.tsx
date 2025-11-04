@@ -14,7 +14,7 @@ export default function TopBar({ diveId }: { diveId: string }) {
   );
 
   return (
-    <div className="mb-6 flex items-center justify-between">
+    <div className="mb-6 flex items-center justify-between -mt-6">
       <button
         onClick={() => router.back()}
         className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-sm text-[#34609E] ring-1 ring-gray-200 hover:bg-gray-50"
@@ -35,7 +35,7 @@ export default function TopBar({ diveId }: { diveId: string }) {
               aria-label="반려"
               className="inline-flex items-center gap-1.5 rounded-lg bg-rose-500 px-3 py-1.5
                          text-xs font-medium text-white shadow-sm
-                         hover:brightness-105 active:translate-y-[1px]"
+                         hover:brightness-105 active:translate-y-[1px] mt-5"
             >
               반려
             </button>
@@ -47,9 +47,20 @@ export default function TopBar({ diveId }: { diveId: string }) {
               aria-label="승인"
               className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5
                          text-xs font-medium text-white shadow-sm
-                         hover:brightness-105 active:translate-y-[1px]"
+                         hover:brightness-105 active:translate-y-[1px] mt-5"
             >
               승인
+            </button>
+          )}
+          {review.status === "approved" && (
+            <button
+              type="button"
+              aria-label="반려"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-gray-500 px-3 py-1.5
+                         text-xs font-medium text-white shadow-sm
+                         hover:brightness-105 mt-5"
+            >
+              내보내기
             </button>
           )}
         </div>
