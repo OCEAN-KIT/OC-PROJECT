@@ -8,6 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ClipLoader } from "react-spinners";
 
 export default function LoginPage() {
   const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoHome" });
@@ -151,9 +152,18 @@ export default function LoginPage() {
               type="submit"
               disabled={syncing}
               className="mt-8 h-12 w-full rounded-xl bg-[#3263F1] text-white text-[15px] font-semibold
-                         shadow-md hover:brightness-105 active:translate-y-[1px] transition disabled:opacity-60"
+             shadow-md hover:brightness-105 active:translate-y-[1px] 
+             flex items-center justify-center"
             >
-              {syncing ? "로그인 중…" : "Log in"}
+              {syncing ? (
+                <span className="translate-y-[2px]">
+                  {" "}
+                  {/* ← 살짝 아래로 */}
+                  <ClipLoader size={30} color="#FFFFFF" speedMultiplier={0.8} />
+                </span>
+              ) : (
+                "Log in"
+              )}
             </button>
           </form>
 

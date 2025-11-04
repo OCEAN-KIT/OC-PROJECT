@@ -1,10 +1,18 @@
 "use client";
 
+import { REVIEW_ITEMS, ReviewItem } from "@/data/reviews";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 
 export default function TopBar({ diveId }: { diveId: string }) {
   const router = useRouter();
+
+  const review = useMemo<ReviewItem | undefined>(
+    () => REVIEW_ITEMS.find((r) => r.id === diveId),
+    [diveId]
+  );
+
   return (
     <div className="mb-6 flex items-center justify-between">
       <button
@@ -19,7 +27,35 @@ export default function TopBar({ diveId }: { diveId: string }) {
         Dive #{diveId}
       </div>
 
-      <div className="h-6 w-[84px]" />
+      <div>
+        <div className="relative ml-4 flex justify-start gap-2">
+          {review.status !== "approved" && (
+            <button
+              type="button"
+              aria-label="반려"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-rose-500 px-3 py-1.5
+                         text-xs font-medium text-white shadow-sm
+                         hover:brightness-105 active:translate-y-[1px]"
+            >
+              반려
+            </button>
+          )}
+
+          {review.status !== "approved" && (
+            <button
+              type="button"
+              aria-label="승인"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5
+                         text-xs font-medium text-white shadow-sm
+                         hover:brightness-105 active:translate-y-[1px]"
+            >
+              승인
+            </button>
+          )}
+        </div>
+
+        <div className="h-6 w-[84px]" />
+      </div>
     </div>
   );
 }

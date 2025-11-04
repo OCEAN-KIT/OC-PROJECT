@@ -72,15 +72,15 @@ export default function ReviewCard({ review }: Props) {
           </div>
 
           {/* 액션 (그리드 마지막 컬럼) */}
-          <div className="relative ml-4 flex justify-start gap-2">
+          <div className="ml-2 flex items-center gap-2">
             {/* 반려: 승인된 항목에선 숨김 */}
             {review.status !== "approved" && (
               <button
                 type="button"
                 aria-label="반려"
                 className="inline-flex items-center gap-1.5 rounded-lg bg-rose-500 px-3 py-1.5
-                         text-xs font-medium text-white shadow-sm
-                         hover:brightness-105 active:translate-y-[1px]"
+                 text-xs font-medium text-white shadow-sm
+                 hover:brightness-105 active:translate-y-[1px]"
               >
                 반려
               </button>
@@ -92,27 +92,26 @@ export default function ReviewCard({ review }: Props) {
                 type="button"
                 aria-label="승인"
                 className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5
-                         text-xs font-medium text-white shadow-sm
-                         hover:brightness-105 active:translate-y-[1px]"
+                 text-xs font-medium text-white shadow-sm
+                 hover:brightness-105 active:translate-y-[1px]"
               >
                 승인
               </button>
             )}
 
-            {/* 우측에서 슬라이드 인 되는 휴지통 */}
+            {/* 휴지통: 옆에서 살짝 슬라이드 인 */}
             <button
               type="button"
               aria-label="삭제"
               className="
-              pointer-events-none absolute right-0 top-1/2 -translate-y-1/2
-              inline-flex h-8 w-8 items-center justify-center rounded-full
-              bg-rose-500 text-white shadow-sm
-              opacity-0 translate-x-2
-              transition-all duration-200 ease-out
-              group-hover:opacity-100 group-hover:translate-x-0 group-hover:pointer-events-auto
-              group-focus-within:opacity-100 group-focus-within:translate-x-0 group-focus-within:pointer-events-auto
-              focus:outline-none focus:ring-2 focus:ring-rose-300
-            "
+                  inline-flex h-8 w-8 items-center justify-center rounded-full
+                  bg-rose-500 text-white shadow-sm
+                  opacity-0 -translate-x-1
+                  transition-all duration-200 ease-out
+                  group-hover:opacity-100 group-hover:translate-x-0
+                  group-focus-within:opacity-100 group-focus-within:translate-x-0
+                  focus:outline-none focus:ring-2 focus:ring-rose-300
+                "
             >
               <Trash2 className="h-4 w-4" />
             </button>

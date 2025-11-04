@@ -12,8 +12,11 @@ import LogCard from "@/components/review-detail/log-card";
 import { REVIEW_ITEMS, type ReviewItem } from "@/data/reviews";
 import { DIVE_PARTICIPANTS } from "@/data/dive-session";
 import { DIVER_ACTIVITY_LOGS, type DiverActivityLog } from "@/data/diver-log";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 export default function ReviewPage() {
+  useAuthGuard({ mode: "gotoLogin" });
+
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const diveId = String(params.id);
