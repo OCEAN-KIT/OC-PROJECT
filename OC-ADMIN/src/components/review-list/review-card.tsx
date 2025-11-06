@@ -1,18 +1,17 @@
-// components/review-card.tsx
 "use client";
 
-import type { ReviewItem } from "@/data/reviews";
+import { useRouter } from "next/navigation";
+import type { Submission } from "@/api/submissions";
 import { CalendarClock, MapPin, User2, Paperclip, Trash2 } from "lucide-react";
 import { REVIEW_GRID } from "./review-grid";
-import { useRouter } from "next/navigation";
 
 type Props = {
-  review: ReviewItem;
+  review: Submission;
   selected?: boolean;
   onToggle?: () => void;
-  onApprove?: (id: string) => void;
-  onReject?: (id: string) => void;
-  onDelete?: (id: string) => void;
+  onApprove?: () => void;
+  onReject?: () => void;
+  onDelete?: () => void;
 };
 
 export default function ReviewCard({
@@ -25,10 +24,6 @@ export default function ReviewCard({
 }: Props) {
   const router = useRouter();
   const goDetail = () => router.push(`/review/${review.id}`);
-
-  const stopBubble = (e: React.SyntheticEvent) => {
-    e.stopPropagation();
-  };
 
   const dt = new Date(review.datetime);
   const dateStr = [
@@ -43,7 +38,7 @@ export default function ReviewCard({
     String(dt.getMinutes()).padStart(2, "0"),
   ].join("");
 
-  // ✅ 상태 칩: approved / pending / rejected
+  const isPending = review.status === "pending";
   const statusChip =
     review.status === "approved"
       ? {
@@ -51,64 +46,76 @@ export default function ReviewCard({
           cls: "bg-emerald-100 text-emerald-700 ring-emerald-200",
         }
       : review.status === "rejected"
-      ? { text: "반려", cls: "bg-rose-100 text-rose-700 ring-rose-200" } // ✅ 반려 색상
+      ? { text: "반려", cls: "bg-rose-100 text-rose-700 ring-rose-200" }
       : { text: "검수대기", cls: "bg-gray-100 text-gray-700 ring-gray-200" };
+
+  const stop = (e: React.SyntheticEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+  };
+
+  // ✅ 1) 카드 클릭에서 체크박스/버튼 클릭은 네비게이션 무시
+  const onCardClick = (e: React.MouseEvent) => {
+    const el = e.target as HTMLElement;
+    if (el.closest("input, button, a")) return; // 입력/버튼은 카드 이동 X
+    goDetail();
+  };
+
+  // ✅ 2) 체크박스는 기본동작 허용(=preventDefault 금지), 버블만 막기
+  const stopOnlyBubble = (e: React.SyntheticEvent) => {
+    e.stopPropagation();
+  };
 
   return (
     <div
       role="button"
       tabIndex={0}
-      onClick={goDetail}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") goDetail();
-      }}
+      onClick={onCardClick}
+      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && goDetail()}
       className={[
         "group rounded-2xl bg-white px-5 py-4 cursor-pointer transition",
       ].join(" ")}
     >
       <div className={`${REVIEW_GRID} items-center`}>
-        {/* 1. ID + 체크박스 */}
         <div className="pl-1 flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={selected}
-            onClick={stopBubble}
-            onMouseDown={stopBubble}
-            onChange={() => onToggle?.()}
-            aria-label={`${review.id} 선택`}
-            className="h-4 w-4 accent-blue-600"
-          />
+          {isPending ? (
+            <input
+              type="checkbox"
+              checked={selected}
+              onClick={stopOnlyBubble} // ⬅️ 버블만 차단
+              onMouseDown={stopOnlyBubble} // ⬅️ 버블만 차단 (preventDefault ❌)
+              onChange={() => onToggle?.()} // ⬅️ 상태 토글
+              aria-label={`${review.id} 선택`}
+              className="h-4 w-4 accent-blue-600"
+            />
+          ) : (
+            <span className="w-4" />
+          )}
           <span className="font-semibold text-gray-900">#{review.id}</span>
         </div>
 
-        {/* 2. 현장명 */}
         <div className="min-w-0 flex items-center gap-1.5 text-gray-700">
           <MapPin className="h-4 w-4 text-gray-400 shrink-0" />
           <span className="truncate">{review.site}</span>
         </div>
 
-        {/* 3. 제출일 */}
         <div className="flex items-center gap-1.5 text-gray-500">
           <CalendarClock className="h-4 w-4 text-gray-400" />
           <time>{dateStr}</time>
         </div>
 
-        {/* 4. 활동유형 */}
         <div className="font-medium text-gray-700">{review.task}</div>
 
-        {/* 5. 작성자 */}
         <div className="flex items-center gap-1.5 text-gray-700">
           <User2 className="h-4 w-4 text-gray-400" />
           <span>{review.author}</span>
         </div>
 
-        {/* 6. 첨부 */}
         <div className="flex items-center gap-1.5 text-gray-600">
           <Paperclip className="h-4 w-4 text-gray-400" />
           <span>{review.fileCount}개 파일</span>
         </div>
 
-        {/* 7. 상태 */}
         <div>
           <span
             className={`rounded-full px-3 py-1 text-xs font-medium ring-1 ${statusChip.cls}`}
@@ -117,18 +124,15 @@ export default function ReviewCard({
           </span>
         </div>
 
-        {/* 8. 액션 */}
         <div className="ml-2 flex items-center gap-2">
-          {/* ✅ 승인/반려 버튼은 '검수대기(pending)'일 때만 노출 */}
-          {review.status === "pending" && (
+          {isPending && (
             <>
               <button
                 type="button"
-                aria-label="반려"
-                onMouseDown={stopBubble}
+                onMouseDown={stop}
                 onClick={(e) => {
-                  stopBubble(e);
-                  onReject?.(String(review.id));
+                  stop(e);
+                  onReject?.();
                 }}
                 className="inline-flex items-center gap-1.5 rounded-lg bg-rose-500 px-3 py-1.5
                            text-xs font-medium text-white shadow-sm hover:brightness-105 active:translate-y-[1px]"
@@ -137,11 +141,10 @@ export default function ReviewCard({
               </button>
               <button
                 type="button"
-                aria-label="승인"
-                onMouseDown={stopBubble}
+                onMouseDown={stop}
                 onClick={(e) => {
-                  stopBubble(e);
-                  onApprove?.(String(review.id));
+                  stop(e);
+                  onApprove?.();
                 }}
                 className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 px-3 py-1.5
                            text-xs font-medium text-white shadow-sm hover:brightness-105 active:translate-y-[1px]"
@@ -151,14 +154,12 @@ export default function ReviewCard({
             </>
           )}
 
-          {/* 삭제 버튼은 동일 유지 */}
           <button
             type="button"
-            aria-label="삭제"
-            onMouseDown={stopBubble}
+            onMouseDown={stop}
             onClick={(e) => {
-              stopBubble(e);
-              onDelete?.(String(review.id));
+              stop(e);
+              onDelete?.();
             }}
             className="inline-flex h-8 w-8 items-center justify-center rounded-full
                        bg-rose-500 text-white shadow-sm opacity-0 -translate-x-1

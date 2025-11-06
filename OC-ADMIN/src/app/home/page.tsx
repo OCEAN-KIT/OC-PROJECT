@@ -1,111 +1,152 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import type { FilterState } from "@/components/filter-bar/types";
-import FilterBar from "@/components/filter-bar/filter-bar";
-import { Search } from "lucide-react";
-import LoadintSpinner from "@/components/ui/loading-spinner";
+import { useState } from "react";
+import {
+  useSubmissionsQuery,
+  useApproveMutation,
+  useRejectMutation,
+  useBulkApproveMutation,
+  useBulkRejectMutation,
+  useDeleteMutation,
+} from "@/queries/submissions";
+import { useSubmissionSelection } from "@/hooks/useSubmissionSelction"; // ✅ 오타 주의
 import ReviewList from "@/components/review-list/review-list";
 import ReviewBulkActions from "@/components/review-list/review-bulk-actions";
+import RejectModal from "@/components/reject-reason-modal";
+import FilterBar from "@/components/filter-bar/filter-bar";
+import type { ListFilters } from "@/api/submissions";
 import { REVIEW_ITEMS } from "@/data/reviews";
-// import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 export default function HomePage() {
-  // useAuthGuard({ mode: "gotoLogin" });
-
-  const [filters, setFilters] = useState<FilterState>({
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+  const [filters, setFilters] = useState<ListFilters>({
     status: "all",
+    q: "",
     dateFrom: null,
     dateTo: null,
-    q: "",
   });
-  const [loading, setLoading] = useState(false);
 
-  // ✅ 선택 상태를 상위에서 관리
-  const [selected, setSelected] = useState<Set<string>>(new Set());
-  const total = REVIEW_ITEMS.length;
-  const selectedCount = selected.size;
-  const allSelected = useMemo(
-    () => selectedCount > 0 && selectedCount === total,
-    [selectedCount, total]
-  );
+  const { data, isFetching } = useSubmissionsQuery(page, pageSize, filters);
+  const items = data?.items ?? REVIEW_ITEMS;
+  const total = data?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
-  const toggleOne = (id: string) =>
-    setSelected((prev) => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
+  const {
+    selected,
+    toggleOne,
+    toggleAll,
+    clear,
+    total: selectableTotal,
+    allSelected,
+    count,
+  } = useSubmissionSelection(items);
 
-  const toggleAll = () =>
-    setSelected((prev) =>
-      prev.size === total
-        ? new Set()
-        : new Set(REVIEW_ITEMS.map((r) => String(r.id)))
-    );
+  const approveOne = useApproveMutation();
+  const rejectOne = useRejectMutation();
+  const bulkApprove = useBulkApproveMutation();
+  const bulkReject = useBulkRejectMutation();
+  const deleteOne = useDeleteMutation();
 
-  const handleBulkApprove = () => {
-    const ids = Array.from(selected);
-    console.log("[bulk approve]", ids);
-    alert(`일괄 승인: ${ids.join(", ") || "-"}`);
-    setSelected(new Set());
-  };
-
-  const handleBulkReject = () => {
-    const ids = Array.from(selected);
-    console.log("[bulk reject]", ids);
-    alert(`일괄 반려: ${ids.join(", ") || "-"}`);
-    setSelected(new Set());
-  };
-
-  const handleSearch = async () => {
-    setLoading(true);
-    try {
-      console.log("검색 요청(실제 POST 예정):", filters);
-    } finally {
-      setLoading(false);
+  // 반려 모달
+  const [rejectOpen, setRejectOpen] = useState(false);
+  const [rejectIds, setRejectIds] = useState<string[]>([]);
+  const openReject = (ids: string[]) => {
+    if (ids.length) {
+      setRejectIds(ids);
+      setRejectOpen(true);
     }
   };
+  const closeReject = () => setRejectOpen(false);
 
   return (
     <div className="p-4">
       <div className="mx-auto max-w-[1500px]">
-        {/* 🔹 같은 라인: 좌측 FilterBar, 우측 BulkActions */}
         <div className="flex flex-wrap items-center gap-3">
           <FilterBar value={filters} onChange={setFilters} />
           <button
-            type="button"
-            onClick={handleSearch}
-            disabled={loading}
-            className="inline-flex h-10 items-center gap-2 rounded-xl border border-gray-200 bg-white
-                       px-4 text-sm font-medium text-[#34609E] hover:bg-gray-50 active:translate-y-[1px]
-                       focus:outline-none"
+            className="ml-2 h-10 rounded-xl border px-4"
+            onClick={() => setPage(1)}
+            disabled={isFetching}
           >
-            {loading ? (
-              <LoadintSpinner />
-            ) : (
-              <Search className="h-4 w-4" aria-hidden />
-            )}
-            {loading ? "검색 중…" : "검색"}
+            검색
           </button>
 
-          {/* ✅ 우측 정렬 */}
           <ReviewBulkActions
             className="ml-auto"
-            total={total}
-            selectedCount={selectedCount}
+            total={selectableTotal}
+            selectedCount={count}
             allSelected={allSelected}
             onToggleAll={toggleAll}
-            onBulkApprove={handleBulkApprove}
-            onBulkReject={handleBulkReject}
+            onBulkApprove={() =>
+              bulkApprove.mutate(Array.from(selected), { onSuccess: clear })
+            }
+            onOpenReject={() => openReject(Array.from(selected))}
+            disabled={
+              isFetching || bulkApprove.isPending || bulkReject.isPending
+            } // ✅ 추가
           />
         </div>
 
-        {/* 리스트 */}
         <div className="mt-4">
-          <ReviewList selected={selected} onToggleOne={toggleOne} />
+          <ReviewList
+            items={items} // ✅ 리스트 전달
+            selected={selected}
+            onToggleOne={toggleOne}
+            onRejectOne={(id) => openReject([id])} // ✅ 함수명 수정
+            onApproveOne={(id) => approveOne.mutate(id)}
+            onDeleteOne={(id) => deleteOne.mutate(id)}
+            loading={isFetching}
+          />
+        </div>
+
+        <div className="mt-4 flex items-center justify-end gap-2 text-sm">
+          <button
+            disabled={page === 1}
+            onClick={() => setPage((p) => p - 1)}
+            className="px-3 py-1 rounded border"
+          >
+            이전
+          </button>
+          <span>
+            {page} / {totalPages}
+          </span>
+          <button
+            disabled={page === totalPages}
+            onClick={() => setPage((p) => p + 1)}
+            className="px-3 py-1 rounded border"
+          >
+            다음
+          </button>
         </div>
       </div>
+
+      <RejectModal
+        open={rejectOpen}
+        ids={rejectIds}
+        onClose={closeReject}
+        onSubmit={({ reason }) =>
+          rejectIds.length === 1
+            ? rejectOne.mutate(
+                { id: rejectIds[0], reason },
+                {
+                  onSuccess: () => {
+                    closeReject();
+                    clear();
+                  },
+                }
+              )
+            : bulkReject.mutate(
+                { ids: rejectIds, reason },
+                {
+                  onSuccess: () => {
+                    closeReject();
+                    clear();
+                  },
+                }
+              )
+        }
+      />
     </div>
   );
 }
