@@ -1,5 +1,5 @@
 // src/mocks/reviews.ts
-export type ReviewStatus = "pending" | "approved";
+export type ReviewStatus = "pending" | "approved" | "rejected";
 
 // ✅ 기본환경정보 타입
 export type BasicEnv = {
@@ -40,11 +40,10 @@ export const REVIEW_ITEMS: ReviewItem[] = [
     author: "김바다",
     fileCount: 3,
     status: "pending",
-    // ✅ 기본환경정보 더미
     env: {
       diveDate: "2025-10-28",
       startTime: "09:05",
-      gps: { lat: 37.0, lng: 129.4 }, // 울진 근사 좌표
+      gps: { lat: 37.0, lng: 129.4 },
       depthM: 10,
       waterTempC: 18.2,
       current: "중간",
@@ -59,17 +58,17 @@ export const REVIEW_ITEMS: ReviewItem[] = [
     author: "이해양",
     fileCount: 5,
     status: "approved",
-    // ✅ 기본환경정보 더미
     env: {
       diveDate: "2025-10-29",
       startTime: "14:20",
-      gps: { lat: 36.05, lng: 129.37 }, // 영일만 근사 좌표
+      gps: { lat: 36.05, lng: 129.37 },
       depthM: 8,
       waterTempC: 18.5,
       current: "잔잔",
       visibilityM: 10,
     },
   },
+  // ✅ 반려 예시 1
   {
     id: "003",
     site: "경남 거제 남부",
@@ -77,8 +76,9 @@ export const REVIEW_ITEMS: ReviewItem[] = [
     task: "바다숲조성",
     author: "박해조",
     fileCount: 2,
-    status: "pending",
+    status: "rejected",
   },
+  // ✅ 반려 예시 2
   {
     id: "004",
     site: "강릉 주문진",
@@ -86,7 +86,7 @@ export const REVIEW_ITEMS: ReviewItem[] = [
     task: "부표점검",
     author: "최아라",
     fileCount: 1,
-    status: "pending",
+    status: "rejected",
   },
   {
     id: "005",
