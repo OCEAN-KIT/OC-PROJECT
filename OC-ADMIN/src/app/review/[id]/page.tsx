@@ -17,6 +17,7 @@ import {
 // ✅ 공용 타입을 가져옵니다 (로컬 정의 제거!)
 import { type DiverActivityLog, type ActivityKind } from "@/types/divers";
 import { csvExportByIds } from "@/api/csv";
+import { ClipLoader } from "react-spinners";
 
 export default function ReviewPage() {
   useAuthGuard({ mode: "gotoLogin" });
@@ -44,8 +45,12 @@ export default function ReviewPage() {
           <ArrowLeft className="h-4 w-4" />
           뒤로가기
         </button>
-        <div className="mt-8 rounded-2xl border border-gray-200 bg-white p-8 text-center">
-          {isFetching ? "불러오는 중..." : "데이터를 찾을 수 없습니다."}
+        <div className="flex h-screen -mt-30 items-center justify-center text-center">
+          {isFetching ? (
+            <ClipLoader color="#3263F1" />
+          ) : (
+            "데이터를 찾을 수 없습니다."
+          )}
         </div>
       </div>
     );

@@ -15,7 +15,7 @@ import ReviewBulkActions from "@/components/review-list/review-bulk-actions";
 import RejectModal from "@/components/reject-reason-modal";
 import FilterBar from "@/components/filter-bar/filter-bar";
 import type { ListFilters } from "@/api/submissions";
-import { REVIEW_ITEMS } from "@/data/reviews";
+import { ClipLoader } from "react-spinners";
 
 export default function HomePage() {
   const [page, setPage] = useState(1);
@@ -28,7 +28,7 @@ export default function HomePage() {
   });
 
   const { data, isFetching } = useSubmissionsQuery(page, pageSize, filters);
-  const items = data?.items ?? REVIEW_ITEMS;
+  const items = data?.items ?? [];
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
@@ -84,21 +84,27 @@ export default function HomePage() {
             onOpenReject={() => openReject(Array.from(selected))}
             disabled={
               isFetching || bulkApprove.isPending || bulkReject.isPending
-            } // ✅ 추가
+            }
           />
         </div>
 
-        <div className="mt-4">
-          <ReviewList
-            items={items} // ✅ 리스트 전달
-            selected={selected}
-            onToggleOne={toggleOne}
-            onRejectOne={(id) => openReject([id])} // ✅ 함수명 수정
-            onApproveOne={(id) => approveOne.mutate(id)}
-            onDeleteOne={(id) => deleteOne.mutate(id)}
-            loading={isFetching}
-          />
-        </div>
+        {isFetching ? (
+          <div className="flex items-center justify-center h-screen -mt-50">
+            <ClipLoader color="#3263F1" />
+          </div>
+        ) : (
+          <div className="mt-4">
+            <ReviewList
+              items={items}
+              selected={selected}
+              onToggleOne={toggleOne}
+              onRejectOne={(id) => openReject([id])}
+              onApproveOne={(id) => approveOne.mutate(id)}
+              onDeleteOne={(id) => deleteOne.mutate(id)}
+              loading={isFetching}
+            />
+          </div>
+        )}
 
         <div className="mt-4 flex items-center justify-end gap-2 text-sm">
           <button

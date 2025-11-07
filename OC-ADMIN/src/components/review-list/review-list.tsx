@@ -1,11 +1,12 @@
 "use client";
 
+import { ClipLoader } from "react-spinners";
 import ReviewCard from "./review-card";
 import { REVIEW_GRID } from "./review-grid";
 import type { Submission } from "@/api/submissions";
 
 type Props = {
-  items: Submission[]; // ✅ 서버(쿼리)에서 내려온 리스트
+  items: Submission[];
   selected?: Set<string>;
   onToggleOne: (id: string) => void;
   onApproveOne: (id: string) => void;
@@ -54,9 +55,7 @@ export default function ReviewList({
         ))}
       </div>
 
-      {loading && (
-        <div className="pointer-events-none absolute inset-0 rounded-xl bg-white/40" />
-      )}
+      {loading && <ClipLoader color="#3263F1" />}
     </div>
   );
 }
