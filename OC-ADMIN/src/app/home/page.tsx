@@ -65,7 +65,7 @@ export default function HomePage() {
         <div className="flex flex-wrap items-center gap-3">
           <FilterBar value={filters} onChange={setFilters} />
           <button
-            className="ml-2 h-10 rounded-xl border px-4"
+            className="ml-2 h-10 rounded-xl border border-gray-200 text-sm px-4"
             onClick={() => setPage(1)}
             disabled={isFetching}
           >

@@ -54,14 +54,12 @@ export default function ReviewCard({
     e.preventDefault();
   };
 
-  // ✅ 1) 카드 클릭에서 체크박스/버튼 클릭은 네비게이션 무시
   const onCardClick = (e: React.MouseEvent) => {
     const el = e.target as HTMLElement;
-    if (el.closest("input, button, a")) return; // 입력/버튼은 카드 이동 X
+    if (el.closest("input, button, a")) return; 
     goDetail();
   };
 
-  // ✅ 2) 체크박스는 기본동작 허용(=preventDefault 금지), 버블만 막기
   const stopOnlyBubble = (e: React.SyntheticEvent) => {
     e.stopPropagation();
   };

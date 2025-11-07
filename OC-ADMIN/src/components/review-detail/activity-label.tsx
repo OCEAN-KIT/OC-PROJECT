@@ -1,11 +1,11 @@
 "use client";
 
-import type { DiverActivityLog } from "@/data/diver-log";
+import type { ActivityKind } from "@/types/activity";
 
 export default function ActivityLabel({
   activity,
 }: {
-  activity: DiverActivityLog["activity"];
+  activity: ActivityKind;
 }) {
   return (
     <span className="inline-flex rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700">
@@ -14,7 +14,7 @@ export default function ActivityLabel({
   );
 }
 
-function labelActivity(a: DiverActivityLog["activity"]) {
+function labelActivity(a: ActivityKind) {
   switch (a) {
     case "Transplantation":
       return "이식";

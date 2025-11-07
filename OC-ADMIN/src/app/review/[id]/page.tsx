@@ -1,52 +1,39 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 
 import TopBar from "@/components/review-detail/top-bar";
 import SessionSummary from "@/components/review-detail/session-summary";
-import DiverToggle from "@/components/review-detail/diver-toggle";
 import LogCard from "@/components/review-detail/log-card";
 
-import { REVIEW_ITEMS, type ReviewItem } from "@/data/reviews";
-import { DIVE_PARTICIPANTS } from "@/data/dive-session";
-import { DIVER_ACTIVITY_LOGS, type DiverActivityLog } from "@/data/diver-log";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
+import {
+  getSubmissionDetails,
+  type SubmissionDetailServer,
+} from "@/api/submissions";
+
+// ✅ 공용 타입을 가져옵니다 (로컬 정의 제거!)
+import { type DiverActivityLog, type ActivityKind } from "@/types/divers";
 
 export default function ReviewPage() {
   useAuthGuard({ mode: "gotoLogin" });
 
   const params = useParams<{ id: string }>();
   const router = useRouter();
-  const diveId = String(params.id);
+  const diveId = Number(params.id);
 
-  const review = useMemo<ReviewItem | undefined>(
-    () => REVIEW_ITEMS.find((r) => r.id === diveId),
-    [diveId]
-  );
-
-  const participants = useMemo(
-    () => DIVE_PARTICIPANTS[diveId]?.participants ?? [],
-    [diveId]
-  );
-
-  const allLogs = useMemo<DiverActivityLog[]>(
-    () => DIVER_ACTIVITY_LOGS.filter((l) => l.diveId === diveId),
-    [diveId]
-  );
-
-  // 기본 선택: 첫 참가자 or 첫 로그의 다이버
-  const [activeDiverId, setActiveDiverId] = useState<string>(() => {
-    return participants[0]?.diverId ?? allLogs[0]?.diverId ?? "";
+  const { data, isFetching, isError } = useQuery({
+    queryKey: ["submissionDetail", diveId],
+    queryFn: () => getSubmissionDetails(diveId),
+    staleTime: 30_000,
+    enabled: Number.isFinite(diveId),
   });
 
-  const diverLogs = useMemo(
-    () => allLogs.filter((l) => l.diverId === activeDiverId),
-    [allLogs, activeDiverId]
-  );
+  const detail = data?.data;
 
-  if (!review) {
+  if (isError || !detail) {
     return (
       <div className="mx-auto max-w-[1100px] p-2">
         <button
@@ -57,42 +44,82 @@ export default function ReviewPage() {
           뒤로가기
         </button>
         <div className="mt-8 rounded-2xl border border-gray-200 bg-white p-8 text-center">
-          데이터를 찾을 수 없습니다.
+          {isFetching ? "불러오는 중..." : "데이터를 찾을 수 없습니다."}
         </div>
       </div>
     );
   }
 
   const commonDate =
-    diverLogs[0]?.env?.diveDate ??
-    new Date(review.datetime).toISOString().slice(0, 10);
-  const participantCount = participants.length;
+    detail.basicEnv?.recordDate ??
+    (detail.submittedAt ? detail.submittedAt.slice(0, 10) : "");
+
+  const participantCount = detail.participants?.participantCount ?? 0;
+  const site = detail.siteName;
+
+  const sessionLog: DiverActivityLog = toSessionLog(detail);
+  const auditLogs = detail.auditLogs ?? [];
 
   return (
     <div className="mx-auto max-w-[1100px] p-6">
-      <TopBar diveId={review.id} />
+      <TopBar detail={detail} />
 
       <SessionSummary
         date={commonDate}
         participantCount={participantCount}
-        site={review.site}
-      />
-
-      <DiverToggle
-        participants={participants}
-        activeDiverId={activeDiverId}
-        onChange={setActiveDiverId}
+        site={site}
       />
 
       <section className="mt-6 space-y-4">
-        {diverLogs.length === 0 ? (
-          <div className="rounded-2xl bg-white p-8 text-center text-sm text-gray-500 ring-1 ring-black/5">
-            선택된 다이버의 기록이 없습니다.
-          </div>
-        ) : (
-          diverLogs.map((log, idx) => <LogCard key={idx} log={log} />)
-        )}
+        <LogCard log={sessionLog} />
       </section>
+
+      {/* 감사 로그 ... */}
     </div>
   );
+}
+
+/** 서버 activity → UI ActivityKind 매핑 */
+function toActivityKind(serverType: string | undefined): ActivityKind {
+  switch ((serverType || "").toUpperCase()) {
+    case "TRASH_COLLECTION":
+      return "DebrisRemoval";
+    case "URCHIN_REMOVAL":
+      // 우니 제거가 별도 종류라면 새 Kind를 추가하세요.
+      // 일단은 화면 라벨링용으로 Other로 보냅니다.
+      return "Other";
+    case "OTHER":
+    default:
+      return "Other";
+  }
+}
+
+/** SubmissionDetailServer → DiverActivityLog */
+function toSessionLog(detail: SubmissionDetailServer): DiverActivityLog {
+  const env = detail.basicEnv
+    ? {
+        waterTempC: detail.basicEnv.waterTempC,
+        current: detail.basicEnv.currentState,
+        visibilityM: detail.basicEnv.visibilityM,
+        depthM: detail.basicEnv.depthM,
+      }
+    : undefined;
+
+  const activityKind = toActivityKind(
+    detail.activity?.type ?? detail.activityType
+  );
+  const details = detail.activity?.details ?? detail.feedbackText ?? "";
+
+  const photos =
+    detail.attachments
+      ?.filter((a) => (a.mimeType || "").toLowerCase().startsWith("image/"))
+      .map((a) => a.fileUrl) ?? [];
+
+  return {
+    env,
+    activity: activityKind, // ✅ ActivityKind로 전달
+    details,
+    media: photos.length ? { photos } : undefined,
+    incidentOrAbnormal: detail.rejectReason || undefined,
+  };
 }

@@ -7,11 +7,18 @@ import {
   Anchor,
   Image as ImageIcon,
 } from "lucide-react";
-import type { DiverActivityLog } from "@/data/diver-log";
+import type { DiverActivityLog } from "@/types/divers";
 import InfoItem from "./info-item";
 import ActivityLabel from "./activity-label";
 
-export default function LogCard({ log }: { log: DiverActivityLog }) {
+type Props = {
+  log: DiverActivityLog;
+  // 과거 프롭 호환이 필요하면 아래 두 개를 남겨두고 사용하지 않습니다.
+  diveId?: string | number;
+  diverId?: string | number;
+};
+
+export default function LogCard({ log }: Props) {
   return (
     <div className="rounded-2xl bg-white p-5 ring-1 ring-black/5">
       {/* 개인 환경정보 요약(있을 때만) */}
