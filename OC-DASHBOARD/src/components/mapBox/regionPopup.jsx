@@ -2,7 +2,6 @@
 "use client";
 
 import { STAGE_META, getStageColor } from "@/constants/stageMeta";
-import { useRouter } from "next/navigation";
 
 // ----- 작은 색 유틸: hex → rgba, lighten -----
 function hexToRgb(hex) {

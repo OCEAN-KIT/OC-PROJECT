@@ -1,4 +1,15 @@
-export default function Header({ areaId, basic, aiOn, setAiOn, onClose }) {
+"use client";
+
+import { ClipLoader, PuffLoader } from "react-spinners";
+
+export default function Header({
+  areaId,
+  basic,
+  aiOn,
+  loading,
+  onToggle,
+  onClose,
+}) {
   return (
     <div className="flex items-center justify-between p-5 pb-3">
       <div className="flex items-center gap-3">
@@ -16,17 +27,27 @@ export default function Header({ areaId, basic, aiOn, setAiOn, onClose }) {
 
       <div className="flex items-center gap-3">
         <button
-          onClick={() => setAiOn((s) => !s)}
+          onClick={onToggle}
+          disabled={loading}
+          aria-busy={loading}
           className={[
-            "h-8 px-3 rounded-full text-xs border transition",
+            "h-8 px-3 rounded-full text-xs border transition inline-flex items-center justify-center min-w-24",
             aiOn
               ? "border-cyan-400/60 bg-cyan-400/20"
               : "border-white/10 bg-white/10 hover:bg-white/15",
+            loading ? "opacity-70 cursor-not-allowed" : "",
           ].join(" ")}
           title="AI 기반 예측값 보기"
         >
-          {aiOn ? "AI 예측 ON" : "AI 예측 OFF"}
+          {loading ? (
+            <PuffLoader size={16} color="#FFFFFF" />
+          ) : aiOn ? (
+            "AI 예측 ON"
+          ) : (
+            "AI 예측 OFF"
+          )}
         </button>
+
         <button
           onClick={onClose}
           className="rounded-md px-3 py-1.5 text-sm bg-white/10 hover:bg-white/15"
