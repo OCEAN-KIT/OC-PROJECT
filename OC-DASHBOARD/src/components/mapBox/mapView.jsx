@@ -31,23 +31,31 @@ export default function MapView() {
     }
   }, [workingArea]);
 
-  // 지도 초기화
+  // 지도 초기화 (정상 버전)
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
-    const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+    const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "";
+    const valid = token.startsWith("pk.") && token.length > 50;
+    if (!valid) {
+      console.error(
+        "[Mapbox] Invalid or missing token. " +
+          "Check .env(.local) NEXT_PUBLIC_MAPBOX_TOKEN and restart the dev server."
+      );
+      return;
+    }
+
     mapboxgl.accessToken = token;
 
     const map = new mapboxgl.Map({
       container: containerRef.current,
-      accessToken: token,
-      // style: "/map-styles/camouflage.json",
       style: "mapbox://styles/aryu1217/cmhq8lzea005k01ss3zjh8fvv",
       projection: "globe",
       antialias: true,
       center: COORDS.POHANG,
       zoom: 5,
     });
+
     mapRef.current = map;
 
     map.dragRotate.enable();
@@ -71,29 +79,30 @@ export default function MapView() {
         bearing: -15,
       });
 
-      // map.addSource("mapbox-dem", {
-      //   type: "raster-dem",
-      //   url: "mapbox://mapbox.mapbox-terrain-dem-v1",
-      //   tileSize: 512,
-      //   maxzoom: 14,
-      // });
+      // Sky layer
+      if (!map.getLayer("sky")) {
+        map.addLayer({
+          id: "sky",
+          type: "sky",
+          paint: {
+            "sky-type": "atmosphere",
+            "sky-atmosphere-sun": [0.0, 0.0],
+            "sky-atmosphere-sun-intensity": 15,
+          },
+        });
+      }
+    });
 
-      // map.setTerrain({ source: "mapbox-dem", exaggeration: 1.3 });
-
-      map.addLayer({
-        id: "sky",
-        type: "sky",
-        paint: {
-          "sky-type": "atmosphere",
-          "sky-atmosphere-sun": [0.0, 0.0],
-          "sky-atmosphere-sun-intensity": 15,
-        },
-      });
+    map.on("error", (e) => {
+      console.error("[Mapbox] runtime error:", e?.error || e);
     });
 
     return () => {
-      map.remove();
-      mapRef.current = null;
+      try {
+        map.remove();
+      } finally {
+        mapRef.current = null;
+      }
     };
   }, []);
 

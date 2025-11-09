@@ -96,7 +96,7 @@ export default function ChatBot() {
           shadow-lg ring-1 ring-black/10
           bg-white hover:bg-gray-50 active:scale-95 cursor-pointer
           flex items-center justify-center
-          z-9999
+          z-[9999]
         "
       >
         <Image
@@ -108,22 +108,18 @@ export default function ChatBot() {
         />
       </button>
 
-      {/* 패널 */}
       {open && (
-        <div
-          className="fixed inset-0 z-9998 bg-black/30"
-          onClick={() => setOpen(false)}
-        >
+        <div className="fixed bottom-24 right-6 z-[9998]">
           <div
             className="
-              absolute bottom-38 right-6
               w-[360px] max-w-[90vw] h-[520px]
               bg-white/10 rounded-2xl shadow-2xl
               ring-1 ring-black/10
               text-gray-500
-              flex flex-col  /* ✅ 세로 레이아웃 */
+              flex flex-col
             "
-            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="false"
           >
             {/* 헤더 */}
             <div className="h-10 flex items-center justify-between px-4 border-b">
@@ -136,7 +132,7 @@ export default function ChatBot() {
               </button>
             </div>
 
-            {/* 메시지 영역: 나머지 높이 차지 + 스크롤 */}
+            {/* 메시지 영역 */}
             <div className="flex-1 overflow-auto p-4 text-sm text-gray-700 space-y-3">
               {messages.length === 0 && (
                 <div className="text-center text-gray-400 mt-8">
@@ -177,7 +173,7 @@ export default function ChatBot() {
               <div ref={scrollRef} />
             </div>
 
-            {/* 입력창: 패널의 맨 아래, absolute 제거 */}
+            {/* 입력창 */}
             <form onSubmit={onSubmit} className="border-t bg-white/1 p-3">
               <div className="flex items-center gap-2">
                 <input
@@ -185,13 +181,13 @@ export default function ChatBot() {
                   value={msg}
                   onChange={(e) => setMsg(e.target.value)}
                   placeholder="메시지를 입력하세요..."
-                  className="flex-1 rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 "
+                  className="flex-1 rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2"
                   disabled={sending}
                 />
                 <button
                   type="submit"
                   disabled={sending || !msg.trim()}
-                  className="rounded-lg bg-[#2F80ED] px-3 py-2 text-xs font-medium text-white  hover:brightness-105 disabled:opacity-50"
+                  className="rounded-lg bg-[#2F80ED] px-3 py-2 text-xs font-medium text-white hover:brightness-105 disabled:opacity-50"
                 >
                   보내기
                 </button>
