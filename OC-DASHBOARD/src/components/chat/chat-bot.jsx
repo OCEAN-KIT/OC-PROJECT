@@ -92,7 +92,7 @@ export default function ChatBot() {
         aria-label="Open chat"
         className="
           fixed bottom-6 right-6
-          h-28 w-28 rounded-full
+          h-13 w-13 rounded-full
           shadow-lg ring-1 ring-black/10
           bg-white hover:bg-gray-50 active:scale-95 cursor-pointer
           flex items-center justify-center
@@ -100,10 +100,10 @@ export default function ChatBot() {
         "
       >
         <Image
-          src="/images/ocnChat.png"
+          src="/images/chatBotIcon.png"
           alt="Ocean Campus Chatbot"
-          width={200}
-          height={200}
+          width={100}
+          height={100}
           priority
         />
       </button>

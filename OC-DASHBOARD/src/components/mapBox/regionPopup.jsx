@@ -20,6 +20,7 @@ function hexToRgb(hex) {
   const b = parseInt(v.slice(4, 6), 16);
   return { r, g, b };
 }
+
 function rgba(hex, alpha = 1) {
   const rgb = hexToRgb(hex);
   if (!rgb) return `rgba(229,231,235,${alpha})`; // fallback slate-200
@@ -33,7 +34,7 @@ function lighten(hex, t = 0.35) {
   return `rgb(${mix(rgb.r)}, ${mix(rgb.g)}, ${mix(rgb.b)})`;
 }
 
-/** stage → 팝업 스타일 계산 (constants는 그대로) */
+/** stage → 팝업 스타일 계산 (constants는 그대로) **/
 function getPopupStyle(stage) {
   const base = getStageColor(stage); // STAGE_META의 color 사용
   const text = base; // 텍스트는 base 컬러

@@ -35,11 +35,14 @@ export default function MapView() {
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
-    mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+    const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+    mapboxgl.accessToken = token;
 
     const map = new mapboxgl.Map({
       container: containerRef.current,
-      style: "/map-styles/camouflage.json",
+      accessToken: token,
+      // style: "/map-styles/camouflage.json",
+      style: "mapbox://styles/aryu1217/cmhq8lzea005k01ss3zjh8fvv",
       projection: "globe",
       antialias: true,
       center: COORDS.POHANG,
@@ -68,14 +71,14 @@ export default function MapView() {
         bearing: -15,
       });
 
-      map.addSource("mapbox-dem", {
-        type: "raster-dem",
-        url: "mapbox://mapbox.mapbox-terrain-dem-v1",
-        tileSize: 512,
-        maxzoom: 14,
-      });
+      // map.addSource("mapbox-dem", {
+      //   type: "raster-dem",
+      //   url: "mapbox://mapbox.mapbox-terrain-dem-v1",
+      //   tileSize: 512,
+      //   maxzoom: 14,
+      // });
 
-      map.setTerrain({ source: "mapbox-dem", exaggeration: 1.3 });
+      // map.setTerrain({ source: "mapbox-dem", exaggeration: 1.3 });
 
       map.addLayer({
         id: "sky",
