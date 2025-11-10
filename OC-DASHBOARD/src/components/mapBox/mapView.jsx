@@ -49,7 +49,9 @@ export default function MapView() {
 
     const map = new mapboxgl.Map({
       container: containerRef.current,
-      style: "mapbox://styles/aryu1217/cmhq8lzea005k01ss3zjh8fvv",
+      // style: "mapbox://styles/aryu1217/cmhq8lzea005k01ss3zjh8fvv",
+      // style: "/map-styles/camouflage.json",
+      style: "mapbox://styles/aryu1217/cmhssx9l9006q01r64s59b80d",
       projection: "globe",
       antialias: true,
       center: COORDS.POHANG,
