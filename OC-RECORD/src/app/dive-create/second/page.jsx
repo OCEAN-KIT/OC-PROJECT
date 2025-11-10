@@ -1,18 +1,15 @@
-// app/dive-management/second/[id]/page.jsx
+// app/dive-create/second/page.jsx
 "use client";
 
-import { useMemo, useRef, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { ACTIVITIES } from "@/data/activity";
+import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { uploadImage } from "@/api/upload-image";
 import { createSubmission } from "@/api/submissions";
 
 const DEBUG = true;
 const TEST_NO_ATTACH = false;
 
-/* ── helpers ─────────────────────────────────────────────────────────── */
-
-/** S3 key → 공개 URL (화면 표시용). 서버 저장은 key만! */
+/** S3 key -> public URL (뷰에서만 사용; 서버 저장은 key만) */
 const keyToPublicUrl = (key) => {
   const base = process.env.NEXT_PUBLIC_S3_PUBLIC_BASE || "";
   const cleanBase = base.replace(/\/+$/, "");
@@ -26,8 +23,6 @@ const n = (v, fb = 0) => {
 };
 
 const pad = (num, len = 2) => String(num).padStart(len, "0");
-
-/** Date | string → "YYYY-MM-DDTHH:mm:ss.SSS"  (※ Z 없음, 서버 스펙) */
 const toLocalDateTimeString = (d) => {
   const date = typeof d === "string" ? new Date(d) : d;
   const yyyy = date.getFullYear();
@@ -40,19 +35,14 @@ const toLocalDateTimeString = (d) => {
   return `${yyyy}-${MM}-${dd}T${hh}:${mm}:${ss}.${ms}`;
 };
 
-/** {hour, minute, second} → "HH:mm:ss" (서버 스펙) */
-const toHHMMSS = (t) => {
-  if (!t) return undefined;
-  return `${pad(n(t.hour))}:${pad(n(t.minute))}:${pad(n(t.second))}`;
-};
-
-// ⚠️ 서버 enum: URCHIN_REMOVAL | TRASH_COLLECTION | OTHER
 function labelToActivityType(label) {
   switch (label) {
+    case "이식":
+      return "TRANSPLANT";
     case "폐기물 수거":
       return "TRASH_COLLECTION";
-    // 현재 UI 항목 중 서버에 없는 것들은 OTHER로 보냄
-    case "이식":
+    case "성게 제거":
+      return "URCHIN_REMOVAL";
     case "연구":
     case "모니터링":
     case "기타":
@@ -61,32 +51,21 @@ function labelToActivityType(label) {
   }
 }
 
-/* ── page ────────────────────────────────────────────────────────────── */
-
-export default function DiveSubmitSecondPage() {
-  const { id } = useParams();
+export default function DiveCreateStep2Page() {
   const router = useRouter();
 
-  const activity = useMemo(
-    () => ACTIVITIES.find((a) => a.id === id) ?? ACTIVITIES[0],
-    [id]
-  );
+  // 활동 유형 선택(서버 enum 대응)
+  const [workType, setWorkType] = useState("이식");
 
-  const [workType, setWorkType] = useState("모니터링");
+  // 내용/사건
   const [details, setDetails] = useState("");
   const [incidentText, setIncidentText] = useState("");
-
-  // 로컬에서 선택된 파일(이미지/비디오)
-  const [attachments, setAttachments] = useState([]);
-  const fileRef = useRef(null);
-
   const DETAILS_MAX = 2000;
   const INCIDENT_MAX = 2000;
 
-  const short = (d) => (d?.length >= 8 ? d.slice(2) : d);
-  const rangeLabel = `${short(activity.startDate)} ~ ${short(
-    activity.endDate
-  )}`;
+  // 첨부
+  const [attachments, setAttachments] = useState([]);
+  const fileRef = useRef(null);
 
   const onPickFiles = (e) => {
     const files = Array.from(e.target.files || []);
@@ -94,123 +73,52 @@ export default function DiveSubmitSecondPage() {
     setAttachments(next);
     if (fileRef.current) fileRef.current.value = "";
   };
-
   const removeOne = (idx) =>
     setAttachments((prev) => prev.filter((_, i) => i !== idx));
 
-  // 임시 저장용 payload (콘솔 확인 전용)
-  const buildPayload = () => {
-    const raw = sessionStorage.getItem(`diveDraft:${id}`);
-    const d = raw ? JSON.parse(raw) : {};
-
-    const apiType = labelToActivityType(workType);
-    const siteName =
-      (activity.site && String(activity.site).trim()) ||
-      `${activity.region || ""} ${activity.title || ""}`.trim() ||
-      "Unknown Site";
-
-    const start = d.startTime ?? { hour: 0, minute: 0, second: 0 };
-    const end = d.endTime ?? start;
-
-    const detailsCombined = incidentText?.trim()
-      ? `${details}\n\n[환경이상/사고 보고]\n${incidentText}`
-      : details;
-
-    // 드래프트에서는 URL 자리에 안내 문구
-    const drafts =
-      attachments.map((f) => ({
-        fileName: f.name,
-        mimeType: f.type,
-        fileSize: n(f.size),
-        fileUrl: "(S3 업로드 후 채워짐)", // 서버 전송 전까지 placeholder
-      })) ?? [];
-
-    return {
-      siteName,
-      activityType: apiType,
-      submittedAt: toLocalDateTimeString(new Date()),
-      authorName: "string",
-      authorEmail: "string",
-      feedbackText: "",
-      latitude: n(d.latitude),
-      longitude: n(d.longitude),
-      basicEnv: {
-        recordDate: d.recordDate ?? new Date().toISOString().slice(0, 10),
-        startTime: toHHMMSS(start),
-        endTime: toHHMMSS(end),
-        waterTempC: n(d.waterTempC),
-        visibilityM: n(d.visibilityM),
-        depthM: n(d.depthM),
-        currentState: d.currentState || "LOW",
-        weather: "SUNNY",
-      },
-      participants: {
-        leaderName: activity.leader || "Unknown",
-        participantCount: n((activity.members?.length ?? 0) + 1, 1),
-        role: "CITIZEN_DIVER",
-      },
-      activity: {
-        type: apiType,
-        details: detailsCombined,
-        collectionAmount: 0,
-        durationHours: 0,
-      },
-      attachments: drafts,
-    };
+  const toHHMMSS = (t) => {
+    if (!t) return "00:00:00";
+    const pad = (n, len = 2) => String(Number(n) || 0).padStart(len, "0");
+    return `${pad(t.hour)}:${pad(t.minute)}:${pad(t.second)}`;
   };
 
   async function handleSubmit() {
     try {
-      // 0) envDraft 복구
-      const raw = sessionStorage.getItem(`diveDraft:${id}`);
+      // 1) step1 저장분 복구
+      const raw = sessionStorage.getItem("diveDraft");
       const d = raw ? JSON.parse(raw) : {};
-      if (DEBUG) console.log("[submit] envDraft =", d);
+      if (DEBUG) console.log("[submit] step1 draft =", d);
 
-      // 1) 첨부 업로드 (S3 presigned PUT)
-      //    ✅ 서버 저장용 object는 'fileUrl: key' 만 넣는다.
+      // 2) 첨부 업로드
       let uploaded = [];
       if (!TEST_NO_ATTACH) {
         for (const f of attachments) {
-          console.log("[upload] start", f.name, f.type, f.size);
-          const key = await uploadImage(f); // ← 서버에서 받은 presigned URL로 PUT 후 key를 반환
-          // 화면에서 미리보기/확인은 필요할 때 keyToPublicUrl(key) 사용
-          if (DEBUG) {
-            const urlForPreview = keyToPublicUrl(key);
-            console.log("[upload] done =>", { key, urlForPreview });
-          }
+          const key = await uploadImage(f); // presigned PUT
+          if (DEBUG)
+            console.log("[upload] done =>", {
+              key,
+              preview: keyToPublicUrl(key),
+            });
           uploaded.push({
             fileName: f.name,
-            fileUrl: key, // ✅ 서버에는 key만 저장 (절대URL 금지)
+            fileUrl: key, // ✅ 서버에는 key만!
             mimeType: f.type,
             fileSize: n(f.size),
           });
         }
-      } else {
-        console.warn("[upload] SKIPPED by TEST_NO_ATTACH");
       }
 
-      // 2) details 결합
+      // 3) activityType, details
+      const apiType = labelToActivityType(workType);
       const detailsCombined = incidentText?.trim()
         ? `${details}\n\n[환경이상/사고 보고]\n${incidentText}`
         : details;
 
-      // 3) siteName
-      const siteName =
-        (activity.site && String(activity.site).trim()) ||
-        `${activity.region || ""} ${activity.title || ""}`.trim() ||
-        "Unknown Site";
-
-      // 4) enum 고정
-      const apiType = labelToActivityType(workType);
-
-      // 5) payload (서버 스펙 포맷으로 변환)
-      const start = d.startTime ?? { hour: 0, minute: 0, second: 0 };
-      const end = d.endTime ?? start;
-
+      // 4) payload (Swagger 스펙 준수)
       const payload = {
-        siteName,
+        siteName: d.siteName || "Unknown Site",
         activityType: apiType,
-        submittedAt: toLocalDateTimeString(new Date()), // ← Z 없는 로컬 datetime
+        submittedAt: toLocalDateTimeString(new Date()),
         authorName: "string",
         authorEmail: "string",
         feedbackText: "",
@@ -218,17 +126,17 @@ export default function DiveSubmitSecondPage() {
         longitude: n(d.longitude),
         basicEnv: {
           recordDate: d.recordDate ?? new Date().toISOString().slice(0, 10),
-          startTime: toHHMMSS(start), // ← "HH:mm:ss"
-          endTime: toHHMMSS(end), // ← "HH:mm:ss"
+          startTime: toHHMMSS(d.startTime), // "HH:mm:ss"
+          endTime: toHHMMSS(d.endTime ?? d.startTime), // "HH:mm:ss"
           waterTempC: n(d.waterTempC),
           visibilityM: n(d.visibilityM),
           depthM: n(d.depthM),
           currentState: d.currentState || "LOW",
-          weather: "SUNNY",
+          weather: d.weather || "SUNNY",
         },
         participants: {
-          leaderName: activity.leader || "Unknown",
-          participantCount: n((activity.members?.length ?? 0) + 1, 1),
+          leaderName: "김다이버",
+          participantCount: 1,
           role: "CITIZEN_DIVER",
         },
         activity: {
@@ -237,12 +145,11 @@ export default function DiveSubmitSecondPage() {
           collectionAmount: 0,
           durationHours: 0,
         },
-        attachments: uploaded, // ✅ key 기반 첨부 목록
+        attachments: uploaded,
       };
 
-      if (DEBUG) {
+      if (DEBUG)
         console.log("[submit] payload =", JSON.stringify(payload, null, 2));
-      }
 
       const res = await createSubmission(payload);
       console.log("[submit] response =", res);
@@ -253,8 +160,6 @@ export default function DiveSubmitSecondPage() {
       const data = err?.response?.data;
       console.error("[submit] ERROR status =", status);
       console.error("[submit] ERROR body   =", data);
-      console.error("[submit] ERROR path   =", data?.errors?.path);
-      console.error("[submit] ERROR field  =", data?.errors?.field);
       alert(
         status === 500
           ? "서버 500 오류: 콘솔 로그 확인"
@@ -266,17 +171,8 @@ export default function DiveSubmitSecondPage() {
   return (
     <div className="min-h-screen bg-white">
       <div className="mx-auto w-[380px] px-4 py-5">
-        {/* 상단 액티비티 요약 pill */}
-        <div className="rounded-full border border-sky-200 bg-white px-3 py-2 text-[15px] text-gray-700 flex items-center gap-2 shadow-sm">
-          <span className="font-semibold">{activity.title}</span>
-          <span className="text-gray-500">{rangeLabel}</span>
-          <span className="ml-auto text-sky-500 underline underline-offset-2 cursor-pointer">
-            {activity.region}
-          </span>
-        </div>
-
         {/* 작업 유형 */}
-        <div className="mt-6">
+        <div>
           <div className="text-[15px] font-semibold text-gray-800 mb-2">
             작업 유형
           </div>
@@ -288,6 +184,7 @@ export default function DiveSubmitSecondPage() {
             >
               <option>이식</option>
               <option>폐기물 수거</option>
+              <option>성게 제거</option>
               <option>연구</option>
               <option>모니터링</option>
               <option>기타</option>
@@ -338,7 +235,7 @@ export default function DiveSubmitSecondPage() {
           </div>
         </div>
 
-        {/* 활동 사진 및 동영상 */}
+        {/* 첨부 */}
         <div className="mt-6">
           <div className="text-[15px] font-semibold text-gray-800 mb-2">
             활동 사진 및 동영상
@@ -391,13 +288,13 @@ export default function DiveSubmitSecondPage() {
           </div>
         </div>
 
-        {/* 하단 버튼 */}
+        {/* 하단 */}
         <div className="mt-8 grid grid-cols-2 gap-3">
           <button
             type="button"
             onClick={() => {
-              const draft = buildPayload();
-              console.log("draft payload:", draft);
+              const raw = sessionStorage.getItem("diveDraft");
+              console.log("draft payload:", raw ? JSON.parse(raw) : {});
               alert("임시 저장(콘솔 확인)");
             }}
             className="h-12 rounded-2xl bg-white text-gray-800 font-semibold shadow-sm border border-gray-200"
@@ -408,7 +305,7 @@ export default function DiveSubmitSecondPage() {
             type="button"
             onClick={handleSubmit}
             className="h-12 rounded-2xl bg-[#2F80ED] text-white font-semibold shadow-md hover:brightness-105 disabled:opacity-50"
-            disabled={details.length === 0 && incidentText.length === 0}
+            disabled={!details && !incidentText}
           >
             제출하기
           </button>
@@ -417,11 +314,3 @@ export default function DiveSubmitSecondPage() {
     </div>
   );
 }
-
-/* 
-NOTE:
-- 서버 저장: attachments[].fileUrl ← 반드시 'S3 key'만 저장
-- 화면 표시(상세/리스트 등): keyToPublicUrl(key)로 변환해서 <img src>에 사용
-- NEXT_PUBLIC_S3_PUBLIC_BASE 예:
-  https://my-bucket.s3.amazonaws.com  또는  https://cdn.example.com
-*/
