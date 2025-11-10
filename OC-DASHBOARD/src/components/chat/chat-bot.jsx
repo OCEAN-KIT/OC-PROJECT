@@ -91,7 +91,7 @@ export default function ChatBot() {
         onClick={() => setOpen(true)}
         aria-label="Open chat"
         className="
-          fixed bottom-6 right-6
+          fixed bottom-6 left-6
           h-13 w-13 rounded-full
           shadow-lg ring-1 ring-black/10
           bg-white hover:bg-gray-50 active:scale-95 cursor-pointer
@@ -109,13 +109,13 @@ export default function ChatBot() {
       </button>
 
       {open && (
-        <div className="fixed bottom-24 right-6 z-[9998]">
+        <div className="fixed bottom-24 left-6 z-[9998]">
           <div
             className="
               w-[360px] max-w-[90vw] h-[520px]
-              bg-white/10 rounded-2xl shadow-2xl
+              bg-black/50 rounded-2xl shadow-2xl
               ring-1 ring-black/10
-              text-gray-500
+              text-gray-300
               flex flex-col
             "
             role="dialog"
@@ -125,7 +125,7 @@ export default function ChatBot() {
             <div className="h-10 flex items-center justify-between px-4 border-b">
               <span className="text-sm font-medium">Ocean Campus 챗봇</span>
               <button
-                className="text-xs text-gray-500"
+                className="text-xs text-gray-300"
                 onClick={() => setOpen(false)}
               >
                 닫기
@@ -181,7 +181,7 @@ export default function ChatBot() {
                   value={msg}
                   onChange={(e) => setMsg(e.target.value)}
                   placeholder="메시지를 입력하세요..."
-                  className="flex-1 rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2"
+                  className="flex-1 rounded-lg border px-3 py-2 text-sm outline-none"
                   disabled={sending}
                 />
                 <button
