@@ -14,10 +14,10 @@ import {
   type SubmissionDetailServer,
 } from "@/api/submissions";
 
-// ✅ 공용 타입을 가져옵니다 (로컬 정의 제거!)
 import { type DiverActivityLog, type ActivityKind } from "@/types/divers";
 import { csvExportByIds } from "@/api/csv";
 import { ClipLoader } from "react-spinners";
+import { keyToPublicUrl } from "@/utils/s3"; // ✅ 여기로 교체
 
 export default function ReviewPage() {
   useAuthGuard({ mode: "gotoLogin" });
@@ -34,6 +34,7 @@ export default function ReviewPage() {
   });
 
   const detail = data?.data;
+  console.log("detail:", detail);
 
   if (isError || !detail) {
     return (
@@ -94,9 +95,7 @@ function toActivityKind(serverType: string | undefined): ActivityKind {
     case "TRASH_COLLECTION":
       return "DebrisRemoval";
     case "URCHIN_REMOVAL":
-      // 우니 제거가 별도 종류라면 새 Kind를 추가하세요.
-      // 일단은 화면 라벨링용으로 Other로 보냅니다.
-      return "Other";
+      return "Other"; // 필요 시 별도 Kind 추가
     case "OTHER":
     default:
       return "Other";
@@ -119,14 +118,30 @@ function toSessionLog(detail: SubmissionDetailServer): DiverActivityLog {
   );
   const details = detail.activity?.details ?? detail.feedbackText ?? "";
 
+  // ✅ 이미지일 때만 key → 절대 URL로 변환해서 UI에 전달
   const photos =
     detail.attachments
-      ?.filter((a) => (a.mimeType || "").toLowerCase().startsWith("image/"))
-      .map((a) => a.fileUrl) ?? [];
+      ?.filter((a) => {
+        const mt = (a.mimeType || "").toLowerCase();
+        if (mt.startsWith("image/")) return true;
+        const p = (a.fileUrl || "").toLowerCase();
+        return [
+          ".jpg",
+          ".jpeg",
+          ".png",
+          ".gif",
+          ".webp",
+          ".bmp",
+          ".tif",
+          ".tiff",
+        ].some((ext) => p.endsWith(ext));
+      })
+      .map((a) => keyToPublicUrl(a.fileUrl)) ?? // ← 여기!
+    [];
 
   return {
     env,
-    activity: activityKind, // ✅ ActivityKind로 전달
+    activity: activityKind,
     details,
     media: photos.length ? { photos } : undefined,
     incidentOrAbnormal: detail.rejectReason || undefined,
