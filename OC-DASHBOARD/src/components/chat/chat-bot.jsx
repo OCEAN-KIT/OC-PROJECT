@@ -100,7 +100,7 @@ export default function ChatBot() {
         "
       >
         <Image
-          src="/images/chatBotIcon.png"
+          src="/images/chat.svg"
           alt="Ocean Campus Chatbot"
           width={100}
           height={100}
