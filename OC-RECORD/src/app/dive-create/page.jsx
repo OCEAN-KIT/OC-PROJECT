@@ -1,7 +1,7 @@
 // app/dive-create/page.jsx
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   ChevronLeft,
@@ -9,11 +9,13 @@ import {
   Clock3,
   MapPin,
   Gauge,
-  Thermometer,
   Waves,
   Eye,
   LocateFixed,
 } from "lucide-react";
+
+// ✅ 천지인 키보드
+import CheonjiinKeyboard from "react-cji-keyboard";
 
 export default function DiveCreateStep1Page() {
   const router = useRouter();
@@ -40,9 +42,45 @@ export default function DiveCreateStep1Page() {
     }
   }, []);
 
+  // ✅ 커스텀 키보드 대상 필드
+  // "siteName" | null
+  const [activeField, setActiveField] = useState(null);
+
   // input refs
   const dateInputRef = useRef(null);
   const timeInputRef = useRef(null);
+  const siteNameRef = useRef(null);
+  const keyboardRef = useRef(null);
+
+  // ✅ 천지인 키보드 → 해당 필드에 값 반영
+  const handleKeyboardChange = (text) => {
+    if (activeField === "siteName") {
+      setSiteName(text);
+    }
+  };
+
+  // ✅ 필드/키보드 바깥 클릭하면 키보드 닫기
+  useEffect(() => {
+    if (!activeField) return;
+
+    const handleClickOutside = (e) => {
+      if (
+        siteNameRef.current?.contains(e.target) ||
+        keyboardRef.current?.contains(e.target)
+      ) {
+        return;
+      }
+      setActiveField(null);
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, [activeField]);
 
   // helpers — 시간/좌표/조류 매핑
   const openDatePicker = () => {
@@ -72,7 +110,6 @@ export default function DiveCreateStep1Page() {
     const [a, b] = (s || "").split(",").map((v) => Number(String(v).trim()));
     if (!Number.isFinite(a) || !Number.isFinite(b))
       return { latitude: 0, longitude: 0 };
-    // 휴리스틱: |lat| <= 90, |lon| <= 180 — 위도/경도 자동 판별
     const looksLikeLatFirst = Math.abs(a) <= 90 && Math.abs(b) <= 180;
     return looksLikeLatFirst
       ? { latitude: a, longitude: b }
@@ -168,10 +205,13 @@ export default function DiveCreateStep1Page() {
           <label className="block">
             <span className={labelCls}>예: 울진 A 구역</span>
             <input
+              ref={siteNameRef}
               className={inputCls}
               placeholder="울진 A 구역"
               value={siteName}
-              onChange={(e) => setSiteName(e.target.value)}
+              readOnly // ✅ 시스템 키보드 막고 천지인만 사용
+              onClick={() => setActiveField("siteName")}
+              onFocus={() => setActiveField("siteName")}
               autoComplete="off"
             />
           </label>
@@ -294,7 +334,7 @@ export default function DiveCreateStep1Page() {
                 placeholder="예: 8.5"
                 value={depth}
                 onChange={(e) => setDepth(e.target.value)}
-                inputMode="decimal"
+                inputMode="decimal" // ✅ 모바일 숫자 키보드 유도
               />
               <span className="pointer-events-none absolute right-3 top-[38px] text-gray-500 select-none">
                 M
@@ -365,6 +405,7 @@ export default function DiveCreateStep1Page() {
             </span>
           </label>
         </section>
+
         <div className="mx-auto max-w-[440px] py-3 grid grid-cols-2 gap-3">
           <button
             type="button"
@@ -383,7 +424,17 @@ export default function DiveCreateStep1Page() {
         </div>
       </main>
 
-      {/* 하단 고정 CTA */}
+      {/* ✅ 하단 천지인 키보드 */}
+      {activeField && (
+        <div
+          ref={keyboardRef}
+          className="fixed left-1/2 bottom-0 z-20 -translate-x-1/2 w-full max-w-[420px]"
+        >
+          <div className="mx-auto max-w-[420px] border-t border-gray-200 bg-white px-2 pt-1 pb-3">
+            <CheonjiinKeyboard onChange={handleKeyboardChange} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

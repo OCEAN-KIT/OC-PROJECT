@@ -15,6 +15,8 @@ import {
   Check,
 } from "lucide-react";
 
+import CheonjiinKeyboard from "react-cji-keyboard";
+
 const DEBUG = true;
 const TEST_NO_ATTACH = false;
 
@@ -74,6 +76,10 @@ export default function DiveCreateStep2Page() {
   ];
   const [workType, setWorkType] = useState("이식");
 
+  // ✅ 어떤 필드에 타이핑 중인지
+  // "details" | "incident" | null
+  const [activeField, setActiveField] = useState(null);
+
   // 내용/사건
   const [details, setDetails] = useState("");
   const [incidentText, setIncidentText] = useState("");
@@ -110,14 +116,48 @@ export default function DiveCreateStep2Page() {
     return Boolean(details.trim() || incidentText.trim() || attachments.length);
   }, [details, incidentText, attachments.length]);
 
+  // ✅ 커스텀 키보드에서 오는 text를 activeField에 반영
+  const handleKeyboardChange = (text) => {
+    if (activeField === "details") {
+      setDetails(text.slice(0, DETAILS_MAX));
+    } else if (activeField === "incident") {
+      setIncidentText(text.slice(0, INCIDENT_MAX));
+    }
+  };
+
+  useEffect(() => {
+    if (!activeField) return;
+
+    const handleClickOutside = (e) => {
+      // textarea 또는 키보드 안을 누른 경우 → 그대로 유지
+      if (
+        detailsRef.current?.contains(e.target) ||
+        incidentRef.current?.contains(e.target) ||
+        keyboardRef.current?.contains(e.target)
+      ) {
+        return;
+      }
+
+      // 그 외 영역 클릭 → 키보드 닫기
+      setActiveField(null);
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, [activeField]);
+
   async function handleSubmit() {
     try {
-      // 1) step1 저장분 복구
       const raw = sessionStorage.getItem("diveDraft");
       const d = raw ? JSON.parse(raw) : {};
       if (DEBUG) console.log("[submit] step1 draft =", d);
 
-      // 2) 첨부 업로드
+      // 첨부 업로드
       let uploaded = [];
       if (!TEST_NO_ATTACH) {
         for (const f of attachments) {
@@ -129,20 +169,18 @@ export default function DiveCreateStep2Page() {
             });
           uploaded.push({
             fileName: f.name,
-            fileUrl: key, // ✅ 서버에는 key만!
+            fileUrl: key,
             mimeType: f.type,
             fileSize: n(f.size),
           });
         }
       }
 
-      // 3) activityType, details
       const apiType = labelToActivityType(workType);
       const detailsCombined = incidentText?.trim()
         ? `${details}\n\n[환경이상/사고 보고]\n${incidentText}`
         : details;
 
-      // 4) payload (Swagger 스펙 준수)
       const payload = {
         siteName: d.siteName || "Unknown Site",
         activityType: apiType,
@@ -196,8 +234,12 @@ export default function DiveCreateStep2Page() {
     }
   }
 
+  const detailsRef = useRef(null);
+  const incidentRef = useRef(null);
+  const keyboardRef = useRef(null);
+
   return (
-    <div className="min-h-[100dvh] bg-gradient-to-b from-gray-50 to-white">
+    <div className="relative min-h-[100dvh] bg-gradient-to-b from-gray-50 to-white">
       {/* 상단 헤더 */}
       <header className="sticky top-0 z-10 bg-white/80 backdrop-blur border-b border-gray-100">
         <div className="mx-auto max-w-[420px] px-4 h-14 flex items-center gap-2">
@@ -216,7 +258,7 @@ export default function DiveCreateStep2Page() {
       </header>
 
       {/* 본문 */}
-      <main className="mx-auto max-w-[420px] px-4 pt-4 pb-32 space-y-4">
+      <main className="mx-auto max-w-[420px] px-4 pt-4 pb-40 space-y-4">
         {/* 작업 유형 */}
         <section className={cardCls}>
           <div className="flex items-center gap-2 mb-2">
@@ -263,11 +305,13 @@ export default function DiveCreateStep2Page() {
           <label className="block">
             <span className={labelCls}>메시지를 입력해 주세요.</span>
             <textarea
+              ref={detailsRef}
               className={`${inputCls} h-44 resize-none`}
               placeholder="메시지를 입력해 주세요."
               value={details}
-              onChange={(e) => setDetails(e.target.value.slice(0, DETAILS_MAX))}
-              maxLength={DETAILS_MAX}
+              readOnly // ✅ 시스템 키보드 막고 커스텀 키보드만 사용
+              onClick={() => setActiveField("details")}
+              onFocus={() => setActiveField("details")}
             />
           </label>
         </section>
@@ -288,13 +332,13 @@ export default function DiveCreateStep2Page() {
           <label className="block">
             <span className={labelCls}>발생 내용을 상세히 입력해 주세요.</span>
             <textarea
+              ref={incidentRef}
               className={`${inputCls} h-44 resize-none`}
               placeholder="발생한 환경 이상 징후나 안전 사고 내용을 상세히 입력해 주세요."
               value={incidentText}
-              onChange={(e) =>
-                setIncidentText(e.target.value.slice(0, INCIDENT_MAX))
-              }
-              maxLength={INCIDENT_MAX}
+              readOnly
+              onClick={() => setActiveField("incident")}
+              onFocus={() => setActiveField("incident")}
             />
           </label>
         </section>
@@ -406,6 +450,25 @@ export default function DiveCreateStep2Page() {
           </button>
         </div>
       </main>
+
+      {/* ✅ 하단 커스텀 키보드 (바텀시트 느낌) */}
+      {activeField && (
+        <div
+          ref={keyboardRef}
+          className="fixed left-1/2 bottom-0 z-20 -translate-x-1/2 w-full max-w-[420px]"
+        >
+          <div className="mx-auto max-w-[420px] px-2 pt-1 pb-3">
+            <CheonjiinKeyboard onChange={handleKeyboardChange} />
+            <button
+              type="button"
+              onClick={() => setActiveField(null)}
+              className="mt-2 w-full h-9 text-[13px] rounded-lg border border-gray-300 text-gray-600 bg-gray-50"
+            >
+              키보드 닫기
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
