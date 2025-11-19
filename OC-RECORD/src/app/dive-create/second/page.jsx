@@ -459,13 +459,6 @@ export default function DiveCreateStep2Page() {
         >
           <div className="mx-auto max-w-[420px] px-2 pt-1 pb-3">
             <CheonjiinKeyboard onChange={handleKeyboardChange} />
-            <button
-              type="button"
-              onClick={() => setActiveField(null)}
-              className="mt-2 w-full h-9 text-[13px] rounded-lg border border-gray-300 text-gray-600 bg-gray-50"
-            >
-              키보드 닫기
-            </button>
           </div>
         </div>
       )}
