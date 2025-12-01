@@ -15,12 +15,15 @@ import {
   Images,
   Plus,
   Check,
+  Activity,
+  TrendingUp,
+  Percent,
 } from "lucide-react";
 
 import { uploadImage } from "@/api/upload-image";
 import { createSubmission } from "@/api/submissions";
 
-// ✅ 천지인 키보드
+// ✅ 천지인 키보드 (작업 내용에만 사용)
 import CheonjiinKeyboard from "react-cji-keyboard";
 
 const DEBUG = true;
@@ -90,30 +93,57 @@ export default function DiveCreatePage() {
   // ========= 1) 환경 정보 상태 =========
   const [siteName, setSiteName] = useState("");
 
+  // 날짜/시간 → 현재 값으로 기본 세팅
+  const [date, setDate] = useState(() => {
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const MM = String(now.getMonth() + 1).padStart(2, "0");
+    const dd = String(now.getDate()).padStart(2, "0");
+    return `${yyyy}-${MM}-${dd}`;
+  });
+  const [time, setTime] = useState(() => {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, "0");
+    const mm = String(now.getMinutes()).padStart(2, "0");
+    return `${hh}:${mm}`;
+  });
+
   const [depth, setDepth] = useState("");
   const [temp, setTemp] = useState("");
   const [current, setCurrent] = useState("중간"); // 잔잔/중간/강함
   const [visibility, setVisibility] = useState("");
 
-  const getInitialDate = () => {
-    const d = new Date();
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
+  // ========= 2) 모니터링(3번) 관련 상태 =========
+  // 건강 상태: A/B/C/D
+  const [healthGrade, setHealthGrade] = useState("A");
 
-  const getInitialTime = () => {
-    const d = new Date();
-    const h = String(d.getHours()).padStart(2, "0");
-    const m = String(d.getMinutes()).padStart(2, "0");
-    return `${h}:${m}`;
-  };
+  // 성장률(cm)
+  const [growthCm, setGrowthCm] = useState("");
 
-  const [date, setDate] = useState(getInitialDate);
-  const [time, setTime] = useState(getInitialTime);
+  // 자연 번식률: 조사 반경 + (번식 개체 / 조사 개체) 형태
+  const [natRadiusM, setNatRadiusM] = useState("");
+  const [natNumerator, setNatNumerator] = useState(""); // 번식 개체 수
+  const [natDenominator, setNatDenominator] = useState(""); // 조사 개체 수
 
-  // ========= 2) 활동/내용/첨부 상태 =========
+  // 생존률: (생존 로프 개수 / 전체 로프 개수)
+  const [survAlive, setSurvAlive] = useState("");
+  const [survTotal, setSurvTotal] = useState("");
+
+  const natPercent = useMemo(() => {
+    const num = Number(natNumerator);
+    const den = Number(natDenominator);
+    if (!den || !Number.isFinite(num)) return 0;
+    return Math.round((num / den) * 100);
+  }, [natNumerator, natDenominator]);
+
+  const survivalPercent = useMemo(() => {
+    const alive = Number(survAlive);
+    const total = Number(survTotal);
+    if (!total || !Number.isFinite(alive)) return 0;
+    return Math.round((alive / total) * 100);
+  }, [survAlive, survTotal]);
+
+  // ========= 3) 활동/내용/첨부 상태 =========
   const [workType, setWorkType] = useState("이식");
   const [details, setDetails] = useState("");
   const DETAILS_MAX = 2000;
@@ -121,7 +151,7 @@ export default function DiveCreatePage() {
   const [attachments, setAttachments] = useState([]);
   const fileRef = useRef(null);
 
-  // ========= 3) 디바이스 특성 =========
+  // ========= 4) 디바이스 특성 =========
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -129,18 +159,18 @@ export default function DiveCreatePage() {
     }
   }, []);
 
-  // ========= 4) 천지인 키보드 활성 필드 =========
-  // "siteName" | "details" | null
+  // ========= 5) 천지인 키보드 활성 필드 =========
+  // 이제 "details"만 천지인 사용
+  // "details" | null
   const [activeField, setActiveField] = useState(null);
 
   // refs
   const dateInputRef = useRef(null);
   const timeInputRef = useRef(null);
-  const siteNameRef = useRef(null);
   const detailsRef = useRef(null);
   const keyboardRef = useRef(null);
 
-  // ========= 5) 헬퍼들 =========
+  // ========= 6) 헬퍼들 =========
   const openDatePicker = () => {
     const el = dateInputRef.current;
     if (el && typeof el.showPicker === "function") el.showPicker();
@@ -182,11 +212,9 @@ export default function DiveCreatePage() {
     return `${pad2(t.hour)}:${pad2(t.minute)}:${pad2(t.second)}`;
   };
 
-  // ========= 6) 천지인 키보드 입력 처리 =========
+  // ========= 7) 천지인 키보드 입력 처리 =========
   const handleKeyboardChange = (text) => {
-    if (activeField === "siteName") {
-      setSiteName(text);
-    } else if (activeField === "details") {
+    if (activeField === "details") {
       setDetails(text.slice(0, DETAILS_MAX));
     }
   };
@@ -197,7 +225,6 @@ export default function DiveCreatePage() {
 
     const handleClickOutside = (e) => {
       if (
-        siteNameRef.current?.contains(e.target) ||
         detailsRef.current?.contains(e.target) ||
         keyboardRef.current?.contains(e.target)
       ) {
@@ -215,36 +242,60 @@ export default function DiveCreatePage() {
     };
   }, [activeField]);
 
-  // ========= 7) 임시 저장용 draft 객체 (환경 위주) =========
+  // ========= 8) 임시 저장용 draft 객체 =========
   const saveDraftObject = () => {
+    // 좌표는 일단 0,0으로 고정
+    const latitude = 0;
+    const longitude = 0;
+
     const draft = {
       siteName: siteName.trim() || "Unknown Site",
       recordDate: date,
       startTime: toTimeObj(time),
       endTime: toTimeObj(time),
-      latitude: 0,
-      longitude: 0,
+      latitude,
+      longitude,
       depthM: Number(depth) || 0,
       waterTempC: Number(temp) || 0,
       visibilityM: Number(visibility) || 0,
       currentState: mapCurrent(current),
       weather: "SUNNY",
+
+      // 🔹 3번: 추후 백엔드로 바로 보낼 수 있게 구조만 잡아둠 (아직 API에는 안 씀)
+      monitoring: {
+        healthGrade,
+        growthCm: Number(growthCm) || 0,
+        naturalReproduction: {
+          radiusM: Number(natRadiusM) || 0,
+          numerator: Number(natNumerator) || 0,
+          denominator: Number(natDenominator) || 0,
+          percent: natPercent || 0,
+        },
+        survival: {
+          aliveCount: Number(survAlive) || 0,
+          totalCount: Number(survTotal) || 0,
+          percent: survivalPercent || 0,
+        },
+      },
     };
-    sessionStorage.setItem("diveDraft", JSON.stringify(draft));
+
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("diveDraft", JSON.stringify(draft));
+    }
     return draft;
   };
 
   const handleSaveDraft = () => {
     const draft = saveDraftObject();
     if (DEBUG) {
-      console.log("[draft] env:", draft);
+      console.log("[draft] env & monitoring:", draft);
       console.log("[draft] details:", details);
       console.log("[draft] attachments count:", attachments.length);
     }
     alert("임시 저장했습니다.");
   };
 
-  // ========= 8) 첨부 핸들링 =========
+  // ========= 9) 첨부 핸들링 =========
   const onPickFiles = (e) => {
     const files = Array.from(e.target.files || []);
     const next = [...attachments, ...files].slice(0, 10);
@@ -255,11 +306,14 @@ export default function DiveCreatePage() {
   const removeOne = (idx) =>
     setAttachments((prev) => prev.filter((_, i) => i !== idx));
 
-  // ========= 9) 제출 =========
+  // 예전처럼 "작업내용/첨부 없으면 제출 불가" 로직 제거
+  // → 항상 제출 가능, 빈값은 0/빈 문자열로 전송
+
+  // ========= 10) 제출 =========
   async function handleSubmit() {
     try {
-      const d = saveDraftObject(); // 현재 환경 값 기반 draft 재생성
-      if (DEBUG) console.log("[submit] env draft =", d);
+      const d = saveDraftObject(); // 현재 환경 + 모니터링 값 기반 draft 재생성
+      if (DEBUG) console.log("[submit] env & monitoring draft =", d);
 
       // 첨부 업로드
       let uploaded = [];
@@ -281,7 +335,7 @@ export default function DiveCreatePage() {
       }
 
       const apiType = labelToActivityType(workType);
-      const detailsCombined = details;
+      const detailsCombined = details || ""; // 비어 있으면 그냥 빈 문자열
 
       const payload = {
         siteName: d.siteName || "Unknown Site",
@@ -290,8 +344,8 @@ export default function DiveCreatePage() {
         authorName: "string",
         authorEmail: "string",
         feedbackText: "",
-        latitude: 0,
-        longitude: 0,
+        latitude: n(d.latitude),
+        longitude: n(d.longitude),
         basicEnv: {
           recordDate: d.recordDate ?? new Date().toISOString().slice(0, 10),
           startTime: toHHMMSS(d.startTime),
@@ -316,8 +370,10 @@ export default function DiveCreatePage() {
         attachments: uploaded,
       };
 
-      if (DEBUG)
-        console.log("[submit] payload =", JSON.stringify(payload, null, 2));
+      if (DEBUG) {
+        console.log("[submit] payload (without monitoring) =", payload);
+        console.log("[submit] monitoring (local only for now) =", d.monitoring);
+      }
 
       const res = await createSubmission(payload);
       console.log("[submit] response =", res);
@@ -336,7 +392,7 @@ export default function DiveCreatePage() {
     }
   }
 
-  // ========= 10) JSX =========
+  // ========= 11) JSX =========
   return (
     <div className="relative min-h-[100dvh] bg-gradient-to-b from-gray-50 to-white">
       {/* 상단 헤더 */}
@@ -360,24 +416,18 @@ export default function DiveCreatePage() {
       <main className="mx-auto max-w-[420px] px-4 pt-4 pb-40 space-y-4">
         {/* ===== 환경 정보 섹션들 ===== */}
 
-        {/* 사이트명 */}
+        {/* 사이트명 (기본 키보드) */}
         <section className={cardCls}>
           <div className="flex items-center gap-2 mb-2">
             <MapPin className="h-4 w-4 text-sky-600" />
-            <h2 className="text-[14px] font-semibold text-gray-800">
-              현장명 (siteName)
-            </h2>
+            <h2 className="text-[14px] font-semibold text-gray-800">현장명</h2>
           </div>
           <label className="block">
-            <span className={labelCls}>예: 울진 A 구역</span>
             <input
-              ref={siteNameRef}
               className={inputCls}
               placeholder="울진 A 구역"
               value={siteName}
-              readOnly // ✅ 시스템 키보드 막고 천지인만 사용
-              onClick={() => setActiveField("siteName")}
-              onFocus={() => setActiveField("siteName")}
+              onChange={(e) => setSiteName(e.target.value)}
               autoComplete="off"
             />
           </label>
@@ -452,6 +502,36 @@ export default function DiveCreatePage() {
                 />
               </div>
             </button>
+          </div>
+        </section>
+
+        {/* 작업 유형 */}
+        <section className={cardCls}>
+          <div className="flex items-center gap-2 mb-2">
+            <ClipboardList className="h-4 w-4 text-sky-600" />
+            <h2 className="text-[14px] font-semibold text-gray-800">
+              작업 유형
+            </h2>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {WORK_TYPES.map((opt) => {
+              const active = workType === opt;
+              return (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => setWorkType(opt)}
+                  className={[
+                    "h-10 rounded-xl text-[13px] font-semibold transition",
+                    active
+                      ? "bg-white border border-sky-200 text-sky-700 ring-2 ring-sky-100"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200",
+                  ].join(" ")}
+                >
+                  {opt}
+                </button>
+              );
+            })}
           </div>
         </section>
 
@@ -530,7 +610,6 @@ export default function DiveCreatePage() {
             <h2 className="text-[14px] font-semibold text-gray-800">시야</h2>
           </div>
           <label className="relative block">
-            <span className={labelCls}>수중 가시 거리</span>
             <input
               className={inputCls + " pr-12"}
               placeholder="예: 4.0"
@@ -538,45 +617,163 @@ export default function DiveCreatePage() {
               onChange={(e) => setVisibility(e.target.value)}
               inputMode="decimal"
             />
-            <span className="pointer-events-none absolute right-3 top-[38px] text-gray-500 select-none">
+            <span className="pointer-events-none absolute right-3 top-[15px] text-gray-500 select-none">
               M
             </span>
           </label>
         </section>
 
-        {/* ===== 활동 / 내용 / 첨부 섹션들 ===== */}
+        {/* ===== 3번: 건강 상태 / 성장률 / 자연번식률 / 생존률 섹션 ===== */}
 
-        {/* 작업 유형 */}
+        {/* 건강 상태 */}
         <section className={cardCls}>
           <div className="flex items-center gap-2 mb-2">
-            <ClipboardList className="h-4 w-4 text-sky-600" />
+            <Activity className="h-4 w-4 text-sky-600" />
             <h2 className="text-[14px] font-semibold text-gray-800">
-              작업 유형
+              건강 상태
             </h2>
           </div>
-          <div className="grid grid-cols-3 gap-2">
-            {WORK_TYPES.map((opt) => {
-              const active = workType === opt;
+          <div className="grid grid-cols-4 gap-2">
+            {["A", "B", "C", "D"].map((grade) => {
+              const active = healthGrade === grade;
               return (
                 <button
-                  key={opt}
+                  key={grade}
                   type="button"
-                  onClick={() => setWorkType(opt)}
+                  onClick={() => setHealthGrade(grade)}
                   className={[
-                    "h-10 rounded-xl text-[13px] font-semibold transition",
+                    "h-10 rounded-xl text-[14px] font-semibold transition",
                     active
-                      ? "bg-white border border-sky-200 text-sky-700 ring-2 ring-sky-100"
+                      ? "bg-white border border-emerald-200 text-emerald-700 ring-2 ring-emerald-100"
                       : "bg-gray-100 text-gray-600 hover:bg-gray-200",
                   ].join(" ")}
                 >
-                  {opt}
+                  {grade}
                 </button>
               );
             })}
           </div>
         </section>
 
-        {/* 작업 내용 */}
+        {/* 성장률 */}
+        <section className={cardCls}>
+          <div className="flex items-center gap-2 mb-2">
+            <TrendingUp className="h-4 w-4 text-sky-600" />
+            <h2 className="text-[14px] font-semibold text-gray-800">
+              성장률 (길이 증가)
+            </h2>
+          </div>
+          <label className="relative block">
+            <input
+              className={inputCls + " pr-12"}
+              placeholder="예: 3.5"
+              value={growthCm}
+              onChange={(e) => setGrowthCm(e.target.value)}
+              inputMode="decimal"
+            />
+            <span className="pointer-events-none absolute right-3 top-[15px] text-gray-500 select-none">
+              cm
+            </span>
+          </label>
+        </section>
+
+        {/* 자연 번식률 */}
+        <section className={cardCls}>
+          <div className="flex items-center gap-2 mb-2">
+            <Percent className="h-4 w-4 text-sky-600" />
+            <h2 className="text-[14px] font-semibold text-gray-800">
+              자연 번식률
+            </h2>
+          </div>
+
+          <div className="grid gap-3">
+            <label className="block">
+              <span className={labelCls}>조사 반경 (예: 50m / 100m)</span>
+              <div className="relative">
+                <input
+                  className={inputCls + " pr-10"}
+                  placeholder="예: 50"
+                  value={natRadiusM}
+                  onChange={(e) => setNatRadiusM(e.target.value)}
+                  inputMode="numeric"
+                />
+                <span className="pointer-events-none absolute right-3 top-[10px] text-gray-500 select-none">
+                  m
+                </span>
+              </div>
+            </label>
+
+            {/* 분자/분모 형태 입력 */}
+            <div>
+              <span className={labelCls}>분모/분자 형태 기록</span>
+              <div className="flex items-center gap-6">
+                <div className="flex flex-col items-center">
+                  <input
+                    className="w-24 rounded-lg border border-gray-200 bg-white px-2 py-1 text-center text-[13px] outline-none focus:ring-2 focus:ring-sky-100 focus:border-sky-300"
+                    placeholder="번식 개체"
+                    value={natNumerator}
+                    onChange={(e) => setNatNumerator(e.target.value)}
+                    inputMode="numeric"
+                  />
+                  <div className="my-1 h-px w-16 bg-gray-300" />
+                  <input
+                    className="w-24 rounded-lg border border-gray-200 bg-white px-2 py-1 text-center text-[13px] outline-none focus:ring-2 focus:ring-sky-100 focus:border-sky-300"
+                    placeholder="조사 개체"
+                    value={natDenominator}
+                    onChange={(e) => setNatDenominator(e.target.value)}
+                    inputMode="numeric"
+                  />
+                </div>
+                <div className="text-[12px] text-gray-500">
+                  대략 번식률{" "}
+                  <span className="font-semibold text-gray-800">
+                    {natPercent || 0}%
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 생존률 */}
+        <section className={cardCls}>
+          <div className="flex items-center gap-2 mb-2">
+            <Percent className="h-4 w-4 text-sky-600 rotate-90" />
+            <h2 className="text-[14px] font-semibold text-gray-800">생존률</h2>
+          </div>
+          <p className="mb-2 text-[11px] text-gray-400">
+            로프 단위로 몇 개가 살아 있고, 전체 로프가 몇 개인지 기록합니다.
+          </p>
+          <div className="flex items-center gap-6">
+            <div className="flex flex-col items-center">
+              <input
+                className="w-24 rounded-lg border border-gray-200 bg-white px-2 py-1 text-center text-[13px] outline-none focus:ring-2 focus:ring-sky-100 focus:border-sky-300"
+                placeholder="생존 로프"
+                value={survAlive}
+                onChange={(e) => setSurvAlive(e.target.value)}
+                inputMode="numeric"
+              />
+              <div className="my-1 h-px w-16 bg-gray-300" />
+              <input
+                className="w-24 rounded-lg border border-gray-200 bg-white px-2 py-1 text-center text-[13px] outline-none focus:ring-2 focus:ring-sky-100 focus:border-sky-300"
+                placeholder="전체 로프"
+                value={survTotal}
+                onChange={(e) => setSurvTotal(e.target.value)}
+                inputMode="numeric"
+              />
+            </div>
+            <div className="text-[12px] text-gray-500">
+              대략 생존률{" "}
+              <span className="font-semibold text-gray-800">
+                {survivalPercent || 0}%
+              </span>
+            </div>
+          </div>
+        </section>
+
+        {/* ===== 활동 / 내용 / 첨부 섹션들 ===== */}
+
+        {/* 작업 내용 (천지인) */}
         <section className={cardCls}>
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
@@ -590,7 +787,6 @@ export default function DiveCreatePage() {
             </span>
           </div>
           <label className="block">
-            <span className={labelCls}>메시지를 입력해 주세요.</span>
             <textarea
               ref={detailsRef}
               className={`${inputCls} h-44 resize-none`}
@@ -678,14 +874,14 @@ export default function DiveCreatePage() {
           <button
             type="button"
             onClick={handleSubmit}
-            className="h-12 rounded-xl bg-[#2F80ED] text-white font-semibold hover:brightness-105 active:translate-y-[1px] disabled:opacity-50"
+            className="h-12 rounded-xl bg-[#2F80ED] text-white font-semibold hover:brightness-105 active:translate-y-[1px]"
           >
             제출하기
           </button>
         </div>
       </main>
 
-      {/* ✅ 하단 천지인 키보드 (바텀시트 느낌) */}
+      {/* ✅ 하단 천지인 키보드 (바텀시트 느낌, 작업 내용 전용) */}
       {activeField && (
         <div
           ref={keyboardRef}
