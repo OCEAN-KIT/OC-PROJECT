@@ -143,11 +143,24 @@ export default function DiveCreatePage() {
   }, [natNumerator, natDenominator]);
 
   const survivalPercent = useMemo(() => {
-    const alive = Number(survAlive);
     const total = Number(survTotal);
-    if (!total || !Number.isFinite(alive)) return 0;
+    const dead = Number(survAlive); // <- 이제 죽은 로프 개수로 사용
+
+    if (!total || !Number.isFinite(total) || total <= 0) return 0;
+
+    const alive = Math.max(total - (Number.isFinite(dead) ? dead : 0), 0);
     return Math.round((alive / total) * 100);
-  }, [survAlive, survTotal]);
+  }, [survTotal, survAlive]);
+
+  const aliveCount = useMemo(() => {
+    const total = Number(survTotal);
+    const dead = Number(survAlive);
+
+    if (!Number.isFinite(total) || total <= 0) return 0;
+    if (!Number.isFinite(dead) || dead < 0) return total;
+
+    return Math.max(total - dead, 0);
+  }, [survTotal, survAlive]);
 
   // ========= 3) 활동/내용/첨부 상태 =========
   const [workType, setWorkType] = useState("이식");
@@ -420,7 +433,16 @@ export default function DiveCreatePage() {
       }
 
       const apiType = labelToActivityType(workType);
-      const detailsCombined = details || ""; // 비어 있으면 그냥 빈 문자열
+      const detailsCombined = details || ""; // 비어 있으면 빈 문자열
+
+      // 🔹 추가: monitoring에서 숫자/필드 꺼내기
+      const mon = d.monitoring ?? {};
+      const nat = mon.naturalReproduction ?? {};
+      const surv = mon.survival ?? {};
+
+      const alive = n(surv.aliveCount, 0);
+      const total = n(surv.totalCount, 0);
+      const dieCount = total > alive ? total - alive : 0;
 
       const payload = {
         siteName: d.siteName || "Unknown Site",
@@ -431,9 +453,10 @@ export default function DiveCreatePage() {
         feedbackText: "",
         latitude: n(d.latitude),
         longitude: n(d.longitude),
+
         basicEnv: {
           recordDate: d.recordDate ?? new Date().toISOString().slice(0, 10),
-          startTime: toHHMMSS(d.startTime),
+          startTime: toHHMMSS(d.startTime), // ✅ 기존 그대로
           endTime: toHHMMSS(d.endTime ?? d.startTime),
           waterTempC: n(d.waterTempC),
           visibilityM: n(d.visibilityM),
@@ -441,22 +464,38 @@ export default function DiveCreatePage() {
           currentState: d.currentState || "LOW",
           weather: d.weather || "SUNNY",
         },
+
         participants: {
           leaderName: "김다이버",
           participantCount: 1,
           role: "CITIZEN_DIVER",
         },
+
         activity: {
           type: apiType,
           details: detailsCombined,
           collectionAmount: 0,
           durationHours: 0,
+
+          // 🔹 여기부터 새 필드 4개
+          healthGrade: mon.healthGrade || "A",
+          growthCm: n(mon.growthCm, 0),
+          naturalReproduction: {
+            radiusM: n(nat.radiusM, 0),
+            numerator: n(nat.numerator, 0),
+            denominator: n(nat.denominator, 0),
+          },
+          survival: {
+            dieCount,
+            totalCount: total,
+          },
         },
+
         attachments: uploaded,
       };
 
       if (DEBUG) {
-        console.log("[submit] payload (without monitoring) =", payload);
+        console.log("[submit] payload =", JSON.stringify(payload, null, 2));
         console.log("[submit] monitoring (local only for now) =", d.monitoring);
       }
 
@@ -468,7 +507,7 @@ export default function DiveCreatePage() {
       const status = err?.response?.status;
       const data = err?.response?.data;
       console.error("[submit] ERROR status =", status);
-      console.error("[submit] ERROR body   =", data);
+      console.error("[submit] ERROR body   =", JSON.stringify(data, null, 2));
       alert(
         status === 500
           ? "서버 500 오류: 콘솔 로그 확인"
@@ -826,33 +865,50 @@ export default function DiveCreatePage() {
             <h2 className="text-[14px] font-semibold text-gray-800">생존률</h2>
           </div>
           <p className="mb-2 text-[11px] text-gray-400">
-            로프 단위로 몇 개가 살아 있고, 전체 로프가 몇 개인지 기록합니다.
+            전체 로프 개수와 죽은 로프 개수를 입력하면 생존 로프와 생존률이 자동
+            계산됩니다.
           </p>
 
-          <div className="flex items-end gap-8">
-            <div className="flex flex-col items-center gap-1">
-              <input
-                className="w-32 h-11 rounded-xl border border-gray-200 bg-white px-3 py-2 text-center text-[15px] outline-none focus:ring-2 focus:ring-sky-100 focus:border-sky-300"
-                placeholder="생존 로프"
-                value={survAlive}
-                onChange={(e) => setSurvAlive(e.target.value)}
-                inputMode="numeric"
-              />
-              <div className="my-1 h-px w-20 bg-gray-300" />
-              <input
-                className="w-32 h-11 rounded-xl border border-gray-200 bg-white px-3 py-2 text-center text-[15px] outline-none focus:ring-2 focus:ring-sky-100 focus:border-sky-300"
-                placeholder="전체 로프"
-                value={survTotal}
-                onChange={(e) => setSurvTotal(e.target.value)}
-                inputMode="numeric"
-              />
+          <div className="space-y-3">
+            {/* 입력 영역 */}
+            <div className="grid grid-cols-2 gap-3">
+              <label className="block">
+                <span className={labelCls}>전체 로프</span>
+                <input
+                  className="w-full h-11 rounded-xl border border-gray-200 bg-white px-3 py-2 text-center text-[15px] outline-none focus:ring-2 focus:ring-sky-100 focus:border-sky-300"
+                  placeholder="예: 10"
+                  value={survTotal}
+                  onChange={(e) => setSurvTotal(e.target.value)}
+                  inputMode="numeric"
+                />
+              </label>
+
+              <label className="block">
+                <span className={labelCls}>죽은 로프</span>
+                <input
+                  className="w-full h-11 rounded-xl border border-gray-200 bg-white px-3 py-2 text-center text-[15px] outline-none focus:ring-2 focus:ring-sky-100 focus:border-sky-300"
+                  placeholder="예: 3"
+                  value={survAlive} // <- 이제 죽은 로프 개수
+                  onChange={(e) => setSurvAlive(e.target.value)}
+                  inputMode="numeric"
+                />
+              </label>
             </div>
 
-            <div className="text-[13px] text-gray-500 leading-relaxed">
-              대략 생존률{" "}
-              <span className="font-semibold text-gray-800">
-                {survivalPercent || 0}%
-              </span>
+            {/* 결과 표시 */}
+            <div className="flex items-center justify-between text-[13px] text-gray-600">
+              <div>
+                총 생존 로프{" "}
+                <span className="font-semibold text-gray-800">
+                  {aliveCount || 0}개
+                </span>
+              </div>
+              <div>
+                생존률{" "}
+                <span className="font-semibold text-gray-800">
+                  {survivalPercent || 0}%
+                </span>
+              </div>
             </div>
           </div>
         </section>
