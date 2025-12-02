@@ -1,0 +1,77 @@
+.cheon-keyboard {
+  background: #f5f6f8;
+  padding: 10px 8px 12px;
+  margin-top: 16px;
+  box-sizing: border-box;
+}
+
+/* 기본 그리드: 4열, 더 높은 키 */
+.cheon-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 56px; /* 기존 44px → 더 높게 */
+  gap: 6px;
+}
+
+.cheon-key {
+  border-radius: 10px;
+  border: 1px solid #d8d8de;
+  background: #ffffff;
+  font-size: 18px; /* 글자 크게 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  user-select: none;
+  color: #111;
+}
+
+.cheon-key:active {
+  background: #e0e7ff;
+}
+
+.cheon-key--func {
+  background: #f6f6f7;
+  font-size: 15px;
+}
+
+.cheon-key--enter {
+  background: #f6f6ff;
+  font-weight: 500;
+}
+
+.cheon-key--space {
+  background: #ffffff;
+  font-size: 15px;
+  grid-column: span 2; /* SPACE를 2칸 차지하게 */
+}
+
+.cheon-key--empty {
+  background: transparent;
+  border-color: transparent;
+}
+
+/* (선택) 모드 탭용 스타일 – 한글/영타/123/기호 같은 위쪽 탭에 사용 */
+.cheon-key--mode {
+  font-size: 14px;
+  background: #f4f4f6;
+}
+
+.cheon-key--mode-active {
+  background: #dbeafe;
+  font-weight: 600;
+}
+
+/* 모드 버튼 줄: 4열, 숫자패드랑 분리 */
+.cheon-mode-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+/* 숫자 키패드 전용: 3열 구조 */
+.cheon-grid--number {
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 6px;
+}

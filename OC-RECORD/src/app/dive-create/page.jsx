@@ -27,9 +27,7 @@ import {
   getDraftById,
   upsertDraft,
 } from "@/utils/diveDraftStorage";
-
-// ✅ 천지인 키보드 (작업 내용에만 사용)
-import CheonjiinKeyboard from "react-cji-keyboard";
+import CheonjiinKeyboard from "@/components/keyboard/CheonjiinKeyboard";
 
 const DEBUG = true;
 const TEST_NO_ATTACH = false;
@@ -975,7 +973,7 @@ export default function DiveCreatePage() {
           ref={keyboardRef}
           className="fixed left-1/2 bottom-0 z-20 -translate-x-1/2 w-full max-w-[420px]"
         >
-          <div className="mx-auto max-w-[420px] border-t border-gray-200 bg-white px-2 pt-1 pb-3">
+          <div className="mx-auto max-w-[420px]">
             <CheonjiinKeyboard onChange={handleKeyboardChange} />
           </div>
         </div>
