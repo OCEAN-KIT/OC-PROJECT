@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState } from "react";
 import MainHeader from "@/components/mian-header";
 
 export default function LoginPage() {
-  // const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoHome" });
+  const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoHome" });
 
   const router = useRouter();
 
@@ -59,7 +59,7 @@ export default function LoginPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [demoMode, autoLogin]);
 
-  // if (checking || isLoggedIn) return null;
+  if (checking || isLoggedIn) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });

@@ -3,10 +3,12 @@
 
 import MainHeader from "@/components/mian-header";
 import MainButton from "@/components/ui/main-button";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useRouter } from "next/navigation";
 
 export default function HomePage() {
   const router = useRouter();
+  const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoLogin" });
 
   return (
     <div className="min-h-screen bg-white">

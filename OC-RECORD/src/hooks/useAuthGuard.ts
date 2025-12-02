@@ -3,7 +3,6 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import axiosInstance from "@/utils/axiosInstance";
 
 type Mode = "gotoLogin" | "gotoHome";
 
@@ -18,6 +17,9 @@ type Options = {
   includeNext?: boolean;
 };
 
+// ✅ 실제로 사용하는 토큰 키 이름으로 맞춰줄 것!
+const ACCESS_TOKEN_KEY = "ACCESS_TOKEN";
+
 export function useAuthGuard({
   mode,
   loginPath = "/login",
@@ -29,39 +31,33 @@ export function useAuthGuard({
   const router = useRouter();
   const pathname = usePathname();
 
-  // 1) 로그인 상태 확인
+  // 1) "로컬스토리지에 access 토큰이 있냐"만 보고 로그인 여부 판단
   useEffect(() => {
-    let alive = true;
-    (async () => {
-      try {
-        await axiosInstance.get("/api/user/my/info", { withCredentials: true });
-        if (alive) setIsLoggedIn(true);
-      } catch {
-        if (alive) setIsLoggedIn(false);
-      } finally {
-        if (alive) setChecking(false);
-      }
-    })();
-    return () => {
-      alive = false;
-    };
+    if (typeof window === "undefined") return;
+
+    const token = window.localStorage.getItem(ACCESS_TOKEN_KEY);
+    setIsLoggedIn(!!token);
+    setChecking(false);
   }, []);
 
   // 2) 모드별 리다이렉트
   useEffect(() => {
     if (checking) return;
 
+    // 보호 페이지인데 로그인 안 되어 있으면 → 로그인 페이지로
     if (mode === "gotoLogin" && !isLoggedIn) {
-      // 이미 로그인 페이지면 중복 이동 방지
-      if (pathname?.startsWith(loginPath)) return;
+      if (pathname?.startsWith(loginPath)) return; // 이미 로그인 페이지면 패스
+
       const url =
         includeNext && pathname
           ? `${loginPath}?next=${encodeURIComponent(pathname)}`
           : loginPath;
+
       router.replace(url);
       return;
     }
 
+    // 비회원 전용 페이지인데 이미 로그인 되어 있으면 → 홈으로
     if (mode === "gotoHome" && isLoggedIn) {
       if (pathname === homePath) return;
       router.replace(homePath);
