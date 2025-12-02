@@ -59,7 +59,7 @@ export default function LoginPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [demoMode, autoLogin]);
 
-  if (checking || isLoggedIn) return null;
+  // if (checking || isLoggedIn) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
