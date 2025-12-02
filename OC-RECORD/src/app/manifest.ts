@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    id: "/?source=pwa", // ✅ 고정 App ID
-    name: "Ocean-Kit",
-    short_name: "Ocean-Kit",
+    id: "/?source=pwa",
+    name: "OC-Diver",
+    short_name: "OC-Diver",
     description: "A Progressive Web App built with Next.js",
     start_url: "/?source=pwa",
     scope: "/",
