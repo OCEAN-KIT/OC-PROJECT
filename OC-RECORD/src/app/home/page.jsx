@@ -3,16 +3,13 @@
 
 import MainHeader from "@/components/mian-header";
 import MainButton from "@/components/ui/main-button";
-import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useRouter } from "next/navigation";
 
 export default function HomePage() {
-  // const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoLogin" });
   const router = useRouter();
 
   return (
     <div className="min-h-screen bg-white">
-      {/* 전체 세로 중앙 */}
       <div className="mx-auto min-h-screen w-[380px] flex flex-col justify-center">
         {/* 상단: 헤더 + 서브타이틀 */}
         <div className="text-center">
@@ -22,10 +19,9 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* 구분선(얇고 은은하게) */}
         <div className="my-5 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
 
-        {/* 메인 카드: 버튼 + 짧은 설명 */}
+        {/* 메인 카드 */}
         <div className="rounded-2xl bg-white">
           <div className="p-4 flex flex-col gap-3">
             <MainButton
@@ -38,10 +34,13 @@ export default function HomePage() {
             <MainButton size="lg" onClick={() => router.push("/dive-create")}>
               활동 생성
             </MainButton>
+
+            <MainButton size="lg" onClick={() => router.push("/dive-drafts")}>
+              임시 저장 불러오기
+            </MainButton>
           </div>
         </div>
 
-        {/* 하단 부가 액션 */}
         <button
           className="mt-8 mx-auto block text-[14px] font-medium text-gray-700"
           type="button"

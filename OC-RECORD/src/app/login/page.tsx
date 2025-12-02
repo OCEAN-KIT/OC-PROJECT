@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState } from "react";
 import MainHeader from "@/components/mian-header";
 
 export default function LoginPage() {
-  const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoHome" });
+  // const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoHome" });
 
   const router = useRouter();
 

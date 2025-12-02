@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   ChevronLeft,
   Calendar as CalendarIcon,
@@ -22,6 +22,11 @@ import {
 
 import { uploadImage } from "@/api/upload-image";
 import { createSubmission } from "@/api/submissions";
+import {
+  generateDraftId,
+  getDraftById,
+  upsertDraft,
+} from "@/utils/diveDraftStorage";
 
 // ✅ 천지인 키보드 (작업 내용에만 사용)
 import CheonjiinKeyboard from "react-cji-keyboard";
@@ -82,6 +87,10 @@ const WORK_TYPES = [
 
 export default function DiveCreatePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [draftId, setDraftId] = useState(null);
+  const initializedRef = useRef(false);
 
   // ========= 공통 스타일 =========
   const inputCls =
@@ -150,6 +159,45 @@ export default function DiveCreatePage() {
 
   const [attachments, setAttachments] = useState([]);
   const fileRef = useRef(null);
+
+  // ========= 8) 최초 진입 시 draftId 결정 + 기존 임시저장 로딩 =========
+  useEffect(() => {
+    if (initializedRef.current) return;
+    initializedRef.current = true;
+
+    if (typeof window === "undefined") return;
+
+    const fromParam = searchParams.get("draftId");
+
+    // 1) 쿼리로 draftId가 넘어온 경우 → 해당 draft 로드
+    if (fromParam) {
+      setDraftId(fromParam);
+      const existing = getDraftById(fromParam);
+      if (existing) {
+        if (DEBUG) console.log("[draft] load existing draft =", existing);
+        setSiteName(existing.siteName || "");
+        setDate(existing.date || date);
+        setTime(existing.time || time);
+        setDepth(existing.depth ?? "");
+        setTemp(existing.temp ?? "");
+        setCurrent(existing.current || "중간");
+        setVisibility(existing.visibility ?? "");
+        setHealthGrade(existing.healthGrade || "A");
+        setGrowthCm(existing.growthCm ?? "");
+        setNatRadiusM(existing.natRadiusM ?? "");
+        setNatNumerator(existing.natNumerator ?? "");
+        setNatDenominator(existing.natDenominator ?? "");
+        setSurvAlive(existing.survAlive ?? "");
+        setSurvTotal(existing.survTotal ?? "");
+        setDetails(existing.details ?? "");
+      }
+    } else {
+      // 2) 새로 만든 활동 → fresh id 생성
+      const freshId = generateDraftId();
+      if (DEBUG) console.log("[draft] new draft id =", freshId);
+      setDraftId(freshId);
+    }
+  }, [searchParams]);
 
   // ========= 4) 디바이스 특성 =========
   const [isMobile, setIsMobile] = useState(false);
@@ -286,15 +334,55 @@ export default function DiveCreatePage() {
   };
 
   const handleSaveDraft = () => {
-    const draft = saveDraftObject();
+    // 백엔드용 env/monitoring draft는 기존처럼 sessionStorage에도 저장
+    const envDraft = saveDraftObject();
+
+    // UI 상태 기반으로 "임시저장 카드"에 쓸 데이터 만들기
+    const nowIso = new Date().toISOString();
+
+    // 일단 현재 폼 값들로 baseDraft 구성
+    const baseDraft = {
+      id: draftId || generateDraftId(),
+      siteName: siteName.trim() || "Unknown Site",
+      date,
+      time,
+      depth,
+      temp,
+      current,
+      visibility,
+      healthGrade,
+      growthCm,
+      natRadiusM,
+      natNumerator,
+      natDenominator,
+      survAlive,
+      survTotal,
+      details,
+      updatedAt: nowIso,
+    };
+
+    // 기존 draft가 있으면 가져와서 createdAt 유지 + 필드만 덮어쓰기
+    const existing = draftId ? getDraftById(draftId) : null;
+    const finalDraft = existing
+      ? { ...existing, ...baseDraft, createdAt: existing.createdAt }
+      : { ...baseDraft, createdAt: nowIso };
+
+    // 새로 생성하는 경우라면 draftId state도 세팅해주기
+    if (!draftId) {
+      setDraftId(finalDraft.id);
+    }
+
+    // localStorage 에 upsert
+    upsertDraft(finalDraft);
+
     if (DEBUG) {
-      console.log("[draft] env & monitoring:", draft);
-      console.log("[draft] details:", details);
+      console.log("[draft] env & monitoring (sessionStorage):", envDraft);
+      console.log("[draft] ui draft upserted:", finalDraft);
       console.log("[draft] attachments count:", attachments.length);
     }
+
     alert("임시 저장했습니다.");
   };
-
   // ========= 9) 첨부 핸들링 =========
   const onPickFiles = (e) => {
     const files = Array.from(e.target.files || []);
@@ -705,27 +793,26 @@ export default function DiveCreatePage() {
 
             {/* 분자/분모 형태 입력 */}
             <div>
-              <span className={labelCls}>분모/분자 형태 기록</span>
-              <div className="flex items-center gap-6">
-                <div className="flex flex-col items-center">
+              <div className="flex items-end gap-8">
+                <div className="flex flex-col items-center gap-1">
                   <input
-                    className="w-24 rounded-lg border border-gray-200 bg-white px-2 py-1 text-center text-[13px] outline-none focus:ring-2 focus:ring-sky-100 focus:border-sky-300"
+                    className="w-32 h-11 rounded-xl border border-gray-200 bg-white px-3 py-2 text-center text-[15px] outline-none focus:ring-2 focus:ring-sky-100 focus:border-sky-300"
                     placeholder="번식 개체"
                     value={natNumerator}
                     onChange={(e) => setNatNumerator(e.target.value)}
                     inputMode="numeric"
                   />
-                  <div className="my-1 h-px w-16 bg-gray-300" />
+                  <div className="my-1 h-px w-20 bg-gray-300" />
                   <input
-                    className="w-24 rounded-lg border border-gray-200 bg-white px-2 py-1 text-center text-[13px] outline-none focus:ring-2 focus:ring-sky-100 focus:border-sky-300"
+                    className="w-32 h-11 rounded-xl border border-gray-200 bg-white px-3 py-2 text-center text-[15px] outline-none focus:ring-2 focus:ring-sky-100 focus:border-sky-300"
                     placeholder="조사 개체"
                     value={natDenominator}
                     onChange={(e) => setNatDenominator(e.target.value)}
                     inputMode="numeric"
                   />
                 </div>
-                <div className="text-[12px] text-gray-500">
-                  대략 번식률{" "}
+                <div className="text-[13px] text-gray-500 leading-relaxed">
+                  번식률{" "}
                   <span className="font-semibold text-gray-800">
                     {natPercent || 0}%
                   </span>
@@ -744,25 +831,27 @@ export default function DiveCreatePage() {
           <p className="mb-2 text-[11px] text-gray-400">
             로프 단위로 몇 개가 살아 있고, 전체 로프가 몇 개인지 기록합니다.
           </p>
-          <div className="flex items-center gap-6">
-            <div className="flex flex-col items-center">
+
+          <div className="flex items-end gap-8">
+            <div className="flex flex-col items-center gap-1">
               <input
-                className="w-24 rounded-lg border border-gray-200 bg-white px-2 py-1 text-center text-[13px] outline-none focus:ring-2 focus:ring-sky-100 focus:border-sky-300"
+                className="w-32 h-11 rounded-xl border border-gray-200 bg-white px-3 py-2 text-center text-[15px] outline-none focus:ring-2 focus:ring-sky-100 focus:border-sky-300"
                 placeholder="생존 로프"
                 value={survAlive}
                 onChange={(e) => setSurvAlive(e.target.value)}
                 inputMode="numeric"
               />
-              <div className="my-1 h-px w-16 bg-gray-300" />
+              <div className="my-1 h-px w-20 bg-gray-300" />
               <input
-                className="w-24 rounded-lg border border-gray-200 bg-white px-2 py-1 text-center text-[13px] outline-none focus:ring-2 focus:ring-sky-100 focus:border-sky-300"
+                className="w-32 h-11 rounded-xl border border-gray-200 bg-white px-3 py-2 text-center text-[15px] outline-none focus:ring-2 focus:ring-sky-100 focus:border-sky-300"
                 placeholder="전체 로프"
                 value={survTotal}
                 onChange={(e) => setSurvTotal(e.target.value)}
                 inputMode="numeric"
               />
             </div>
-            <div className="text-[12px] text-gray-500">
+
+            <div className="text-[13px] text-gray-500 leading-relaxed">
               대략 생존률{" "}
               <span className="font-semibold text-gray-800">
                 {survivalPercent || 0}%
