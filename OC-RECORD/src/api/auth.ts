@@ -1,11 +1,18 @@
 // api/auth.ts
 import axiosInstance from "@/utils/axiosInstance";
 
+// api/auth.ts
 export async function logIn(username: string, password: string) {
   const res = await axiosInstance.post("/api/auth/login", {
     username,
     password,
   });
+
+  const access = res.data?.data?.access;
+  if (access) {
+    localStorage.setItem("ACCESS_TOKEN", access);
+  }
+
   return res;
 }
 

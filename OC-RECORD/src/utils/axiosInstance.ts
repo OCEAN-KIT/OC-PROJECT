@@ -6,27 +6,21 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-const SHOULD_FORCE = process.env.NEXT_PUBLIC_USE_DEV_BEARER === "1";
-const DEV_BEARER = process.env.NEXT_PUBLIC_DEV_BEARER ?? "";
-
-axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+axiosInstance.interceptors.request.use((config) => {
   const isInternalApi =
     typeof config.url === "string" &&
     (config.url.startsWith("/api/admin") || config.url.startsWith("/api/user"));
 
-  // headers를 AxiosHeaders로 보장 (any 사용 X)
   const headers =
     config.headers instanceof AxiosHeaders
       ? config.headers
       : new AxiosHeaders(config.headers);
 
-  if (
-    SHOULD_FORCE &&
-    isInternalApi &&
-    DEV_BEARER &&
-    !headers.has("Authorization")
-  ) {
-    headers.set("Authorization", `Bearer ${DEV_BEARER}`);
+  if (isInternalApi && typeof window !== "undefined") {
+    const token = localStorage.getItem("ACCESS_TOKEN");
+    if (token && !headers.has("Authorization")) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
   }
 
   config.headers = headers;
