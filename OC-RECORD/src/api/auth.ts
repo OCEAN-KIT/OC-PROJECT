@@ -16,6 +16,18 @@ export async function logIn(username: string, password: string) {
   return res;
 }
 
+export async function logOut() {
+  try {
+    await axiosInstance.post("/api/auth/logout", {});
+  } catch (e) {
+    console.error("[logout] api error", e);
+  } finally {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("ACCESS_TOKEN");
+    }
+  }
+}
+
 export async function signUp1(username: string, password: string) {
   const res = await axiosInstance.post("/api/auth/sign-up", {
     username,

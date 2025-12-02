@@ -1,6 +1,7 @@
 // app/page.jsx
 "use client";
 
+import { logOut } from "@/api/auth";
 import MainHeader from "@/components/mian-header";
 import MainButton from "@/components/ui/main-button";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
@@ -9,6 +10,11 @@ import { useRouter } from "next/navigation";
 export default function HomePage() {
   const router = useRouter();
   const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoLogin" });
+
+  async function handleLogOut() {
+    await logOut();
+    router.replace("/login");
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -21,7 +27,7 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="my-5 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+        <div className="my-5 h-px bg-linear-to-r from-transparent via-gray-200 to-transparent" />
 
         {/* 메인 카드 */}
         <div className="rounded-2xl bg-white">
@@ -44,10 +50,12 @@ export default function HomePage() {
         </div>
 
         <button
-          className="mt-8 mx-auto block text-[14px] font-medium text-gray-700"
+          className="mt-8 mx-auto block text-[14px] font-medium text-gray-700 cursor-pointer"
+          onClick={handleLogOut}
           type="button"
         >
-          로그아웃 <span className="inline-block translate-y-[1px]">›</span>
+          로그아웃{" "}
+          <span className="inline-block translate-y-1px cursor-pointer">›</span>
         </button>
       </div>
     </div>
