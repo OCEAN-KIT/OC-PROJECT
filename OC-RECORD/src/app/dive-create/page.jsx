@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   ChevronLeft,
   Calendar as CalendarIcon,
@@ -87,7 +87,6 @@ const WORK_TYPES = [
 
 export default function DiveCreatePage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const [draftId, setDraftId] = useState(null);
   const initializedRef = useRef(false);
@@ -167,14 +166,15 @@ export default function DiveCreatePage() {
 
     if (typeof window === "undefined") return;
 
-    const fromParam = searchParams.get("draftId");
+    const sp = new URLSearchParams(window.location.search);
+    const fromParam = sp.get("draftId");
 
-    // 1) 쿼리로 draftId가 넘어온 경우 → 해당 draft 로드
     if (fromParam) {
       setDraftId(fromParam);
       const existing = getDraftById(fromParam);
       if (existing) {
         if (DEBUG) console.log("[draft] load existing draft =", existing);
+
         setSiteName(existing.siteName || "");
         setDate(existing.date || date);
         setTime(existing.time || time);
@@ -192,12 +192,11 @@ export default function DiveCreatePage() {
         setDetails(existing.details ?? "");
       }
     } else {
-      // 2) 새로 만든 활동 → fresh id 생성
       const freshId = generateDraftId();
       if (DEBUG) console.log("[draft] new draft id =", freshId);
       setDraftId(freshId);
     }
-  }, [searchParams]);
+  }, []); // ✅ 의존성 배열 비움
 
   // ========= 4) 디바이스 특성 =========
   const [isMobile, setIsMobile] = useState(false);
