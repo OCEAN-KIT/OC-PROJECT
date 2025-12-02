@@ -1,2 +1,16 @@
 @import "tailwindcss";
 @import "react-cji-keyboard/style.css";
+
+/* iOS 입력 포커스 시 자동 확대 방지용 */
+@media (max-width: 768px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+html,
+body {
+  background: #f9fafb; /* 네가 쓰는 가장 바탕색 */
+}

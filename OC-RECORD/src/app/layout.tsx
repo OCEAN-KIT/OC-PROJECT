@@ -6,6 +6,12 @@ import { Providers } from "./providers";
 export const metadata: Metadata = {
   title: "OC-Diver",
   description: "해양 활동 제출 애플리케이션",
+  themeColor: "#f9fafb",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Ocean Admin",
+  },
 };
 
 export default function RootLayout({
