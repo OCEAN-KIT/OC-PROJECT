@@ -171,6 +171,8 @@ export default function DiveCreatePage() {
   const [attachments, setAttachments] = useState([]);
   const fileRef = useRef(null);
 
+  const keyboardBaseRef = useRef("");
+
   // ========= 8) 최초 진입 시 draftId 결정 + 기존 임시저장 로딩 =========
   useEffect(() => {
     if (initializedRef.current) return;
@@ -221,7 +223,7 @@ export default function DiveCreatePage() {
   // ========= 5) 천지인 키보드 활성 필드 =========
   // 이제 "details"만 천지인 사용
   // "details" | null
-  const [activeField, setActiveField] = useState(null);
+  const [activeField, setActiveField] = useState();
 
   // refs
   const dateInputRef = useRef(null);
@@ -272,10 +274,11 @@ export default function DiveCreatePage() {
   };
 
   // ========= 7) 천지인 키보드 입력 처리 =========
-  const handleKeyboardChange = (text) => {
-    if (activeField === "details") {
-      setDetails(text.slice(0, DETAILS_MAX));
-    }
+  const handleKeyboardChange = (sessionText) => {
+    if (activeField !== "details") return;
+    const base = keyboardBaseRef.current ?? "";
+    const merged = (base + sessionText).slice(0, DETAILS_MAX);
+    setDetails(merged);
   };
 
   // 바깥 클릭 시 키보드 닫기
@@ -394,6 +397,7 @@ export default function DiveCreatePage() {
 
     alert("임시 저장했습니다.");
   };
+
   // ========= 9) 첨부 핸들링 =========
   const onPickFiles = (e) => {
     const files = Array.from(e.target.files || []);
@@ -513,7 +517,7 @@ export default function DiveCreatePage() {
       console.error("[submit] ERROR body   =", JSON.stringify(data, null, 2));
       alert(
         status === 500
-          ? "서버 500 오류: 콘솔 로그 확인"
+          ? "서버 500 : 콘솔 로그 확인"
           : `제출 실패: ${status ?? ""}`
       );
     } finally {
@@ -939,9 +943,15 @@ export default function DiveCreatePage() {
               className={`${inputCls} h-44 resize-none`}
               placeholder="메시지를 입력해 주세요."
               value={details}
-              readOnly // ✅ 시스템 키보드 막고 커스텀 키보드만 사용
-              onClick={() => setActiveField("details")}
-              onFocus={() => setActiveField("details")}
+              readOnly
+              onClick={() => {
+                keyboardBaseRef.current = details; // ✅ 현재 내용 스냅샷으로 저장
+                setActiveField("details");
+              }}
+              onFocus={() => {
+                keyboardBaseRef.current = details; // 포커스로 열릴 때도 동일 처리
+                setActiveField("details");
+              }}
             />
           </label>
         </section>
