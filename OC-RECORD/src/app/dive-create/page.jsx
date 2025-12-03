@@ -68,9 +68,10 @@ function labelToActivityType(label) {
     case "성게 제거":
       return "URCHIN_REMOVAL";
     case "연구":
+      return "RESEARCH";
     case "모니터링":
+      return "MONITORING";
     case "기타":
-    default:
       return "OTHER";
   }
 }
@@ -462,7 +463,7 @@ export default function DiveCreatePage() {
 
         basicEnv: {
           recordDate: d.recordDate ?? new Date().toISOString().slice(0, 10),
-          startTime: toHHMMSS(d.startTime), // ✅ 기존 그대로
+          startTime: toHHMMSS(d.startTime),
           endTime: toHHMMSS(d.endTime ?? d.startTime),
           waterTempC: n(d.waterTempC),
           visibilityM: n(d.visibilityM),
@@ -521,7 +522,7 @@ export default function DiveCreatePage() {
           : `제출 실패: ${status ?? ""}`
       );
     } finally {
-      setLoading(false); // ✅ 성공/실패 상관없이 로딩 끄기
+      setLoading(false);
     }
   }
 

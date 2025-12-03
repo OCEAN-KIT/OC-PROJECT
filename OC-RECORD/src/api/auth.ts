@@ -2,7 +2,6 @@
 import axiosInstance from "@/utils/axiosInstance";
 import axios from "axios";
 
-// api/auth.ts
 export async function logIn(username: string, password: string) {
   try {
     const res = await axiosInstance.post("/api/auth/login", {
