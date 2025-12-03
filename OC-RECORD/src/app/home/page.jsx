@@ -6,13 +6,18 @@ import MainHeader from "@/components/mian-header";
 import MainButton from "@/components/ui/main-button";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function HomePage() {
   const router = useRouter();
   const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoLogin" });
 
+  const [loading, setLoading] = useState(false);
+
   async function handleLogOut() {
+    setLoading(true);
     await logOut();
+    setLoading(false);
     router.replace("/login");
   }
 
@@ -54,7 +59,7 @@ export default function HomePage() {
           onClick={handleLogOut}
           type="button"
         >
-          로그아웃{" "}
+          {loading ? "로그아웃 중..." : "로그아웃"}
           <span className="inline-block translate-y-1px cursor-pointer">›</span>
         </button>
       </div>

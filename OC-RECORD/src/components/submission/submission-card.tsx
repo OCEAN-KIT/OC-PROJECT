@@ -9,8 +9,12 @@ type CardProps = {
 };
 
 export default function MobileSubmissionCard({ item, onPress }: CardProps) {
-  const date = item.submittedAt?.slice(0, 10) ?? "";
-  const time = item.submittedAt?.slice(11, 16) ?? "";
+  const year = item.submittedAt[0];
+  const month = item.submittedAt[1];
+  const day = item.submittedAt[2];
+
+  const time = item.submittedAt[3];
+  const min = item.submittedAt[4];
 
   const statusBadge =
     {
@@ -31,7 +35,7 @@ export default function MobileSubmissionCard({ item, onPress }: CardProps) {
             {item.siteName}
           </div>
           <div className="mt-1 text-[13px] text-gray-500">
-            {date} {time} · {item.activityType}
+            {year}년 {month}월 {day}일 - {time}시 {min}분 · {item.activityType}
           </div>
           <div className="mt-1 text-[13px] text-gray-500">
             {item.authorName} ({item.attachmentCount}개 첨부)
