@@ -1,17 +1,21 @@
 // src/app/layout.tsx
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "OC-Diver",
   description: "해양 활동 제출 애플리케이션",
-  themeColor: "#f9fafb",
+
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "Ocean Admin",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#f9fafb",
 };
 
 export default function RootLayout({
