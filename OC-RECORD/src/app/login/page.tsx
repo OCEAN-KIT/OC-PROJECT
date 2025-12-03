@@ -5,7 +5,7 @@ import { logIn } from "@/api/auth";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { ClipLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import MainHeader from "@/components/mian-header";
 
 export default function LoginPage() {
@@ -13,51 +13,9 @@ export default function LoginPage() {
 
   const router = useRouter();
 
-  // ✅ demo 모드 여부: URL ?demo=1 일 때만 동작 (배포 상태에서도 안전)
-  const demoMode = useMemo(() => {
-    if (typeof window === "undefined") return false;
-    const sp = new URLSearchParams(window.location.search);
-    return sp.get("demo") === "1";
-  }, []);
-
-  // ✅ 자동 로그인까지 원하면 ?autologin=1 추가
-  const autoLogin = useMemo(() => {
-    if (typeof window === "undefined") return false;
-    const sp = new URLSearchParams(window.location.search);
-    return sp.get("autologin") === "1";
-  }, []);
-
-  // ✅ 초기 폼 상태
   const [form, setForm] = useState({ id: "", password: "" });
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [sending, setSending] = useState(false);
-
-  // ✅ 마운트 이후에만 데모 크리덴셜 주입 (SSR 흔들림 방지)
-  useEffect(() => {
-    if (demoMode) {
-      setForm({ id: "admin@admin.com", password: "password" });
-    }
-  }, [demoMode]);
-
-  // ✅ 데모 & 자동로그인 플래그가 있으면 바로 로그인 시도
-  useEffect(() => {
-    const doAuto = async () => {
-      if (!demoMode || !autoLogin) return;
-      try {
-        setErrorMsg("");
-        setSending(true);
-        await logIn("admin@admin.com", "password");
-        router.push("/home");
-      } catch (err) {
-        console.error("자동 로그인 에러:", err);
-        setErrorMsg("자동 로그인 중 오류가 발생했습니다.");
-      } finally {
-        setSending(false);
-      }
-    };
-    doAuto();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [demoMode, autoLogin]);
 
   if (checking || isLoggedIn) return null;
 
@@ -72,9 +30,12 @@ export default function LoginPage() {
       setSending(true);
       await logIn(form.id, form.password);
       router.push("/home");
-    } catch (err) {
-      console.error("로그인 에러:", err);
-      setErrorMsg("로그인 중 오류가 발생했습니다.");
+    } catch (e) {
+      if (e instanceof Error) {
+        setErrorMsg(e.message);
+      } else {
+        setErrorMsg("로그인 중 오류가 발생했습니다.");
+      }
     } finally {
       setSending(false);
     }
@@ -117,7 +78,7 @@ export default function LoginPage() {
               value={form.id}
               onChange={handleChange}
               placeholder="아이디를 입력하세요"
-              autoComplete="username" // ✅ 브라우저 자동완성 힌트
+              autoComplete="username"
               className="
                 h-12 w-full rounded-2xl
                 border-0 ring-1 ring-gray-200
@@ -138,7 +99,7 @@ export default function LoginPage() {
               value={form.password}
               onChange={handleChange}
               placeholder="비밀번호를 입력하세요"
-              autoComplete="current-password" // ✅ 브라우저 자동완성 힌트
+              autoComplete="current-password"
               className="
                 h-12 w-full rounded-2xl
                 border-0 ring-1 ring-gray-200
