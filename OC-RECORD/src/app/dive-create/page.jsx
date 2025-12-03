@@ -28,6 +28,7 @@ import {
   upsertDraft,
 } from "@/utils/diveDraftStorage";
 import CheonjiinKeyboard from "@/components/keyboard/CheonjiinKeyboard";
+import { ClipLoader } from "react-spinners";
 
 const DEBUG = true;
 const TEST_NO_ATTACH = false;
@@ -406,9 +407,10 @@ export default function DiveCreatePage() {
 
   // 예전처럼 "작업내용/첨부 없으면 제출 불가" 로직 제거
   // → 항상 제출 가능, 빈값은 0/빈 문자열로 전송
-
+  const [loading, setLoading] = useState(false);
   // ========= 10) 제출 =========
   async function handleSubmit() {
+    setLoading(true);
     try {
       const d = saveDraftObject(); // 현재 환경 + 모니터링 값 기반 draft 재생성
       if (DEBUG) console.log("[submit] env & monitoring draft =", d);
@@ -501,6 +503,7 @@ export default function DiveCreatePage() {
 
       const res = await createSubmission(payload);
       console.log("[submit] response =", res);
+      setLoading(false);
       alert("제출 완료!");
       router.replace("/home");
     } catch (err) {
@@ -513,6 +516,8 @@ export default function DiveCreatePage() {
           ? "서버 500 오류: 콘솔 로그 확인"
           : `제출 실패: ${status ?? ""}`
       );
+    } finally {
+      setLoading(false); // ✅ 성공/실패 상관없이 로딩 끄기
     }
   }
 
@@ -1016,9 +1021,10 @@ export default function DiveCreatePage() {
           <button
             type="button"
             onClick={handleSubmit}
-            className="h-12 rounded-xl bg-[#2F80ED] text-white font-semibold hover:brightness-105 active:translate-y-[1px]"
+            disabled={loading}
+            className="h-12 rounded-xl bg-[#2F80ED] text-white font-semibold hover:brightness-105 active:translate-y-[1px] disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            제출하기
+            {loading ? <ClipLoader size={20} color="#ffffff" /> : "제출하기"}
           </button>
         </div>
       </main>
