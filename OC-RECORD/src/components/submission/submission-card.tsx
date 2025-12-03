@@ -35,10 +35,10 @@ export default function MobileSubmissionCard({ item, onPress }: CardProps) {
             {item.siteName}
           </div>
           <div className="mt-1 text-[13px] text-gray-500">
-            {year}년 {month}월 {day}일 - {time}시 {min}분 · {item.activityType}
+            {year}년 {month}월 {day}일 · {time}시 {min}분 제출
           </div>
-          <div className="mt-1 text-[13px] text-gray-500">
-            {item.authorName} ({item.attachmentCount}개 첨부)
+          <div className="mt-1 text-[11px] text-gray-500">
+            {item.activityType}
           </div>
         </div>
 
