@@ -38,14 +38,10 @@ export default function LoginPage() {
     if (syncing) return; // 이중 제출 방지
     try {
       setErrorMsg("");
-      await logIn(form.id, form.password); // ← 로그인 로직/시그니처 유지
-
       setSyncing(true);
-      await queryClient.invalidateQueries({
-        queryKey: ["myInfo"] /*, refetchType: "active"(기본)*/,
-      });
-      // router.refresh(); // 필요 시
+      await logIn(form.id, form.password);
       router.push("/home");
+      queryClient.invalidateQueries({ queryKey: ["myInfo"] });
     } catch (err) {
       console.error("로그인 에러:", err);
       setErrorMsg("로그인 중 오류가 발생했습니다.");

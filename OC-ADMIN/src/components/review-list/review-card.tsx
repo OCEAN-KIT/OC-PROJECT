@@ -24,19 +24,45 @@ export default function ReviewCard({
 }: Props) {
   const router = useRouter();
   const goDetail = () => router.push(`/review/${review.id}`);
+  console.log("review: ", review);
 
-  const dt = new Date(review.datetime);
-  const dateStr = [
-    dt.getFullYear(),
-    "-",
-    String(dt.getMonth() + 1).padStart(2, "0"),
-    "-",
-    String(dt.getDate()).padStart(2, "0"),
-    " ",
-    String(dt.getHours()).padStart(2, "0"),
-    ":",
-    String(dt.getMinutes()).padStart(2, "0"),
-  ].join("");
+  console.log("review: ", review);
+
+  // ✅ 백엔드 포맷: "2025,12,3,9,0,7,438000000"
+  const raw = review.datetime;
+
+  let dateStr = "";
+  if (typeof raw === "string" && raw.includes(",")) {
+    const [y, m, d, hh, mm] = raw.split(",").map((v) => Number(v.trim()));
+
+    dateStr = [
+      y,
+      "-",
+      String(m).padStart(2, "0"),
+      "-",
+      String(d).padStart(2, "0"),
+      " ",
+      String(hh).padStart(2, "0"),
+      ":",
+      String(mm).padStart(2, "0"),
+    ].join("");
+  } else {
+    // 혹시 나중에 ISO 문자열로 바뀌는 경우 대비용
+    const dt = new Date(raw);
+    dateStr = isNaN(dt.getTime())
+      ? "-"
+      : [
+          dt.getFullYear(),
+          "-",
+          String(dt.getMonth() + 1).padStart(2, "0"),
+          "-",
+          String(dt.getDate()).padStart(2, "0"),
+          " ",
+          String(dt.getHours()).padStart(2, "0"),
+          ":",
+          String(dt.getMinutes()).padStart(2, "0"),
+        ].join("");
+  }
 
   const isPending = review.status === "pending";
   const statusChip =
@@ -56,7 +82,7 @@ export default function ReviewCard({
 
   const onCardClick = (e: React.MouseEvent) => {
     const el = e.target as HTMLElement;
-    if (el.closest("input, button, a")) return; 
+    if (el.closest("input, button, a")) return;
     goDetail();
   };
 

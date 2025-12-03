@@ -33,3 +33,8 @@ export async function signUp3(nickname: string, email: string, phone: string) {
   });
   return res.data;
 }
+
+export async function logOut() {
+  const res = await axiosInstance.post("/api/auth/logout");
+  return res.data;
+}

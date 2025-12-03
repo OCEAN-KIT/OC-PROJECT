@@ -4,14 +4,15 @@
 import { useEffect, useRef, useState } from "react";
 import { useMyInfo } from "@/hooks/useMyInfo";
 import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { UserRound, LogOut } from "lucide-react";
 import Link from "next/link";
+import { logOut } from "@/api/auth";
+import { useRouter } from "next/navigation";
 
 export default function MainHeader() {
   const { data, isLoading } = useMyInfo();
-  const queryClient = useQueryClient();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const [open, setOpen] = useState(false);
   const anchorRef = useRef<HTMLButtonElement | null>(null);
@@ -51,16 +52,13 @@ export default function MainHeader() {
   }, [open]);
 
   const handleLogout = async () => {
-    // try {
-    //   await logOut(); // 쿠키/세션 해제
-    // } finally {
-    //   // 캐시 정리 + 즉시 갱신
-    //   queryClient.removeQueries({ queryKey: ["myInfo"] });
-    //   // 필요 시 홈으로 이동(원하면 주석 해제)
-    //   // router.push("/login");
-    //   router.refresh();
-    //   setOpen(false);
-    // }
+    try {
+      await logOut();
+    } finally {
+      queryClient.removeQueries({ queryKey: ["myInfo"] });
+      router.refresh();
+      setOpen(false);
+    }
   };
 
   return (
