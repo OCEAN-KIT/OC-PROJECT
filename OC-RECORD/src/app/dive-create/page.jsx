@@ -178,6 +178,7 @@ export default function DiveCreatePage() {
   const fileRef = useRef(null);
 
   const keyboardBaseRef = useRef("");
+  const longPressTimerRef = useRef(null);
 
   // ========= 8) 최초 진입 시 draftId 결정 + 기존 임시저장 로딩 =========
   useEffect(() => {
@@ -297,6 +298,44 @@ export default function DiveCreatePage() {
       keyboardBaseRef.current = corrected;
     } else {
       alert("문장 보정에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
+
+  const handleClipboardPaste = async () => {
+    if (!navigator?.clipboard?.readText) {
+      alert("클립보드를 읽을 수 없습니다. 권한을 확인해주세요.");
+      return;
+    }
+
+    try {
+      const text = await navigator.clipboard.readText();
+      if (!text) {
+        alert("클립보드에 내용이 없습니다.");
+        return;
+      }
+      const next = (details + text).slice(0, DETAILS_MAX);
+      setDetails(next);
+      keyboardBaseRef.current = next;
+      setActiveField("details");
+    } catch (err) {
+      console.error("[paste] clipboard read failed", err);
+      alert("붙여넣기에 실패했습니다. 브라우저 권한을 확인해주세요.");
+    }
+  };
+
+  const startLongPressPaste = () => {
+    if (!isMobile) return;
+    if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
+    longPressTimerRef.current = setTimeout(() => {
+      handleClipboardPaste();
+      longPressTimerRef.current = null;
+    }, 500);
+  };
+
+  const cancelLongPressPaste = () => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
     }
   };
 
@@ -973,6 +1012,9 @@ export default function DiveCreatePage() {
               value={details}
               inputMode="none"
               readOnly={isMobile}
+              onTouchStart={startLongPressPaste}
+              onTouchEnd={cancelLongPressPaste}
+              onTouchCancel={cancelLongPressPaste}
               onClick={() => {
                 keyboardBaseRef.current = details; // ✅ 현재 내용 스냅샷으로 저장
                 setActiveField("details");
