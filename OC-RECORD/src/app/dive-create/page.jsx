@@ -971,6 +971,8 @@ export default function DiveCreatePage() {
               className={`${inputCls} h-44 resize-none`}
               placeholder="메시지를 입력해 주세요."
               value={details}
+              inputMode="none"
+              readOnly={isMobile}
               onClick={() => {
                 keyboardBaseRef.current = details; // ✅ 현재 내용 스냅샷으로 저장
                 setActiveField("details");
