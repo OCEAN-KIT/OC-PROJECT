@@ -179,6 +179,7 @@ export default function DiveCreatePage() {
 
   const keyboardBaseRef = useRef("");
   const longPressTimerRef = useRef(null);
+  const [allowNativePaste, setAllowNativePaste] = useState(false);
 
   // ========= 8) 최초 진입 시 draftId 결정 + 기존 임시저장 로딩 =========
   useEffect(() => {
@@ -302,8 +303,11 @@ export default function DiveCreatePage() {
   };
 
   const handleClipboardPaste = async () => {
+    if (allowNativePaste) return; // 이미 네이티브 붙여넣기 허용 중이면 기본 메뉴 사용
+
     if (!navigator?.clipboard?.readText) {
-      alert("클립보드를 읽을 수 없습니다. 권한을 확인해주세요.");
+      setAllowNativePaste(true);
+      alert("클립보드 권한이 없어 기본 붙여넣기를 잠시 허용합니다. 길게 눌러 붙여넣기 해주세요.");
       return;
     }
 
@@ -317,14 +321,17 @@ export default function DiveCreatePage() {
       setDetails(next);
       keyboardBaseRef.current = next;
       setActiveField("details");
+      setAllowNativePaste(false);
     } catch (err) {
       console.error("[paste] clipboard read failed", err);
-      alert("붙여넣기에 실패했습니다. 브라우저 권한을 확인해주세요.");
+      setAllowNativePaste(true);
+      alert("클립보드 접근이 차단되어 기본 붙여넣기를 잠시 허용합니다. 길게 눌러 붙여넣기 해주세요.");
     }
   };
 
   const startLongPressPaste = () => {
     if (!isMobile) return;
+    if (allowNativePaste) return; // 기본 붙여넣기 모드에서는 타이머 불필요
     if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
     longPressTimerRef.current = setTimeout(() => {
       handleClipboardPaste();
@@ -338,6 +345,12 @@ export default function DiveCreatePage() {
       longPressTimerRef.current = null;
     }
   };
+
+  useEffect(() => {
+    return () => {
+      if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
+    };
+  }, []);
 
   // 바깥 클릭 시 키보드 닫기
   useEffect(() => {
@@ -1011,10 +1024,11 @@ export default function DiveCreatePage() {
               placeholder="메시지를 입력해 주세요."
               value={details}
               inputMode="none"
-              readOnly={isMobile}
+              readOnly={isMobile && !allowNativePaste}
               onTouchStart={startLongPressPaste}
               onTouchEnd={cancelLongPressPaste}
               onTouchCancel={cancelLongPressPaste}
+              onBlur={() => setAllowNativePaste(false)}
               onClick={() => {
                 keyboardBaseRef.current = details; // ✅ 현재 내용 스냅샷으로 저장
                 setActiveField("details");
