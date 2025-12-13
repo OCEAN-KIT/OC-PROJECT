@@ -29,6 +29,7 @@ import {
 } from "@/utils/diveDraftStorage";
 import CheonjiinKeyboard from "@/components/keyboard/CheonjiinKeyboard";
 import { ClipLoader } from "react-spinners";
+import { useTextCorrection } from "@/hooks/useTextCorrection";
 
 const DEBUG = true;
 const TEST_NO_ATTACH = false;
@@ -168,6 +169,10 @@ export default function DiveCreatePage() {
   const [workType, setWorkType] = useState("이식");
   const [details, setDetails] = useState("");
   const DETAILS_MAX = 2000;
+  const {
+    correct: runSentenceCorrection,
+    isLoading: correctingSentence,
+  } = useTextCorrection();
 
   const [attachments, setAttachments] = useState([]);
   const fileRef = useRef(null);
@@ -280,6 +285,19 @@ export default function DiveCreatePage() {
     const base = keyboardBaseRef.current ?? "";
     const merged = (base + sessionText).slice(0, DETAILS_MAX);
     setDetails(merged);
+  };
+
+  const handleSentenceCorrect = async () => {
+    const target = details.trim();
+    if (!target || correctingSentence) return;
+
+    const corrected = await runSentenceCorrection(target);
+    if (corrected) {
+      setDetails(corrected);
+      keyboardBaseRef.current = corrected;
+    } else {
+      alert("문장 보정에 실패했습니다. 다시 시도해주세요.");
+    }
   };
 
   // 바깥 클릭 시 키보드 닫기
@@ -934,9 +952,18 @@ export default function DiveCreatePage() {
                 작업 내용
               </h2>
             </div>
-            <span className="text-[12px] text-gray-400">
-              {details.length}/{DETAILS_MAX}
-            </span>
+            <button
+              type="button"
+              className="text-[12px] text-sky-600 hover:text-sky-700 disabled:text-gray-300 disabled:cursor-not-allowed"
+              onClick={handleSentenceCorrect}
+              disabled={!details.trim() || correctingSentence}
+            >
+              {correctingSentence ? (
+                <ClipLoader size={14} color="#0284c7" />
+              ) : (
+                "문장 보정"
+              )}
+            </button>
           </div>
           <label className="block">
             <textarea
@@ -944,7 +971,6 @@ export default function DiveCreatePage() {
               className={`${inputCls} h-44 resize-none`}
               placeholder="메시지를 입력해 주세요."
               value={details}
-              readOnly
               onClick={() => {
                 keyboardBaseRef.current = details; // ✅ 현재 내용 스냅샷으로 저장
                 setActiveField("details");
@@ -952,6 +978,11 @@ export default function DiveCreatePage() {
               onFocus={() => {
                 keyboardBaseRef.current = details; // 포커스로 열릴 때도 동일 처리
                 setActiveField("details");
+              }}
+              onChange={(e) => {
+                const next = e.target.value.slice(0, DETAILS_MAX);
+                setDetails(next);
+                keyboardBaseRef.current = next;
               }}
             />
           </label>
