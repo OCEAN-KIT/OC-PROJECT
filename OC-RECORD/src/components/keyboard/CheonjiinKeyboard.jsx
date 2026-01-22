@@ -21,7 +21,7 @@ export default function CheonjiinKeyboard({ onChange }) {
 
   useEffect(() => {
     if (onChange) onChange(text);
-  }, [text, onChange]);
+  }, [text]);
 
   const resetComposition = (prev) => ({
     ...prev,
