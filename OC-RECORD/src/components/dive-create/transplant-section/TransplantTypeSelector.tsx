@@ -3,7 +3,6 @@
 import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
 import { Sprout } from "lucide-react";
-import { cardCls } from "../styles";
 
 import type { OcRecordForm, TransplantType } from "@/types/form";
 
@@ -27,7 +26,6 @@ export default function TransplantTypeSelector({
 }: Props) {
   return (
     <SelectCard
-      className={cardCls}
       title="이식 대상 종류"
       icon={<Sprout className="h-4 w-4 text-sky-600" />}
     >

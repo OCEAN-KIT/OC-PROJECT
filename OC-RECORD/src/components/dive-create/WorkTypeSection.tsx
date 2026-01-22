@@ -1,4 +1,6 @@
-import type { WorkType, OcRecordForm } from "@/types/form";
+"use client";
+
+import type { OcRecordForm, WorkType } from "@/types/form";
 
 import TransplantWrapper from "@/components/dive-create/transplant-section/TransplantWrapper";
 import GrazingWrapper from "@/components/dive-create/grazing-section/GrazingWrapper";
@@ -8,7 +10,9 @@ import CleanupWrapper from "@/components/dive-create/cleanup-section/CleanupWrap
 
 type SectionProps = {
   form: OcRecordForm;
-  setForm: React.Dispatch<React.SetStateAction<OcRecordForm>>;
+  setBasic: (patch: Partial<OcRecordForm["basic"]>) => void;
+  setEnv: (patch: Partial<OcRecordForm["env"]>) => void;
+  setTransplant: (patch: Partial<OcRecordForm["transplant"]>) => void;
 };
 
 const WORKTYPE_TO_SECTION: Record<
@@ -23,8 +27,20 @@ const WORKTYPE_TO_SECTION: Record<
   기타: null,
 };
 
-export default function WorkTypeSection({ form, setForm }: SectionProps) {
+export default function WorkTypeSection({
+  form,
+  setBasic,
+  setEnv,
+  setTransplant,
+}: SectionProps) {
   const Section = WORKTYPE_TO_SECTION[form.basic.workType];
   if (!Section) return null;
-  return <Section form={form} setForm={setForm} />;
+  return (
+    <Section
+      form={form}
+      setBasic={setBasic}
+      setEnv={setEnv}
+      setTransplant={setTransplant}
+    />
+  );
 }

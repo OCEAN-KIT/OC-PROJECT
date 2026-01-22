@@ -20,6 +20,16 @@ export type TransplantType =
   | "대황"
   | "기타";
 
+export type TransplantPlace = "어초" | "암반" | "기타";
+
+export type TransplantSystem =
+  | "로프 연승"
+  | "종자 직접 이식"
+  | "이식용 모듈"
+  | "기타";
+
+export type TransplantScale = string;
+
 export type OcRecordForm = {
   basic: {
     siteName: string;
@@ -37,6 +47,9 @@ export type OcRecordForm = {
   };
   transplant: {
     transplantType: TransplantType;
+    transplantPlace: TransplantPlace;
+    transplantSystem: TransplantSystem;
+    transplantScale: TransplantScale;
     healthGrade: HealthGrade;
   };
 };

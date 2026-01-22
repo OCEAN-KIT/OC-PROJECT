@@ -59,6 +59,9 @@ export default function DiveCreatePage() {
     },
     transplant: {
       transplantType: "감태",
+      transplantPlace: "기타",
+      transplantSystem: "기타",
+      transplantScale: "",
       healthGrade: "A",
     },
   });
@@ -161,6 +164,13 @@ export default function DiveCreatePage() {
     });
 
     setTransplant({
+      transplantType: existing.transplantType ?? form.transplant.transplantType,
+      transplantPlace:
+        existing.transplantPlace ?? form.transplant.transplantPlace,
+      transplantSystem:
+        existing.transplantSystem ?? form.transplant.transplantSystem,
+      transplantScale:
+        existing.transplantScalse ?? form.transplant.transplantScale,
       healthGrade: existing.healthGrade ?? form.transplant.healthGrade,
     });
 
@@ -258,7 +268,12 @@ export default function DiveCreatePage() {
 
         <WorkTypeSelector workType={form.basic.workType} setBasic={setBasic} />
 
-        <WorkTypeSection form={form} setForm={setForm} />
+        <WorkTypeSection
+          form={form}
+          setBasic={setBasic}
+          setEnv={setEnv}
+          setTransplant={setTransplant}
+        />
 
         <DetailsInput
           value={details}
@@ -274,11 +289,11 @@ export default function DiveCreatePage() {
           maxCount={10}
         />
 
-        <div className="mx-auto max-w-[420px] py-3 grid grid-cols-2 gap-3">
+        <div className="mx-auto max-w-105 py-3 grid grid-cols-2 gap-3">
           <button
             type="button"
             onClick={handleSaveDraft}
-            className="h-12 rounded-xl bg-gray-100 text-gray-800 font-semibold hover:bg-gray-200 active:translate-y-[1px]"
+            className="h-12 rounded-xl bg-gray-100 text-gray-800 font-semibold hover:bg-gray-200 active:translate-y-px"
           >
             임시 저장
           </button>
@@ -286,7 +301,7 @@ export default function DiveCreatePage() {
             type="button"
             onClick={handleSubmit}
             disabled={loading}
-            className="h-12 rounded-xl bg-[#2F80ED] text-white font-semibold hover:brightness-105 active:translate-y-[1px] disabled:opacity-60 disabled:cursor-not-allowed"
+            className="h-12 rounded-xl bg-[#2F80ED] text-white font-semibold hover:brightness-105 active:translate-y-px disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? <ClipLoader size={20} color="#ffffff" /> : "제출하기"}
           </button>
