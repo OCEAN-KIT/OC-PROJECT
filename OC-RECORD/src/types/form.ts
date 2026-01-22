@@ -52,10 +52,17 @@ export type OcRecordForm = {
     workers: string; // 작업자(참여자) 정보 텍스트
   };
   env: {
-    avgDepthM: string; // 평균 수심(m) 입력 텍스트
-    waterTempC: string; // 수온(°C) 입력 텍스트
-    current: CurrentStrength; // 유속(잔잔/중간/강함)
+    avgDepthM: string; // 평균 수심(m)
+    maxDepthM: string; // 최대 수심(m)
+    waterTempC: string; // 수온(°C)
+
     visibility: Rating3; // 시야(나쁨/보통/좋음)
+
+    wave: Rating3; // 파도(나쁨/보통/좋음)
+    surge: Rating3; // 서지(나쁨/보통/좋음)
+    currentGrade: Rating3; // 조류(나쁨/보통/좋음)
+
+    current: CurrentStrength; // 유속(잔잔/중간/강함) (기존 유지)
   };
   transplant: {
     transplantType: TransplantType; // 이식 대상 종류(감태/다시마/곰피/모자반/대황/기타)

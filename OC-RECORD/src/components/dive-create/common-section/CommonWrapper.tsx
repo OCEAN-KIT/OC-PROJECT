@@ -7,6 +7,7 @@ import DateTimeInput from "./DateTimeInput";
 import DiveRoundSelector from "./DiveRoundSelector";
 import DepthTempInput from "@/components/dive-create/common-section/DepthTempInput";
 import VisibilitySelector from "./VisibilitySelector";
+import CurrentSelector from "./CurrentSelector";
 
 type Props = {
   form: OcRecordForm;
@@ -59,6 +60,8 @@ export default function CommonWrapper({
       />
 
       <VisibilitySelector visibility={form.env.visibility} setEnv={setEnv} />
+
+      <CurrentSelector 
     </>
   );
 }
