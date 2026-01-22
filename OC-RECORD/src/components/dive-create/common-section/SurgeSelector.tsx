@@ -1,18 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, ChevronDown } from "lucide-react";
+import { Activity, ChevronDown } from "lucide-react";
 import OptionGrid from "@/components/ui/OptionGrid";
 import type { OcRecordForm, Rating3 } from "@/types/form";
 
 type Props = {
-  visibility: OcRecordForm["env"]["visibility"];
+  surge: OcRecordForm["env"]["surge"];
   setEnv: (patch: Partial<OcRecordForm["env"]>) => void;
 };
 
 const OPTIONS: Rating3[] = ["나쁨", "보통", "좋음"];
 
-export default function VisibilitySelector({ visibility, setEnv }: Props) {
+export default function SurgeSelector({ surge, setEnv }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -37,13 +37,13 @@ export default function VisibilitySelector({ visibility, setEnv }: Props) {
         ].join(" ")}
       >
         <div className="flex items-center gap-1.5 text-[12px] font-semibold text-gray-800">
-          <Eye className="h-4 w-4 text-sky-600" />
-          <span className="truncate">시야</span>
+          <Activity className="h-4 w-4 text-sky-600" />
+          <span className="truncate">서지</span>
         </div>
 
         <div className="mt-1 flex items-center justify-between">
           <span className="text-[13px] font-semibold text-sky-700 truncate">
-            {visibility}
+            {surge}
           </span>
           <ChevronDown
             className={[
@@ -62,14 +62,14 @@ export default function VisibilitySelector({ visibility, setEnv }: Props) {
         >
           <div className="grid grid-cols-1 gap-2">
             {OPTIONS.map((opt) => {
-              const active = visibility === opt;
+              const active = surge === opt;
 
               return (
                 <button
                   key={opt}
                   type="button"
                   onClick={() => {
-                    setEnv({ visibility: opt });
+                    setEnv({ surge: opt });
                     setOpen(false);
                   }}
                   className={[

@@ -7,8 +7,6 @@ export type WorkType =
   | "해양정화"
   | "기타";
 
-export type CurrentStrength = "잔잔" | "중간" | "강함";
-
 export type Rating3 = "나쁨" | "보통" | "좋음";
 
 export type HealthGrade = "A" | "B" | "C" | "D";
@@ -55,14 +53,10 @@ export type OcRecordForm = {
     avgDepthM: string; // 평균 수심(m)
     maxDepthM: string; // 최대 수심(m)
     waterTempC: string; // 수온(°C)
-
     visibility: Rating3; // 시야(나쁨/보통/좋음)
-
     wave: Rating3; // 파도(나쁨/보통/좋음)
     surge: Rating3; // 서지(나쁨/보통/좋음)
-    currentGrade: Rating3; // 조류(나쁨/보통/좋음)
-
-    current: CurrentStrength; // 유속(잔잔/중간/강함) (기존 유지)
+    current: Rating3; // 유속(잔잔/중간/강함)
   };
   transplant: {
     transplantType: TransplantType; // 이식 대상 종류(감태/다시마/곰피/모자반/대황/기타)

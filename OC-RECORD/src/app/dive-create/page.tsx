@@ -53,9 +53,12 @@ export default function DiveCreatePage() {
     },
     env: {
       avgDepthM: "",
+      maxDepthM: "",
       waterTempC: "",
-      current: "중간",
       visibility: "보통",
+      wave: "보통",
+      surge: "보통",
+      current: "보통",
     },
     transplant: {
       transplantType: "감태",
@@ -63,6 +66,13 @@ export default function DiveCreatePage() {
       transplantSystem: "기타",
       transplantScale: "",
       healthGrade: "A",
+    },
+    grazing: {
+      targets: [],
+      density: "적음",
+      scope: "국소",
+      scopeNote: "",
+      collectedAmount: "",
     },
   });
 

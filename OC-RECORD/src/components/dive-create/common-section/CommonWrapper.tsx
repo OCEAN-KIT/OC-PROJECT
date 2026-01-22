@@ -8,6 +8,8 @@ import DiveRoundSelector from "./DiveRoundSelector";
 import DepthTempInput from "@/components/dive-create/common-section/DepthTempInput";
 import VisibilitySelector from "./VisibilitySelector";
 import CurrentSelector from "./CurrentSelector";
+import WaveSelector from "./WaveSelector";
+import SurgeSelector from "./SurgeSelector";
 
 type Props = {
   form: OcRecordForm;
@@ -55,13 +57,16 @@ export default function CommonWrapper({
 
       <DepthTempInput
         avgDepthM={form.env.avgDepthM}
+        maxDepthM={form.env.maxDepthM}
         waterTempC={form.env.waterTempC}
         setEnv={setEnv}
       />
-
-      <VisibilitySelector visibility={form.env.visibility} setEnv={setEnv} />
-
-      <CurrentSelector 
+      <div className="grid grid-cols-4 gap-2">
+        <VisibilitySelector visibility={form.env.visibility} setEnv={setEnv} />
+        <WaveSelector wave={form.env.wave} setEnv={setEnv} />
+        <SurgeSelector surge={form.env.surge} setEnv={setEnv} />
+        <CurrentSelector current={form.env.current} setEnv={setEnv} />
+      </div>
     </>
   );
 }
