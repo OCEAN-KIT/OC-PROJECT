@@ -28,7 +28,7 @@ export default function DateTimeInput({
   timeInputRef,
 }: Props) {
   return (
-    <section className={cardCls}>
+    <section className="mb-7">
       <div className="flex items-center gap-2 mb-3">
         <CalendarIcon className="h-4 w-4 text-sky-600" />
         <h2 className="text-[14px] font-semibold text-gray-800">날짜/시간</h2>
@@ -41,14 +41,14 @@ export default function DateTimeInput({
           onClick={!isMobile ? openDatePicker : undefined}
           className="relative text-left"
         >
-          <div className={cardCls + " p-3"}>
-            <div className="text-[12px] text-gray-500 mb-1">날짜</div>
+          <div className={cardCls}>
+            <div className="flex justify-between">
+              <div className="text-[12px] text-gray-500 mb-1">시간</div>
+              <div className="text-[12px] text-sky-600 font-medium">변경</div>
+            </div>
             <div className="flex items-center gap-2 text-[15px] text-gray-800">
               <CalendarIcon className="h-4 w-4 shrink-0" />
               <span>{date}</span>
-            </div>
-            <div className="mt-2 text-[12px] text-sky-600 font-medium">
-              변경
             </div>
 
             <input
@@ -72,14 +72,15 @@ export default function DateTimeInput({
           onClick={!isMobile ? openTimePicker : undefined}
           className="relative text-left"
         >
-          <div className={cardCls + " p-3"}>
-            <div className="text-[12px] text-gray-500 mb-1">시간</div>
+          <div className={cardCls}>
+            <div className="flex justify-between">
+              <div className="text-[12px] text-gray-500 mb-1">시간</div>
+              <div className="text-[12px] text-sky-600 font-medium">변경</div>
+            </div>
+
             <div className="flex items-center gap-2 text-[15px] text-gray-800">
               <Clock3 className="h-4 w-4 shrink-0" />
               <span>{time}</span>
-            </div>
-            <div className="mt-2 text-[12px] text-sky-600 font-medium">
-              변경
             </div>
 
             <input

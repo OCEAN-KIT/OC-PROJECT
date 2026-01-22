@@ -15,10 +15,15 @@ export default function DetailsInput({
   maxLen = 2000,
 }: Props) {
   return (
-    <section className={cardCls}>
-      <div className="flex items-center gap-2 mb-2">
-        <ClipboardList className="h-4 w-4 text-sky-600" />
-        <h2 className="text-[14px] font-semibold text-gray-800">작업 내용</h2>
+    <section className="mb-3">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <ClipboardList className="h-4 w-4 text-sky-600" />
+          <h2 className="text-[14px] font-semibold text-gray-800">작업 내용</h2>
+        </div>
+        <div className="text-right text-[11px] text-gray-400">
+          {value.length}/{maxLen}
+        </div>
       </div>
 
       <label className="block">
@@ -29,10 +34,6 @@ export default function DetailsInput({
           onChange={(e) => onChange(e.target.value.slice(0, maxLen))}
         />
       </label>
-
-      <div className="mt-2 text-right text-[11px] text-gray-400">
-        {value.length}/{maxLen}
-      </div>
     </section>
   );
 }

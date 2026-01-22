@@ -12,6 +12,14 @@ export type Rating3 = "나쁨" | "보통" | "좋음";
 
 export type HealthGrade = "A" | "B" | "C" | "D";
 
+export type TransplantType =
+  | "감태"
+  | "다시마"
+  | "곰피"
+  | "모자반"
+  | "대황"
+  | "기타";
+
 export type OcRecordForm = {
   basic: {
     siteName: string;
@@ -28,6 +36,7 @@ export type OcRecordForm = {
     visibility: Rating3;
   };
   transplant: {
+    transplantType: TransplantType;
     healthGrade: HealthGrade;
   };
 };

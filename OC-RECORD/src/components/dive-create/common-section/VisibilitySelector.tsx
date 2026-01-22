@@ -2,7 +2,6 @@
 
 import { Eye } from "lucide-react";
 import type { OcRecordForm, Rating3 } from "@/types/form";
-import { cardCls } from "../dive-create/styles";
 
 type Props = {
   visibility: OcRecordForm["env"]["visibility"];
@@ -13,7 +12,7 @@ const OPTIONS: Rating3[] = ["나쁨", "보통", "좋음"];
 
 export default function VisibilitySelector({ visibility, setEnv }: Props) {
   return (
-    <section className={cardCls}>
+    <section className="mb-7">
       <div className="flex items-center gap-2 mb-2">
         <Eye className="h-4 w-4 text-sky-600" />
         <h2 className="text-[14px] font-semibold text-gray-800">시야</h2>
