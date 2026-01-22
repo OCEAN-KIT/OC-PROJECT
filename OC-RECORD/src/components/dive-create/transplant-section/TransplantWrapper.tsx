@@ -3,6 +3,7 @@
 import type { OcRecordForm } from "@/types/form";
 import TransplantTypeSelector from "./TransplantTypeSelector";
 import TransplantPlaceSelector from "./TransplantPlaceSelector";
+import TransplantSystemSelector from "./TransplantSystem";
 
 type Props = {
   form: OcRecordForm;
@@ -18,6 +19,10 @@ export default function TransplantWrapper({ form, setTransplant }: Props) {
       />
       <TransplantPlaceSelector
         transplantPlace={form.transplant.transplantPlace}
+        setTransplant={setTransplant}
+      />
+      <TransplantSystemSelector
+        transplantSystem={form.transplant.transplantSystem}
         setTransplant={setTransplant}
       />
     </>
