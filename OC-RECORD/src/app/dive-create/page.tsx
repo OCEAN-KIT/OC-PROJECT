@@ -62,13 +62,13 @@ export default function DiveCreatePage() {
     },
     transplant: {
       transplantType: "감태",
-      transplantPlace: "기타",
-      transplantSystem: "기타",
+      transplantPlace: "어초",
+      transplantSystem: "로프 연승",
       transplantScale: "",
       healthGrade: "A",
     },
     grazing: {
-      targets: [],
+      targets: ["성게"],
       density: "적음",
       scope: "국소",
       scopeNote: "",
@@ -92,6 +92,12 @@ export default function DiveCreatePage() {
     setForm((prev) => ({
       ...prev,
       transplant: { ...prev.transplant, ...patch },
+    }));
+  };
+  const setGrazing = (patch: Partial<OcRecordForm["grazing"]>) => {
+    setForm((prev) => ({
+      ...prev,
+      grazing: { ...prev.grazing, ...patch },
     }));
   };
 
@@ -283,6 +289,7 @@ export default function DiveCreatePage() {
           setBasic={setBasic}
           setEnv={setEnv}
           setTransplant={setTransplant}
+          setGrazing={setGrazing}
         />
 
         <DetailsInput

@@ -13,6 +13,7 @@ type SectionProps = {
   setBasic: (patch: Partial<OcRecordForm["basic"]>) => void;
   setEnv: (patch: Partial<OcRecordForm["env"]>) => void;
   setTransplant: (patch: Partial<OcRecordForm["transplant"]>) => void;
+  setGrazing: (patch: Partial<OcRecordForm["grazing"]>) => void;
 };
 
 const WORKTYPE_TO_SECTION: Record<
@@ -32,6 +33,7 @@ export default function WorkTypeSection({
   setBasic,
   setEnv,
   setTransplant,
+  setGrazing,
 }: SectionProps) {
   const Section = WORKTYPE_TO_SECTION[form.basic.workType];
   if (!Section) return null;
@@ -41,6 +43,7 @@ export default function WorkTypeSection({
       setBasic={setBasic}
       setEnv={setEnv}
       setTransplant={setTransplant}
+      setGrazing={setGrazing}
     />
   );
 }

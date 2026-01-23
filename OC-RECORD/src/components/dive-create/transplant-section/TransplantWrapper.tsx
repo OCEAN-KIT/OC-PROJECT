@@ -10,6 +10,7 @@ import HealthGradeSelector from "./HealthGradeSelector";
 type Props = {
   form: OcRecordForm;
   setTransplant: (patch: Partial<OcRecordForm["transplant"]>) => void;
+  setGrazing: (patch: Partial<OcRecordForm["grazing"]>) => void;
 };
 
 export default function TransplantWrapper({ form, setTransplant }: Props) {
