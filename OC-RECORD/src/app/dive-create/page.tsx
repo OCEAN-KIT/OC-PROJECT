@@ -218,21 +218,42 @@ export default function DiveCreatePage() {
 
     setEnv({
       avgDepthM: existing.avgDepthM ?? form.env.avgDepthM,
+      maxDepthM: existing.maxDepthM ?? form.env.maxDepthM,
       waterTempC: existing.waterTempC ?? form.env.waterTempC,
-      current: existing.current ?? form.env.current,
       visibility: existing.visibility ?? form.env.visibility,
+      wave: existing.wave ?? form.env.wave,
+      surge: existing.surge ?? form.env.surge,
+      current: existing.current ?? form.env.current,
     });
 
-    setTransplant({
-      transplantType: existing.transplantType ?? form.transplant.transplantType,
-      transplantPlace:
-        existing.transplantPlace ?? form.transplant.transplantPlace,
-      transplantSystem:
-        existing.transplantSystem ?? form.transplant.transplantSystem,
-      transplantScale:
-        existing.transplantScalse ?? form.transplant.transplantScale,
-      healthGrade: existing.healthGrade ?? form.transplant.healthGrade,
-    });
+    // workType에 따라 해당 섹션만 복원
+    switch (existing.workType) {
+      case "이식":
+        if (existing.transplant) {
+          setTransplant(existing.transplant);
+        }
+        break;
+      case "조식동물 작업":
+        if (existing.grazing) {
+          setGrazing(existing.grazing);
+        }
+        break;
+      case "부착기질 개선":
+        if (existing.substrate) {
+          setSubstrate(existing.substrate);
+        }
+        break;
+      case "모니터링":
+        if (existing.monitoring) {
+          setMonitoring(existing.monitoring);
+        }
+        break;
+      case "해양정화":
+        if (existing.cleanup) {
+          setCleanup(existing.cleanup);
+        }
+        break;
+    }
 
     setDetails(existing.details ?? "");
     // attachments(File)은 localStorage 복원 불가 → 유지 안 함
@@ -254,12 +275,12 @@ export default function DiveCreatePage() {
 
       // env
       avgDepthM: form.env.avgDepthM,
+      maxDepthM: form.env.maxDepthM,
       waterTempC: form.env.waterTempC,
-      current: form.env.current,
       visibility: form.env.visibility,
-
-      // transplant
-      healthGrade: form.transplant.healthGrade,
+      wave: form.env.wave,
+      surge: form.env.surge,
+      current: form.env.current,
 
       // details
       details,
@@ -267,10 +288,30 @@ export default function DiveCreatePage() {
       updatedAt: nowIso,
     };
 
+    // workType에 따라 해당 섹션만 저장
+    let sectionData = {};
+    switch (form.basic.workType) {
+      case "이식":
+        sectionData = { transplant: form.transplant };
+        break;
+      case "조식동물 작업":
+        sectionData = { grazing: form.grazing };
+        break;
+      case "부착기질 개선":
+        sectionData = { substrate: form.substrate };
+        break;
+      case "모니터링":
+        sectionData = { monitoring: form.monitoring };
+        break;
+      case "해양정화":
+        sectionData = { cleanup: form.cleanup };
+        break;
+    }
+
     const existing = draftId ? getDraftById(draftId) : null;
     const finalDraft = existing
-      ? { ...existing, ...baseDraft, createdAt: existing.createdAt }
-      : { ...baseDraft, createdAt: nowIso };
+      ? { ...existing, ...baseDraft, ...sectionData, createdAt: existing.createdAt }
+      : { ...baseDraft, ...sectionData, createdAt: nowIso };
 
     if (!draftId) setDraftId(finalDraft.id);
 
