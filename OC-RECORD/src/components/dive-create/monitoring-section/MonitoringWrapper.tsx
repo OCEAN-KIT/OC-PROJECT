@@ -1,18 +1,24 @@
 "use client";
 
 import type { OcRecordForm } from "@/types/form";
+import SiteSurvey from "./SiteSurvey";
+import AlgaeStatus from "./AlgaeStatus";
+import PreciseMeasurement from "./PreciseMeasurement";
 
 type Props = {
   form: OcRecordForm;
-  setTransplant: (patch: Partial<OcRecordForm["transplant"]>) => void;
-  setGrazing: (patch: Partial<OcRecordForm["grazing"]>) => void;
-  setSubstrate: (patch: Partial<OcRecordForm["substrate"]>) => void;
+  setMonitoring: (patch: Partial<OcRecordForm["monitoring"]>) => void;
 };
 
-export default function MonitoringWrapper({}: Props) {
+export default function MonitoringWrapper({ form, setMonitoring }: Props) {
   return (
     <>
-      <>모니터링 섹션</>
+      <SiteSurvey monitoring={form.monitoring} setMonitoring={setMonitoring} />
+      <AlgaeStatus monitoring={form.monitoring} setMonitoring={setMonitoring} />
+      <PreciseMeasurement
+        monitoring={form.monitoring}
+        setMonitoring={setMonitoring}
+      />
     </>
   );
 }

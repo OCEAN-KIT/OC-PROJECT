@@ -46,6 +46,39 @@ export type SubstrateRange = string;
 
 export type SubstrateCondition = string;
 
+////////////// 모니터링 ////////////////
+// 적지조사
+export type TerrainType = "암반" | "모래" | "혼합" | "기타";
+
+export type WhiteningLevel = "없음" | "진행" | "심각";
+
+export type GrazerDistribution = "낮음" | "중간" | "높음";
+
+export type RockCharacteristic =
+  | "매끈"
+  | "균열"
+  | "석회조류 우점"
+  | "혼합"
+  | "해조류 식생";
+
+export type TransplantSuitability = "적합" | "부적합";
+
+// 해조류 상태
+export type AlgaeCondition = "양호" | "쇠약" | "탈락";
+
+////////////// 해양정화 ////////////////
+export type CleanupType =
+  | "그물"
+  | "통발"
+  | "기타 어구"
+  | "낚시도구"
+  | "플라스틱"
+  | "기타";
+
+export type LiftingMethod = "수작업" | "인양백" | "크레인";
+
+export type UncollectedWasteScale = "소" | "중" | "대";
+
 ////////////// 제출 폼 ////////////////
 export type OcRecordForm = {
   basic: {
@@ -83,5 +116,29 @@ export type OcRecordForm = {
     target: SubstrateTarget; // 작업 대상(암반/어초/구조물/기타)
     range: SubstrateRange; // 작업 범위(텍스트)
     condition: SubstrateCondition; // 작업 후 기질 상태(텍스트)
+  };
+  monitoring: {
+    // 적지조사
+    entryCoord: string; // 입수 좌표
+    exitCoord: string; // 출수 좌표
+    direction: string; // 진행 방위
+    terrainType: TerrainType; // 지형 구성
+    whiteningLevel: WhiteningLevel; // 갯녹음 정도
+    grazerDistribution: GrazerDistribution; // 조식동물 분포
+    rockCharacteristic: RockCharacteristic; // 암반 특성
+    transplantSuitability: TransplantSuitability; // 해조 이식 적합성
+    // 해조류 상태
+    measurementId: string; // 측정 식별번호
+    algaeCondition: AlgaeCondition; // 생육 상태
+    // 정밀 측정 (선택적)
+    hasPreciseMeasurement: boolean; // 정밀 측정 개체 있음
+    bladeLength: string; // 엽장
+    maxBladeWidth: string; // 최대엽폭
+  };
+  cleanup: {
+    types: CleanupType[]; // 유형(복수 선택)
+    liftingMethod: LiftingMethod; // 인양 방식
+    collectedAmount: string; // 수거량
+    uncollectedWasteScale: UncollectedWasteScale; // 미수거 폐기물 규모
   };
 };

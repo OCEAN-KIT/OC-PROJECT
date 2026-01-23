@@ -79,6 +79,27 @@ export default function DiveCreatePage() {
       range: "",
       condition: "",
     },
+    monitoring: {
+      entryCoord: "",
+      exitCoord: "",
+      direction: "",
+      terrainType: "암반",
+      whiteningLevel: "없음",
+      grazerDistribution: "낮음",
+      rockCharacteristic: "매끈",
+      transplantSuitability: "적합",
+      measurementId: "",
+      algaeCondition: "양호",
+      hasPreciseMeasurement: false,
+      bladeLength: "",
+      maxBladeWidth: "",
+    },
+    cleanup: {
+      types: [],
+      liftingMethod: "수작업",
+      collectedAmount: "",
+      uncollectedWasteScale: "소",
+    },
   });
 
   const setBasic = (patch: Partial<OcRecordForm["basic"]>) => {
@@ -109,6 +130,18 @@ export default function DiveCreatePage() {
     setForm((prev) => ({
       ...prev,
       substrate: { ...prev.substrate, ...patch },
+    }));
+  };
+  const setMonitoring = (patch: Partial<OcRecordForm["monitoring"]>) => {
+    setForm((prev) => ({
+      ...prev,
+      monitoring: { ...prev.monitoring, ...patch },
+    }));
+  };
+  const setCleanup = (patch: Partial<OcRecordForm["cleanup"]>) => {
+    setForm((prev) => ({
+      ...prev,
+      cleanup: { ...prev.cleanup, ...patch },
     }));
   };
 
@@ -297,11 +330,11 @@ export default function DiveCreatePage() {
 
         <WorkTypeSection
           form={form}
-          setBasic={setBasic}
-          setEnv={setEnv}
           setTransplant={setTransplant}
           setGrazing={setGrazing}
           setSubstrate={setSubstrate}
+          setMonitoring={setMonitoring}
+          setCleanup={setCleanup}
         />
 
         <DetailsInput

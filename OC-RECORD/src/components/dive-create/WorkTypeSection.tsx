@@ -1,6 +1,6 @@
 "use client";
 
-import type { OcRecordForm, WorkType } from "@/types/form";
+import type { OcRecordForm } from "@/types/form";
 
 import TransplantWrapper from "@/components/dive-create/transplant-section/TransplantWrapper";
 import GrazingWrapper from "@/components/dive-create/grazing-section/GrazingWrapper";
@@ -10,43 +10,35 @@ import CleanupWrapper from "@/components/dive-create/cleanup-section/CleanupWrap
 
 type SectionProps = {
   form: OcRecordForm;
-  setBasic: (patch: Partial<OcRecordForm["basic"]>) => void;
-  setEnv: (patch: Partial<OcRecordForm["env"]>) => void;
   setTransplant: (patch: Partial<OcRecordForm["transplant"]>) => void;
   setGrazing: (patch: Partial<OcRecordForm["grazing"]>) => void;
   setSubstrate: (patch: Partial<OcRecordForm["substrate"]>) => void;
-};
-
-const WORKTYPE_TO_SECTION: Record<
-  WorkType,
-  React.ComponentType<SectionProps> | null
-> = {
-  이식: TransplantWrapper,
-  "조식동물 작업": GrazingWrapper,
-  "부착기질 개선": SubstrateWrapper,
-  모니터링: MonitoringWrapper,
-  해양정화: CleanupWrapper,
-  기타: null,
+  setMonitoring: (patch: Partial<OcRecordForm["monitoring"]>) => void;
+  setCleanup: (patch: Partial<OcRecordForm["cleanup"]>) => void;
 };
 
 export default function WorkTypeSection({
   form,
-  setBasic,
-  setEnv,
   setTransplant,
   setGrazing,
   setSubstrate,
+  setMonitoring,
+  setCleanup,
 }: SectionProps) {
-  const Section = WORKTYPE_TO_SECTION[form.basic.workType];
-  if (!Section) return null;
-  return (
-    <Section
-      form={form}
-      setBasic={setBasic}
-      setEnv={setEnv}
-      setTransplant={setTransplant}
-      setGrazing={setGrazing}
-      setSubstrate={setSubstrate}
-    />
-  );
+  const workType = form.basic.workType;
+
+  switch (workType) {
+    case "이식":
+      return <TransplantWrapper form={form} setTransplant={setTransplant} />;
+    case "조식동물 작업":
+      return <GrazingWrapper form={form} setGrazing={setGrazing} />;
+    case "부착기질 개선":
+      return <SubstrateWrapper form={form} setSubstrate={setSubstrate} />;
+    case "모니터링":
+      return <MonitoringWrapper form={form} setMonitoring={setMonitoring} />;
+    case "해양정화":
+      return <CleanupWrapper form={form} setCleanup={setCleanup} />;
+    default:
+      return null;
+  }
 }
