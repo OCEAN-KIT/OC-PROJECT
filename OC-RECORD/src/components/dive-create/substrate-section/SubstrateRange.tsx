@@ -46,6 +46,7 @@ export default function SubstrateRange({
           className="w-full h-11 rounded-xl border border-gray-200 px-3 text-[14px] outline-none"
           value={value}
           readOnly
+          aria-label="작업 범위"
           inputMode="none"
           onFocus={openKeyboard}
           onClick={openKeyboard}
