@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./CheonjiinKeyboard.css";
 import {
   createInitialState,
+  createInitialStateFromText,
   pressConsonantCycle,
   pressVowelStroke,
   backspace,
@@ -13,15 +14,19 @@ import HangulKeyboard from "./HangulKeyboard";
 import EnglishKeyboard from "./EnglishKeyboard";
 import NumberKeyboard from "./NumberKeyboard";
 import SymbolKeyboard from "./SymbolKeyboard";
-export default function CheonjiinKeyboard({ onChange }) {
-  const [state, setState] = useState(() => createInitialState());
+export default function CheonjiinKeyboard({ onChange, initialValue }) {
+  const [state, setState] = useState(() =>
+    initialValue
+      ? createInitialStateFromText(initialValue)
+      : createInitialState()
+  );
   const [mode, setMode] = useState("hangul");
   const [isUpper, setIsUpper] = useState(false);
   const text = getText(state);
 
   useEffect(() => {
     if (onChange) onChange(text);
-  }, [text, onChange]);
+  }, [text]);
 
   const resetComposition = (prev) => ({
     ...prev,

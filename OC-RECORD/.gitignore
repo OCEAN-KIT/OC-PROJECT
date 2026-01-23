@@ -47,6 +47,9 @@ data
 .env.production
 .env.test
 
+# AI Agents
+.agents
+.codex
 
 # End of https://www.toptal.com/developers/gitignore/api/java,gradle,intellij,intellij+all,intellij+iml
 .DS_Store

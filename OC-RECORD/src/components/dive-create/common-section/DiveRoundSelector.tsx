@@ -13,7 +13,7 @@ const ROUNDS: OcRecordForm["basic"]["diveRound"][] = [1, 2, 3, 4, 5];
 
 export default function DiveRoundSelector({ diveRound, setBasic }: Props) {
   return (
-    <section className={cardCls}>
+    <section className="mb-7">
       <div className="flex items-center gap-2 mb-2">
         <Hash className="h-4 w-4 text-sky-600" />
         <h2 className="text-[14px] font-semibold text-gray-800">다이빙 회차</h2>

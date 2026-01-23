@@ -11,7 +11,7 @@ export default function SiteNameInput({
   onChange,
 }: SiteNameInputProps) {
   return (
-    <section className={cardCls}>
+    <section className="mb-7">
       <div className="flex items-center gap-2 mb-2">
         <MapPin className="h-4 w-4 text-sky-600" />
         <h2 className="text-[14px] font-semibold text-gray-800">현장명</h2>

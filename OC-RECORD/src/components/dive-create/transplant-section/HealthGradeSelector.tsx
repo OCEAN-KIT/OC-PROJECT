@@ -1,0 +1,33 @@
+"use client";
+
+import SelectCard from "@/components/ui/SelectCard";
+import OptionGrid from "@/components/ui/OptionGrid";
+import { Activity } from "lucide-react";
+
+import type { HealthGrade, OcRecordForm } from "@/types/form";
+
+type Props = {
+  healthGrade: OcRecordForm["transplant"]["healthGrade"];
+  setTransplant: (patch: Partial<OcRecordForm["transplant"]>) => void;
+};
+
+const GRADES: HealthGrade[] = ["A", "B", "C", "D"];
+
+export default function HealthGradeSelector({
+  healthGrade,
+  setTransplant,
+}: Props) {
+  return (
+    <SelectCard
+      title="건강 상태"
+      icon={<Activity className="h-4 w-4 text-sky-600" />}
+    >
+      <OptionGrid<HealthGrade>
+        options={GRADES}
+        value={healthGrade}
+        columns={4}
+        onChange={(opt) => setTransplant({ healthGrade: opt })}
+      />
+    </SelectCard>
+  );
+}

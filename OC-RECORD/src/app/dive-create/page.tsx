@@ -13,14 +13,11 @@ import {
 
 import type { OcRecordForm } from "@/types/form";
 
-import SiteNameInput from "@/components/dive-create/common-section/SiteNameInput";
-import DateTimeInput from "@/components/dive-create/common-section/DateTimeInput";
-import DiveRoundSelector from "@/components/dive-create/common-section/DiveRoundSelector";
 import WorkTypeSelector from "@/components/dive-create/common-section/WorkTypeSelector";
-import DepthTempInput from "@/components/temp/DepthTempInput";
-import VisibilitySelector from "@/components/temp/VisibilitySelector";
 import DetailsInput from "@/components/dive-create/common-section/DetailsInput";
 import MediaUploadSection from "@/components/dive-create/common-section/MediaUploadSection";
+import WorkTypeSection from "@/components/dive-create/WorkTypeSection";
+import CommonWrapper from "@/components/dive-create/common-section/CommonWrapper";
 
 const DEBUG = true;
 
@@ -56,12 +53,52 @@ export default function DiveCreatePage() {
     },
     env: {
       avgDepthM: "",
+      maxDepthM: "",
       waterTempC: "",
-      current: "중간",
       visibility: "보통",
+      wave: "보통",
+      surge: "보통",
+      current: "보통",
     },
     transplant: {
+      transplantType: "감태",
+      transplantPlace: "어초",
+      transplantSystem: "로프 연승",
+      transplantScale: "",
       healthGrade: "A",
+    },
+    grazing: {
+      targets: ["성게"],
+      density: "적음",
+      scope: "국소",
+      scopeNote: "",
+      collectedAmount: "",
+    },
+    substrate: {
+      target: "암반",
+      range: "",
+      condition: "",
+    },
+    monitoring: {
+      entryCoord: "",
+      exitCoord: "",
+      direction: "",
+      terrainType: "암반",
+      whiteningLevel: "없음",
+      grazerDistribution: "낮음",
+      rockCharacteristic: "매끈",
+      transplantSuitability: "적합",
+      measurementId: "",
+      algaeCondition: "양호",
+      hasPreciseMeasurement: false,
+      bladeLength: "",
+      maxBladeWidth: "",
+    },
+    cleanup: {
+      types: [],
+      liftingMethod: "수작업",
+      collectedAmount: "",
+      uncollectedWasteScale: "소",
     },
   });
 
@@ -81,6 +118,30 @@ export default function DiveCreatePage() {
     setForm((prev) => ({
       ...prev,
       transplant: { ...prev.transplant, ...patch },
+    }));
+  };
+  const setGrazing = (patch: Partial<OcRecordForm["grazing"]>) => {
+    setForm((prev) => ({
+      ...prev,
+      grazing: { ...prev.grazing, ...patch },
+    }));
+  };
+  const setSubstrate = (patch: Partial<OcRecordForm["substrate"]>) => {
+    setForm((prev) => ({
+      ...prev,
+      substrate: { ...prev.substrate, ...patch },
+    }));
+  };
+  const setMonitoring = (patch: Partial<OcRecordForm["monitoring"]>) => {
+    setForm((prev) => ({
+      ...prev,
+      monitoring: { ...prev.monitoring, ...patch },
+    }));
+  };
+  const setCleanup = (patch: Partial<OcRecordForm["cleanup"]>) => {
+    setForm((prev) => ({
+      ...prev,
+      cleanup: { ...prev.cleanup, ...patch },
     }));
   };
 
@@ -109,8 +170,7 @@ export default function DiveCreatePage() {
 
   const openDatePicker = () => {
     const el = dateInputRef.current;
-    if (el && typeof (el as any).showPicker === "function")
-      (el as any).showPicker();
+    if (el && typeof el.showPicker === "function") el.showPicker();
     else {
       const v = prompt("날짜 (YYYY-MM-DD)", form.basic.date);
       if (v) setBasic({ date: v });
@@ -119,8 +179,7 @@ export default function DiveCreatePage() {
 
   const openTimePicker = () => {
     const el = timeInputRef.current;
-    if (el && typeof (el as any).showPicker === "function")
-      (el as any).showPicker();
+    if (el && typeof el.showPicker === "function") el.showPicker();
     else {
       const v = prompt("시간 (HH:MM)", form.basic.time);
       if (v) setBasic({ time: v });
@@ -159,14 +218,42 @@ export default function DiveCreatePage() {
 
     setEnv({
       avgDepthM: existing.avgDepthM ?? form.env.avgDepthM,
+      maxDepthM: existing.maxDepthM ?? form.env.maxDepthM,
       waterTempC: existing.waterTempC ?? form.env.waterTempC,
-      current: existing.current ?? form.env.current,
       visibility: existing.visibility ?? form.env.visibility,
+      wave: existing.wave ?? form.env.wave,
+      surge: existing.surge ?? form.env.surge,
+      current: existing.current ?? form.env.current,
     });
 
-    setTransplant({
-      healthGrade: existing.healthGrade ?? form.transplant.healthGrade,
-    });
+    // workType에 따라 해당 섹션만 복원
+    switch (existing.workType) {
+      case "이식":
+        if (existing.transplant) {
+          setTransplant(existing.transplant);
+        }
+        break;
+      case "조식동물 작업":
+        if (existing.grazing) {
+          setGrazing(existing.grazing);
+        }
+        break;
+      case "부착기질 개선":
+        if (existing.substrate) {
+          setSubstrate(existing.substrate);
+        }
+        break;
+      case "모니터링":
+        if (existing.monitoring) {
+          setMonitoring(existing.monitoring);
+        }
+        break;
+      case "해양정화":
+        if (existing.cleanup) {
+          setCleanup(existing.cleanup);
+        }
+        break;
+    }
 
     setDetails(existing.details ?? "");
     // attachments(File)은 localStorage 복원 불가 → 유지 안 함
@@ -188,12 +275,12 @@ export default function DiveCreatePage() {
 
       // env
       avgDepthM: form.env.avgDepthM,
+      maxDepthM: form.env.maxDepthM,
       waterTempC: form.env.waterTempC,
-      current: form.env.current,
       visibility: form.env.visibility,
-
-      // transplant
-      healthGrade: form.transplant.healthGrade,
+      wave: form.env.wave,
+      surge: form.env.surge,
+      current: form.env.current,
 
       // details
       details,
@@ -201,10 +288,36 @@ export default function DiveCreatePage() {
       updatedAt: nowIso,
     };
 
+    // workType에 따라 해당 섹션만 저장
+    let sectionData = {};
+    switch (form.basic.workType) {
+      case "이식":
+        sectionData = { transplant: form.transplant };
+        break;
+      case "조식동물 작업":
+        sectionData = { grazing: form.grazing };
+        break;
+      case "부착기질 개선":
+        sectionData = { substrate: form.substrate };
+        break;
+      case "모니터링":
+        sectionData = { monitoring: form.monitoring };
+        break;
+      case "해양정화":
+        sectionData = { cleanup: form.cleanup };
+        break;
+    }
+
     const existing = draftId ? getDraftById(draftId) : null;
-    const finalDraft = existing
-      ? { ...existing, ...baseDraft, createdAt: existing.createdAt }
-      : { ...baseDraft, createdAt: nowIso };
+    const baseMeta = existing
+      ? { id: existing.id, createdAt: existing.createdAt }
+      : {};
+    const finalDraft = {
+      ...baseMeta,
+      ...baseDraft,
+      ...sectionData,
+      createdAt: existing?.createdAt ?? nowIso,
+    };
 
     if (!draftId) setDraftId(finalDraft.id);
 
@@ -231,9 +344,9 @@ export default function DiveCreatePage() {
   };
 
   return (
-    <div className="relative min-h-[100dvh] bg-gradient-to-b from-gray-50 to-white">
+    <div className="relative min-h-dvh ">
       <header className="sticky top-0 z-10 bg-white/80 backdrop-blur border-b border-gray-100">
-        <div className="mx-auto max-w-[420px] px-4 h-14 flex items-center gap-2">
+        <div className="mx-auto max-w-105 px-4 h-14 flex items-center gap-2">
           <button
             type="button"
             onClick={() => router.back()}
@@ -248,16 +361,11 @@ export default function DiveCreatePage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-[420px] px-4 pt-4 pb-40 space-y-4">
-        <SiteNameInput
-          siteName={form.basic.siteName}
-          onChange={(v) => setBasic({ siteName: v })}
-        />
-
-        <DateTimeInput
-          date={form.basic.date}
-          time={form.basic.time}
+      <main className="mx-auto max-w-105 px-4 pt-4 pb-40 space-y-4">
+        <CommonWrapper
+          form={form}
           setBasic={setBasic}
+          setEnv={setEnv}
           isMobile={isMobile}
           openDatePicker={openDatePicker}
           openTimePicker={openTimePicker}
@@ -265,20 +373,16 @@ export default function DiveCreatePage() {
           timeInputRef={timeInputRef}
         />
 
-        <DiveRoundSelector
-          diveRound={form.basic.diveRound}
-          setBasic={setBasic}
-        />
-
         <WorkTypeSelector workType={form.basic.workType} setBasic={setBasic} />
 
-        <DepthTempInput
-          avgDepthM={form.env.avgDepthM}
-          waterTempC={form.env.waterTempC}
-          setEnv={setEnv}
+        <WorkTypeSection
+          form={form}
+          setTransplant={setTransplant}
+          setGrazing={setGrazing}
+          setSubstrate={setSubstrate}
+          setMonitoring={setMonitoring}
+          setCleanup={setCleanup}
         />
-
-        <VisibilitySelector visibility={form.env.visibility} setEnv={setEnv} />
 
         <DetailsInput
           value={details}
@@ -294,11 +398,11 @@ export default function DiveCreatePage() {
           maxCount={10}
         />
 
-        <div className="mx-auto max-w-[420px] py-3 grid grid-cols-2 gap-3">
+        <div className="mx-auto max-w-105 py-3 grid grid-cols-2 gap-3">
           <button
             type="button"
             onClick={handleSaveDraft}
-            className="h-12 rounded-xl bg-gray-100 text-gray-800 font-semibold hover:bg-gray-200 active:translate-y-[1px]"
+            className="h-12 rounded-xl bg-gray-100 text-gray-800 font-semibold hover:bg-gray-200 active:translate-y-px"
           >
             임시 저장
           </button>
@@ -306,7 +410,7 @@ export default function DiveCreatePage() {
             type="button"
             onClick={handleSubmit}
             disabled={loading}
-            className="h-12 rounded-xl bg-[#2F80ED] text-white font-semibold hover:brightness-105 active:translate-y-[1px] disabled:opacity-60 disabled:cursor-not-allowed"
+            className="h-12 rounded-xl bg-[#2F80ED] text-white font-semibold hover:brightness-105 active:translate-y-px disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? <ClipLoader size={20} color="#ffffff" /> : "제출하기"}
           </button>

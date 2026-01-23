@@ -19,7 +19,7 @@ export default function MediaUploadSection({
   maxCount = 10,
 }: Props) {
   return (
-    <section className={cardCls}>
+    <section>
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <Images className="h-4 w-4 text-sky-600" />
