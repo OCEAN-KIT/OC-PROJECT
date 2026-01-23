@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Eye, ChevronDown } from "lucide-react";
-import OptionGrid from "@/components/ui/OptionGrid";
 import type { OcRecordForm, Rating3 } from "@/types/form";
 
 type Props = {

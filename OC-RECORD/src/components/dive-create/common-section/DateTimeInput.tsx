@@ -43,7 +43,7 @@ export default function DateTimeInput({
         >
           <div className={cardCls}>
             <div className="flex justify-between">
-              <div className="text-[12px] text-gray-500 mb-1">시간</div>
+              <div className="text-[12px] text-gray-500 mb-1">날짜</div>
               <div className="text-[12px] text-sky-600 font-medium">변경</div>
             </div>
             <div className="flex items-center gap-2 text-[15px] text-gray-800">

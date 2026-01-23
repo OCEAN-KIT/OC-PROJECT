@@ -9,7 +9,6 @@ type Props = {
   setEnv: (patch: Partial<OcRecordForm["env"]>) => void;
 };
 
-// ✅ 조류도 나쁨/보통/좋음이면 Rating3로
 const OPTIONS: Rating3[] = ["나쁨", "보통", "좋음"];
 
 export default function CurrentSelector({ current, setEnv }: Props) {

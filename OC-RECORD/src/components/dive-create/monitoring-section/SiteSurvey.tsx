@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { MapPin, Compass, Mountain } from "lucide-react";
 import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
@@ -180,7 +180,8 @@ export default function SiteSurvey({ monitoring, setMonitoring }: Props) {
               onTouchStart={(e) => e.stopPropagation()}
             >
               <CheonjiinKeyboard
-                onChange={(val) => setValue(activeField, val)}
+                onChange={(val: string) => setValue(activeField, val)}
+                initialValue={monitoring[activeField]}
               />
             </div>
           </div>

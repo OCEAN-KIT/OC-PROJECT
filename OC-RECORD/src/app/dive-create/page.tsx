@@ -309,9 +309,15 @@ export default function DiveCreatePage() {
     }
 
     const existing = draftId ? getDraftById(draftId) : null;
-    const finalDraft = existing
-      ? { ...existing, ...baseDraft, ...sectionData, createdAt: existing.createdAt }
-      : { ...baseDraft, ...sectionData, createdAt: nowIso };
+    const baseMeta = existing
+      ? { id: existing.id, createdAt: existing.createdAt }
+      : {};
+    const finalDraft = {
+      ...baseMeta,
+      ...baseDraft,
+      ...sectionData,
+      createdAt: existing?.createdAt ?? nowIso,
+    };
 
     if (!draftId) setDraftId(finalDraft.id);
 

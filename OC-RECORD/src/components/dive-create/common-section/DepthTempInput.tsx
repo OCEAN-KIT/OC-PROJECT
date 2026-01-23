@@ -34,7 +34,7 @@ export default function DepthTempInput({
             onChange={(e) => setEnv({ avgDepthM: e.target.value })}
             inputMode="decimal"
           />
-          <span className="pointer-events-none absolute right-3 top-3.25 text-gray-500 select-none">
+          <span className="pointer-events-none absolute right-3 top-3.5 text-gray-500 select-none">
             m
           </span>
         </label>

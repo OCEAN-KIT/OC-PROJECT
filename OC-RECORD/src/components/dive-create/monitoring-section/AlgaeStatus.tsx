@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Activity } from "lucide-react";
 import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
@@ -82,7 +82,10 @@ export default function AlgaeStatus({ monitoring, setMonitoring }: Props) {
               onMouseDown={(e) => e.stopPropagation()}
               onTouchStart={(e) => e.stopPropagation()}
             >
-              <CheonjiinKeyboard onChange={setValue} />
+              <CheonjiinKeyboard
+                onChange={setValue}
+                initialValue={monitoring.measurementId}
+              />
             </div>
           </div>
         </>

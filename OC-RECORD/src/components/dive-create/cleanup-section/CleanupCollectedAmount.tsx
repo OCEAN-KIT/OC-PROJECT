@@ -66,7 +66,7 @@ export default function CleanupCollectedAmount({
               onMouseDown={(e) => e.stopPropagation()}
               onTouchStart={(e) => e.stopPropagation()}
             >
-              <CheonjiinKeyboard onChange={setValue} />
+              <CheonjiinKeyboard onChange={setValue} initialValue={value} />
             </div>
           </div>
         </>

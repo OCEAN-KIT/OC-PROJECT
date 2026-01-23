@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Ruler } from "lucide-react";
 import SelectCard from "@/components/ui/SelectCard";
 import CheonjiinKeyboard from "@/components/keyboard/CheonjiinKeyboard";
@@ -113,7 +113,8 @@ export default function PreciseMeasurement({
               onTouchStart={(e) => e.stopPropagation()}
             >
               <CheonjiinKeyboard
-                onChange={(val) => setValue(activeField, val)}
+                onChange={(val: string) => setValue(activeField, val)}
+                initialValue={monitoring[activeField]}
               />
             </div>
           </div>

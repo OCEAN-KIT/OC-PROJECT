@@ -14,6 +14,23 @@ export function createInitialState() {
   };
 }
 
+// 기존 텍스트로부터 초기 상태 생성
+export function createInitialStateFromText(text) {
+  if (!text) {
+    return createInitialState();
+  }
+
+  // hangul-js의 disassemble로 텍스트를 자모 배열로 변환
+  // 두 번째 파라미터를 생략하면 평탄화된 1차원 배열 반환
+  const jamo = Hangul.disassemble(text);
+
+  return {
+    jamo,
+    vowelStrokes: [],
+    currentVowelIndex: -1,
+  };
+}
+
 // 단일 자음 추가용
 export function pressConsonant(state, consonant) {
   const jamo = [...state.jamo, consonant];

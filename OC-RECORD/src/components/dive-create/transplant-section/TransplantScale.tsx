@@ -67,7 +67,7 @@ export default function TransplantScale({
               onMouseDown={(e) => e.stopPropagation()}
               onTouchStart={(e) => e.stopPropagation()}
             >
-              <CheonjiinKeyboard onChange={setValue} />
+              <CheonjiinKeyboard onChange={setValue} initialValue={value} />
             </div>
           </div>
         </>

@@ -96,7 +96,7 @@ export type OcRecordForm = {
     visibility: Rating3; // 시야(나쁨/보통/좋음)
     wave: Rating3; // 파도(나쁨/보통/좋음)
     surge: Rating3; // 서지(나쁨/보통/좋음)
-    current: Rating3; // 유속(잔잔/중간/강함)
+    current: Rating3; // 조류(나쁨/보통/좋음)
   };
   transplant: {
     transplantType: TransplantType; // 이식 대상 종류(감태/다시마/곰피/모자반/대황/기타)

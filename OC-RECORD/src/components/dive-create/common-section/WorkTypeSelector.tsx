@@ -2,7 +2,6 @@
 
 import { ClipboardList } from "lucide-react";
 import type { OcRecordForm, WorkType } from "@/types/form";
-import { cardCls } from "../styles";
 import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
 
