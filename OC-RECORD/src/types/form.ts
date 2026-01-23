@@ -39,6 +39,13 @@ export type GrazingScope = "국소" | "구역" | "광범위";
 
 export type GrazingCollectedAmount = string;
 
+////////////// 부착기질 개선 ////////////////
+export type SubstrateTarget = "암반" | "어초" | "구조물" | "기타";
+
+export type SubstrateRange = string;
+
+export type SubstrateCondition = string;
+
 ////////////// 제출 폼 ////////////////
 export type OcRecordForm = {
   basic: {
@@ -71,5 +78,10 @@ export type OcRecordForm = {
     scope: GrazingScope; // 작업 범위(국소/구역/광범위)
     scopeNote: string; // 작업 범위 보충 설명(텍스트)
     collectedAmount: GrazingCollectedAmount; // 수거량(텍스트)
+  };
+  substrate: {
+    target: SubstrateTarget; // 작업 대상(암반/어초/구조물/기타)
+    range: SubstrateRange; // 작업 범위(텍스트)
+    condition: SubstrateCondition; // 작업 후 기질 상태(텍스트)
   };
 };

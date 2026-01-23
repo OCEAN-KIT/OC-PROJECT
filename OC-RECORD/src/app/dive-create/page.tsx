@@ -74,6 +74,11 @@ export default function DiveCreatePage() {
       scopeNote: "",
       collectedAmount: "",
     },
+    substrate: {
+      target: "암반",
+      range: "",
+      condition: "",
+    },
   });
 
   const setBasic = (patch: Partial<OcRecordForm["basic"]>) => {
@@ -98,6 +103,12 @@ export default function DiveCreatePage() {
     setForm((prev) => ({
       ...prev,
       grazing: { ...prev.grazing, ...patch },
+    }));
+  };
+  const setSubstrate = (patch: Partial<OcRecordForm["substrate"]>) => {
+    setForm((prev) => ({
+      ...prev,
+      substrate: { ...prev.substrate, ...patch },
     }));
   };
 
@@ -290,6 +301,7 @@ export default function DiveCreatePage() {
           setEnv={setEnv}
           setTransplant={setTransplant}
           setGrazing={setGrazing}
+          setSubstrate={setSubstrate}
         />
 
         <DetailsInput

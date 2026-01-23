@@ -1,17 +1,29 @@
 "use client";
 
 import type { OcRecordForm } from "@/types/form";
+import SubstrateTargetSelector from "./SubstrateTargetSelector";
+import SubstrateRange from "./SubstrateRange";
+import SubstrateCondition from "./SubstrateCondition";
 
 type Props = {
   form: OcRecordForm;
   setTransplant: (patch: Partial<OcRecordForm["transplant"]>) => void;
   setGrazing: (patch: Partial<OcRecordForm["grazing"]>) => void;
+  setSubstrate: (patch: Partial<OcRecordForm["substrate"]>) => void;
 };
 
-export default function SubstrateWrapper({}: Props) {
+export default function SubstrateWrapper({ form, setSubstrate }: Props) {
   return (
     <>
-      <>부착기질 개선 섹션</>
+      <SubstrateTargetSelector
+        target={form.substrate.target}
+        setSubstrate={setSubstrate}
+      />
+      <SubstrateRange range={form.substrate.range} setSubstrate={setSubstrate} />
+      <SubstrateCondition
+        condition={form.substrate.condition}
+        setSubstrate={setSubstrate}
+      />
     </>
   );
 }
