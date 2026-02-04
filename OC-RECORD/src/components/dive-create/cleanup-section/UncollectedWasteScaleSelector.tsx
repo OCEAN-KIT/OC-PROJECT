@@ -9,12 +9,12 @@ import type { OcRecordForm, UncollectedWasteScale } from "@/types/form";
 const UNCOLLECTED_WASTE_SCALES: UncollectedWasteScale[] = ["소", "중", "대"];
 
 type Props = {
-  uncollectedWasteScale: OcRecordForm["cleanup"]["uncollectedWasteScale"];
+  uncollectedScale: OcRecordForm["cleanup"]["uncollectedScale"];
   setCleanup: (patch: Partial<OcRecordForm["cleanup"]>) => void;
 };
 
 export default function UncollectedWasteScaleSelector({
-  uncollectedWasteScale,
+  uncollectedScale,
   setCleanup,
 }: Props) {
   return (
@@ -24,9 +24,9 @@ export default function UncollectedWasteScaleSelector({
     >
       <OptionGrid<UncollectedWasteScale>
         options={UNCOLLECTED_WASTE_SCALES}
-        value={uncollectedWasteScale}
+        value={uncollectedScale}
         columns={3}
-        onChange={(opt) => setCleanup({ uncollectedWasteScale: opt })}
+        onChange={(opt) => setCleanup({ uncollectedScale: opt })}
       />
     </SelectCard>
   );

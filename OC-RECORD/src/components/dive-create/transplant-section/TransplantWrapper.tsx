@@ -16,23 +16,23 @@ export default function TransplantWrapper({ form, setTransplant }: Props) {
   return (
     <>
       <TransplantTypeSelector
-        transplantType={form.transplant.transplantType}
+        speciesType={form.transplant.speciesType}
         setTransplant={setTransplant}
       />
       <TransplantPlaceSelector
-        transplantPlace={form.transplant.transplantPlace}
+        locationType={form.transplant.locationType}
         setTransplant={setTransplant}
       />
       <TransplantSystemSelector
-        transplantSystem={form.transplant.transplantSystem}
+        methodType={form.transplant.methodType}
         setTransplant={setTransplant}
       />
       <TransplantScale
-        transplantScale={form.transplant.transplantScale}
+        scale={form.transplant.scale}
         setTransplant={setTransplant}
       />
       <HealthGradeSelector
-        healthGrade={form.transplant.healthGrade}
+        healthStatus={form.transplant.healthStatus}
         setTransplant={setTransplant}
       />
     </>

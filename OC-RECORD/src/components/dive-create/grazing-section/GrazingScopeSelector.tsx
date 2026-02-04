@@ -11,26 +11,26 @@ import CheonjiinKeyboard from "@/components/keyboard/CheonjiinKeyboard";
 const SCOPES: GrazingScope[] = ["국소", "구역", "광범위"];
 
 type Props = {
-  scope: OcRecordForm["grazing"]["scope"];
-  scopeNote: OcRecordForm["grazing"]["scopeNote"];
+  workScope: OcRecordForm["grazing"]["workScope"];
+  note: OcRecordForm["grazing"]["note"];
   setGrazing: (patch: Partial<OcRecordForm["grazing"]>) => void;
   maxLen?: number;
 };
 
 export default function GrazingScopeSelector({
-  scope,
-  scopeNote,
+  workScope,
+  note,
   setGrazing,
   maxLen = 100,
 }: Props) {
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const value = useMemo(() => scopeNote ?? "", [scopeNote]);
+  const value = useMemo(() => note ?? "", [note]);
 
   const setValue = (next: string) => {
     const clipped = next.slice(0, maxLen);
-    setGrazing({ scopeNote: clipped });
+    setGrazing({ note: clipped });
   };
 
   const openKeyboard = () => {
@@ -48,9 +48,9 @@ export default function GrazingScopeSelector({
       >
         <OptionGrid<GrazingScope>
           options={SCOPES}
-          value={scope}
+          value={workScope}
           columns={3}
-          onChange={(opt) => setGrazing({ scope: opt })}
+          onChange={(opt) => setGrazing({ workScope: opt })}
         />
         <div className="mt-3">
           <input

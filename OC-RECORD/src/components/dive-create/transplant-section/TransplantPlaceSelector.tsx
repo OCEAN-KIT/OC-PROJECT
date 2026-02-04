@@ -9,12 +9,12 @@ import type { OcRecordForm, TransplantPlace } from "@/types/form";
 const TRANSPLANT_PLACES: TransplantPlace[] = ["어초", "암반", "기타"];
 
 type Props = {
-  transplantPlace: OcRecordForm["transplant"]["transplantPlace"];
+  locationType: OcRecordForm["transplant"]["locationType"];
   setTransplant: (patch: Partial<OcRecordForm["transplant"]>) => void;
 };
 
 export default function TransplantPlaceSelector({
-  transplantPlace,
+  locationType,
   setTransplant,
 }: Props) {
   return (
@@ -24,9 +24,9 @@ export default function TransplantPlaceSelector({
     >
       <OptionGrid<TransplantPlace>
         options={TRANSPLANT_PLACES}
-        value={transplantPlace}
+        value={locationType}
         columns={3}
-        onChange={(opt) => setTransplant({ transplantPlace: opt })}
+        onChange={(opt) => setTransplant({ locationType: opt })}
       />
     </SelectCard>
   );

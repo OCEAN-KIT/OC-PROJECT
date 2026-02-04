@@ -14,17 +14,17 @@ type Props = {
 export default function CleanupWrapper({ form, setCleanup }: Props) {
   return (
     <>
-      <CleanupTypeSelector types={form.cleanup.types} setCleanup={setCleanup} />
+      <CleanupTypeSelector wasteTypes={form.cleanup.wasteTypes} setCleanup={setCleanup} />
       <LiftingMethodSelector
-        liftingMethod={form.cleanup.liftingMethod}
+        method={form.cleanup.method}
         setCleanup={setCleanup}
       />
       <CleanupCollectedAmount
-        collectedAmount={form.cleanup.collectedAmount}
+        collectionAmount={form.cleanup.collectionAmount}
         setCleanup={setCleanup}
       />
       <UncollectedWasteScaleSelector
-        uncollectedWasteScale={form.cleanup.uncollectedWasteScale}
+        uncollectedScale={form.cleanup.uncollectedScale}
         setCleanup={setCleanup}
       />
     </>

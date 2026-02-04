@@ -12,7 +12,7 @@ type Props = {
   setMonitoring: (patch: Partial<OcRecordForm["monitoring"]>) => void;
 };
 
-type TextFieldType = "bladeLength" | "maxBladeWidth";
+type TextFieldType = "leafLength" | "maxLeafWidth";
 
 export default function PreciseMeasurement({
   monitoring,
@@ -20,8 +20,8 @@ export default function PreciseMeasurement({
 }: Props) {
   const [activeField, setActiveField] = useState<TextFieldType | null>(null);
   const inputRefs = {
-    bladeLength: useRef<HTMLInputElement | null>(null),
-    maxBladeWidth: useRef<HTMLInputElement | null>(null),
+    leafLength: useRef<HTMLInputElement | null>(null),
+    maxLeafWidth: useRef<HTMLInputElement | null>(null),
   };
 
   const openKeyboard = (field: TextFieldType) => {
@@ -37,7 +37,7 @@ export default function PreciseMeasurement({
 
   const togglePreciseMeasurement = () => {
     setMonitoring({
-      hasPreciseMeasurement: !monitoring.hasPreciseMeasurement,
+      precisionMeasurement: !monitoring.precisionMeasurement,
     });
   };
 
@@ -52,7 +52,7 @@ export default function PreciseMeasurement({
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"
-              checked={monitoring.hasPreciseMeasurement}
+              checked={monitoring.precisionMeasurement}
               onChange={togglePreciseMeasurement}
               className="w-4 h-4 rounded border-gray-300 text-sky-600 focus:ring-sky-500"
             />
@@ -62,20 +62,20 @@ export default function PreciseMeasurement({
           </label>
 
           {/* 조건부 입력 필드 */}
-          {monitoring.hasPreciseMeasurement && (
+          {monitoring.precisionMeasurement && (
             <div className="space-y-3 pt-2">
               <div>
                 <label className="block text-[12px] text-gray-600 mb-1.5">
                   엽장
                 </label>
                 <input
-                  ref={inputRefs.bladeLength}
+                  ref={inputRefs.leafLength}
                   className="w-full h-11 rounded-xl border border-gray-200 px-3 text-[14px] outline-none"
-                  value={monitoring.bladeLength}
+                  value={monitoring.leafLength}
                   readOnly
                   inputMode="none"
-                  onFocus={() => openKeyboard("bladeLength")}
-                  onClick={() => openKeyboard("bladeLength")}
+                  onFocus={() => openKeyboard("leafLength")}
+                  onClick={() => openKeyboard("leafLength")}
                 />
               </div>
               <div>
@@ -83,13 +83,13 @@ export default function PreciseMeasurement({
                   최대엽폭
                 </label>
                 <input
-                  ref={inputRefs.maxBladeWidth}
+                  ref={inputRefs.maxLeafWidth}
                   className="w-full h-11 rounded-xl border border-gray-200 px-3 text-[14px] outline-none"
-                  value={monitoring.maxBladeWidth}
+                  value={monitoring.maxLeafWidth}
                   readOnly
                   inputMode="none"
-                  onFocus={() => openKeyboard("maxBladeWidth")}
-                  onClick={() => openKeyboard("maxBladeWidth")}
+                  onFocus={() => openKeyboard("maxLeafWidth")}
+                  onClick={() => openKeyboard("maxLeafWidth")}
                 />
               </div>
             </div>

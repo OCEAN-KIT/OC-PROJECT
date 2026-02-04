@@ -83,62 +83,62 @@ export type UncollectedWasteScale = "소" | "중" | "대";
 export type OcRecordForm = {
   basic: {
     siteName: string; // 활동 장소명(사이트명)
-    date: string; // 활동 날짜 (YYYY-MM-DD)
-    time: string; // 활동 시간 (HH:MM)
-    diveRound: number; // 다이빙 회차
-    workType: WorkType; // 작업 유형
-    workers: string; // 작업자(참여자) 정보 텍스트
+    date: string; // 활동 날짜 (YYYY-MM-DD) → API: recordDate
+    time: string; // 활동 시간 (HH:MM) - 프론트 전용
+    diveRound: number; // 다이빙 회차 → API: divingRound
+    workType: WorkType; // 작업 유형 → API: activityType
+    workers: string; // 작업자(참여자) 정보 텍스트 - 프론트 전용 (API: participants로 분리)
   };
   env: {
     avgDepthM: string; // 평균 수심(m)
     maxDepthM: string; // 최대 수심(m)
     waterTempC: string; // 수온(°C)
-    visibility: Rating3; // 시야(나쁨/보통/좋음)
-    wave: Rating3; // 파도(나쁨/보통/좋음)
-    surge: Rating3; // 서지(나쁨/보통/좋음)
-    current: Rating3; // 조류(나쁨/보통/좋음)
+    visibilityStatus: Rating3; // 시야(나쁨/보통/좋음)
+    waveStatus: Rating3; // 파도(나쁨/보통/좋음)
+    surgeStatus: Rating3; // 서지(나쁨/보통/좋음)
+    currentStatus: Rating3; // 조류(나쁨/보통/좋음)
   };
   transplant: {
-    transplantType: TransplantType; // 이식 대상 종류(감태/다시마/곰피/모자반/대황/기타)
-    transplantPlace: TransplantPlace; // 이식 장소(어초/암반/기타)
-    transplantSystem: TransplantSystem; // 이식 방식(로프 연승/종자 직접 이식/이식용 모듈/기타)
-    transplantScale: TransplantScale; // 이식 규모(텍스트)
-    healthGrade: HealthGrade; // 건강 상태 등급(A/B/C/D)
+    speciesType: TransplantType; // 이식 대상 종류(감태/다시마/곰피/모자반/대황/기타)
+    locationType: TransplantPlace; // 이식 장소(어초/암반/기타)
+    methodType: TransplantSystem; // 이식 방식(로프 연승/종자 직접 이식/이식용 모듈/기타)
+    scale: TransplantScale; // 이식 규모(텍스트)
+    healthStatus: HealthGrade; // 건강 상태 등급(A/B/C/D)
   };
   grazing: {
-    targets: GrazingTarget[]; // 대상 생물(복수 선택: 성게/소라/전복/불가사리/기타)
-    density: GrazingDensity; // 작업 전 체감 밀도(적음/보통/많음)
-    scope: GrazingScope; // 작업 범위(국소/구역/광범위)
-    scopeNote: string; // 작업 범위 보충 설명(텍스트)
-    collectedAmount: GrazingCollectedAmount; // 수거량(텍스트)
+    targetSpecies: GrazingTarget[]; // 대상 생물(복수 선택: 성게/소라/전복/불가사리/기타)
+    densityBeforeWork: GrazingDensity; // 작업 전 체감 밀도(적음/보통/많음)
+    workScope: GrazingScope; // 작업 범위(국소/구역/광범위)
+    note: string; // 작업 범위 보충 설명(텍스트)
+    collectionAmount: GrazingCollectedAmount; // 수거량(텍스트)
   };
   substrate: {
-    target: SubstrateTarget; // 작업 대상(암반/어초/구조물/기타)
-    range: SubstrateRange; // 작업 범위(텍스트)
-    condition: SubstrateCondition; // 작업 후 기질 상태(텍스트)
+    targetType: SubstrateTarget; // 작업 대상(암반/어초/구조물/기타)
+    workScope: SubstrateRange; // 작업 범위(텍스트)
+    substrateState: SubstrateCondition; // 작업 후 기질 상태(텍스트)
   };
   monitoring: {
     // 적지조사
-    entryCoord: string; // 입수 좌표
-    exitCoord: string; // 출수 좌표
+    entryCoordinate: string; // 입수 좌표
+    exitCoordinate: string; // 출수 좌표
     direction: string; // 진행 방위
-    terrainType: TerrainType; // 지형 구성
-    whiteningLevel: WhiteningLevel; // 갯녹음 정도
+    terrain: TerrainType; // 지형 구성
+    barrenExtent: WhiteningLevel; // 갯녹음 정도
     grazerDistribution: GrazerDistribution; // 조식동물 분포
-    rockCharacteristic: RockCharacteristic; // 암반 특성
-    transplantSuitability: TransplantSuitability; // 해조 이식 적합성
+    rockFeatures: RockCharacteristic[]; // [배열로 변경됨] 암반 특성 (복수 선택)
+    suitability: TransplantSuitability; // 해조 이식 적합성
     // 해조류 상태
-    measurementId: string; // 측정 식별번호
-    algaeCondition: AlgaeCondition; // 생육 상태
+    seaweedIdNumber: string; // 측정 식별번호
+    seaweedHealthStatus: AlgaeCondition; // 생육 상태
     // 정밀 측정 (선택적)
-    hasPreciseMeasurement: boolean; // 정밀 측정 개체 있음
-    bladeLength: string; // 엽장
-    maxBladeWidth: string; // 최대엽폭
+    precisionMeasurement: boolean; // 정밀 측정 개체 있음
+    leafLength: string; // 엽장
+    maxLeafWidth: string; // 최대엽폭
   };
   cleanup: {
-    types: CleanupType[]; // 유형(복수 선택)
-    liftingMethod: LiftingMethod; // 인양 방식
-    collectedAmount: string; // 수거량
-    uncollectedWasteScale: UncollectedWasteScale; // 미수거 폐기물 규모
+    wasteTypes: CleanupType[]; // 유형(복수 선택)
+    method: LiftingMethod; // 인양 방식
+    collectionAmount: string; // 수거량
+    uncollectedScale: UncollectedWasteScale; // 미수거 폐기물 규모
   };
 };

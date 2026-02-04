@@ -15,20 +15,20 @@ export default function GrazingWrapper({ form, setGrazing }: Props) {
   return (
     <>
       <GrazingTargetSelector
-        targets={form.grazing.targets}
+        targetSpecies={form.grazing.targetSpecies}
         setGrazing={setGrazing}
       />
       <GrazingDensitySelector
-        density={form.grazing.density}
+        densityBeforeWork={form.grazing.densityBeforeWork}
         setGrazing={setGrazing}
       />
       <GrazingScopeSelector
-        scope={form.grazing.scope}
-        scopeNote={form.grazing.scopeNote}
+        workScope={form.grazing.workScope}
+        note={form.grazing.note}
         setGrazing={setGrazing}
       />
       <GrazingCollectedAmount
-        collectedAmount={form.grazing.collectedAmount}
+        collectionAmount={form.grazing.collectionAmount}
         setGrazing={setGrazing}
       />
     </>

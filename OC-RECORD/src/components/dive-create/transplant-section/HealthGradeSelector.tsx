@@ -7,14 +7,14 @@ import { Activity } from "lucide-react";
 import type { HealthGrade, OcRecordForm } from "@/types/form";
 
 type Props = {
-  healthGrade: OcRecordForm["transplant"]["healthGrade"];
+  healthStatus: OcRecordForm["transplant"]["healthStatus"];
   setTransplant: (patch: Partial<OcRecordForm["transplant"]>) => void;
 };
 
 const GRADES: HealthGrade[] = ["A", "B", "C", "D"];
 
 export default function HealthGradeSelector({
-  healthGrade,
+  healthStatus,
   setTransplant,
 }: Props) {
   return (
@@ -24,9 +24,9 @@ export default function HealthGradeSelector({
     >
       <OptionGrid<HealthGrade>
         options={GRADES}
-        value={healthGrade}
+        value={healthStatus}
         columns={4}
-        onChange={(opt) => setTransplant({ healthGrade: opt })}
+        onChange={(opt) => setTransplant({ healthStatus: opt })}
       />
     </SelectCard>
   );

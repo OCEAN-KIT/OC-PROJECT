@@ -9,11 +9,11 @@ import type { OcRecordForm, GrazingDensity } from "@/types/form";
 const DENSITIES: GrazingDensity[] = ["적음", "보통", "많음"];
 
 type Props = {
-  density: OcRecordForm["grazing"]["density"];
+  densityBeforeWork: OcRecordForm["grazing"]["densityBeforeWork"];
   setGrazing: (patch: Partial<OcRecordForm["grazing"]>) => void;
 };
 
-export default function GrazingDensitySelector({ density, setGrazing }: Props) {
+export default function GrazingDensitySelector({ densityBeforeWork, setGrazing }: Props) {
   return (
     <SelectCard
       title="작업 전 체감 밀도"
@@ -21,9 +21,9 @@ export default function GrazingDensitySelector({ density, setGrazing }: Props) {
     >
       <OptionGrid<GrazingDensity>
         options={DENSITIES}
-        value={density}
+        value={densityBeforeWork}
         columns={3}
-        onChange={(opt) => setGrazing({ density: opt })}
+        onChange={(opt) => setGrazing({ densityBeforeWork: opt })}
       />
     </SelectCard>
   );

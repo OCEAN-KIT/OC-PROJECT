@@ -7,7 +7,7 @@ import { Network } from "lucide-react";
 import type { OcRecordForm, TransplantSystem } from "@/types/form";
 
 type Props = {
-  transplantSystem: OcRecordForm["transplant"]["transplantSystem"];
+  methodType: OcRecordForm["transplant"]["methodType"];
   setTransplant: (patch: Partial<OcRecordForm["transplant"]>) => void;
 };
 
@@ -19,7 +19,7 @@ const TRANSPLANT_SYSTEMS: TransplantSystem[] = [
 ];
 
 export default function TransplantSystemSelector({
-  transplantSystem,
+  methodType,
   setTransplant,
 }: Props) {
   return (
@@ -29,9 +29,9 @@ export default function TransplantSystemSelector({
     >
       <OptionGrid<TransplantSystem>
         options={TRANSPLANT_SYSTEMS}
-        value={transplantSystem}
+        value={methodType}
         columns={2}
-        onChange={(opt) => setTransplant({ transplantSystem: opt })}
+        onChange={(opt) => setTransplant({ methodType: opt })}
       />
     </SelectCard>
   );

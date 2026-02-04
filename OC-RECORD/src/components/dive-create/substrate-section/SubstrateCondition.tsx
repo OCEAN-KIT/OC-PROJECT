@@ -8,24 +8,24 @@ import type { OcRecordForm } from "@/types/form";
 import CheonjiinKeyboard from "@/components/keyboard/CheonjiinKeyboard";
 
 type Props = {
-  condition: OcRecordForm["substrate"]["condition"];
+  substrateState: OcRecordForm["substrate"]["substrateState"];
   setSubstrate: (patch: Partial<OcRecordForm["substrate"]>) => void;
   maxLen?: number;
 };
 
 export default function SubstrateCondition({
-  condition,
+  substrateState,
   setSubstrate,
   maxLen = 100,
 }: Props) {
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const value = useMemo(() => condition ?? "", [condition]);
+  const value = useMemo(() => substrateState ?? "", [substrateState]);
 
   const setValue = (next: string) => {
     const clipped = next.slice(0, maxLen);
-    setSubstrate({ condition: clipped });
+    setSubstrate({ substrateState: clipped });
   };
 
   const openKeyboard = () => {

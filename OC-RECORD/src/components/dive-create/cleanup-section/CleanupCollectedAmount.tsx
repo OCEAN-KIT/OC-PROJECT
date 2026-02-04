@@ -8,24 +8,24 @@ import type { OcRecordForm } from "@/types/form";
 import CheonjiinKeyboard from "@/components/keyboard/CheonjiinKeyboard";
 
 type Props = {
-  collectedAmount: OcRecordForm["cleanup"]["collectedAmount"];
+  collectionAmount: OcRecordForm["cleanup"]["collectionAmount"];
   setCleanup: (patch: Partial<OcRecordForm["cleanup"]>) => void;
   maxLen?: number;
 };
 
 export default function CleanupCollectedAmount({
-  collectedAmount,
+  collectionAmount,
   setCleanup,
   maxLen = 50,
 }: Props) {
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const value = useMemo(() => collectedAmount ?? "", [collectedAmount]);
+  const value = useMemo(() => collectionAmount ?? "", [collectionAmount]);
 
   const setValue = (next: string) => {
     const clipped = next.slice(0, maxLen);
-    setCleanup({ collectedAmount: clipped });
+    setCleanup({ collectionAmount: clipped });
   };
 
   const openKeyboard = () => {

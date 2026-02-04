@@ -10,6 +10,7 @@ import VisibilitySelector from "./VisibilitySelector";
 import CurrentSelector from "./CurrentSelector";
 import WaveSelector from "./WaveSelector";
 import SurgeSelector from "./SurgeSelector";
+import WorkersInput from "./WorkerInput";
 
 type Props = {
   form: OcRecordForm;
@@ -55,6 +56,8 @@ export default function CommonWrapper({
 
       <DiveRoundSelector diveRound={form.basic.diveRound} setBasic={setBasic} />
 
+      <WorkersInput workers={form.basic.workers} setBasic={setBasic} />
+
       <DepthTempInput
         avgDepthM={form.env.avgDepthM}
         maxDepthM={form.env.maxDepthM}
@@ -62,10 +65,16 @@ export default function CommonWrapper({
         setEnv={setEnv}
       />
       <div className="grid grid-cols-4 gap-2">
-        <VisibilitySelector visibility={form.env.visibility} setEnv={setEnv} />
-        <WaveSelector wave={form.env.wave} setEnv={setEnv} />
-        <SurgeSelector surge={form.env.surge} setEnv={setEnv} />
-        <CurrentSelector current={form.env.current} setEnv={setEnv} />
+        <VisibilitySelector
+          visibilityStatus={form.env.visibilityStatus}
+          setEnv={setEnv}
+        />
+        <WaveSelector waveStatus={form.env.waveStatus} setEnv={setEnv} />
+        <SurgeSelector surgeStatus={form.env.surgeStatus} setEnv={setEnv} />
+        <CurrentSelector
+          currentStatus={form.env.currentStatus}
+          setEnv={setEnv}
+        />
       </div>
     </>
   );
