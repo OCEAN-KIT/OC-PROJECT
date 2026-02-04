@@ -10,6 +10,8 @@ import {
   getDraftById,
   upsertDraft,
 } from "@/utils/diveDraftStorage";
+import { useCreateSubmission } from "@/hooks/useCreateSubmission";
+import { validateSubmission } from "@/utils/validateSubmission";
 
 import type { OcRecordForm } from "@/types/form";
 
@@ -18,10 +20,12 @@ import DetailsInput from "@/components/dive-create/common-section/DetailsInput";
 import MediaUploadSection from "@/components/dive-create/common-section/MediaUploadSection";
 import WorkTypeSection from "@/components/dive-create/WorkTypeSection";
 import CommonWrapper from "@/components/dive-create/common-section/CommonWrapper";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 const DEBUG = true;
 
 export default function DiveCreatePage() {
+  useAuthGuard({ mode: "gotoLogin" });
   const router = useRouter();
 
   // ========= 임시저장 draft =========
@@ -55,50 +59,50 @@ export default function DiveCreatePage() {
       avgDepthM: "",
       maxDepthM: "",
       waterTempC: "",
-      visibility: "보통",
-      wave: "보통",
-      surge: "보통",
-      current: "보통",
+      visibilityStatus: "보통",
+      waveStatus: "보통",
+      surgeStatus: "보통",
+      currentStatus: "보통",
     },
     transplant: {
-      transplantType: "감태",
-      transplantPlace: "어초",
-      transplantSystem: "로프 연승",
-      transplantScale: "",
-      healthGrade: "A",
+      speciesType: "감태",
+      locationType: "어초",
+      methodType: "로프 연승",
+      scale: "",
+      healthStatus: "A",
     },
     grazing: {
-      targets: ["성게"],
-      density: "적음",
-      scope: "국소",
-      scopeNote: "",
-      collectedAmount: "",
+      targetSpecies: ["성게"],
+      densityBeforeWork: "적음",
+      workScope: "국소",
+      note: "",
+      collectionAmount: "",
     },
     substrate: {
-      target: "암반",
-      range: "",
-      condition: "",
+      targetType: "암반",
+      workScope: "",
+      substrateState: "",
     },
     monitoring: {
-      entryCoord: "",
-      exitCoord: "",
+      entryCoordinate: "",
+      exitCoordinate: "",
       direction: "",
-      terrainType: "암반",
-      whiteningLevel: "없음",
+      terrain: "암반",
+      barrenExtent: "없음",
       grazerDistribution: "낮음",
-      rockCharacteristic: "매끈",
-      transplantSuitability: "적합",
-      measurementId: "",
-      algaeCondition: "양호",
-      hasPreciseMeasurement: false,
-      bladeLength: "",
-      maxBladeWidth: "",
+      rockFeatures: ["매끈"], // [배열로 변경됨]
+      suitability: "적합",
+      seaweedIdNumber: "",
+      seaweedHealthStatus: "양호",
+      precisionMeasurement: false,
+      leafLength: "",
+      maxLeafWidth: "",
     },
     cleanup: {
-      types: [],
-      liftingMethod: "수작업",
-      collectedAmount: "",
-      uncollectedWasteScale: "소",
+      wasteTypes: [],
+      method: "수작업",
+      collectionAmount: "",
+      uncollectedScale: "소",
     },
   });
 
@@ -148,6 +152,12 @@ export default function DiveCreatePage() {
   // ========= 작업내용 =========
   const DETAILS_MAX = 2000;
   const [details, setDetails] = useState("");
+
+  // ========= 유효성 검증 에러 =========
+  const [validationError, setValidationError] = useState<string | null>(null);
+  useEffect(() => {
+    if (validationError) setValidationError(null);
+  }, [form, details]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ========= 첨부(사진/영상) =========
   const [attachments, setAttachments] = useState<File[]>([]);
@@ -220,10 +230,10 @@ export default function DiveCreatePage() {
       avgDepthM: existing.avgDepthM ?? form.env.avgDepthM,
       maxDepthM: existing.maxDepthM ?? form.env.maxDepthM,
       waterTempC: existing.waterTempC ?? form.env.waterTempC,
-      visibility: existing.visibility ?? form.env.visibility,
-      wave: existing.wave ?? form.env.wave,
-      surge: existing.surge ?? form.env.surge,
-      current: existing.current ?? form.env.current,
+      visibilityStatus: existing.visibilityStatus ?? form.env.visibilityStatus,
+      waveStatus: existing.waveStatus ?? form.env.waveStatus,
+      surgeStatus: existing.surgeStatus ?? form.env.surgeStatus,
+      currentStatus: existing.currentStatus ?? form.env.currentStatus,
     });
 
     // workType에 따라 해당 섹션만 복원
@@ -277,10 +287,10 @@ export default function DiveCreatePage() {
       avgDepthM: form.env.avgDepthM,
       maxDepthM: form.env.maxDepthM,
       waterTempC: form.env.waterTempC,
-      visibility: form.env.visibility,
-      wave: form.env.wave,
-      surge: form.env.surge,
-      current: form.env.current,
+      visibilityStatus: form.env.visibilityStatus,
+      waveStatus: form.env.waveStatus,
+      surgeStatus: form.env.surgeStatus,
+      currentStatus: form.env.currentStatus,
 
       // details
       details,
@@ -331,16 +341,34 @@ export default function DiveCreatePage() {
     alert("임시 저장했습니다.");
   };
 
-  // ========= 제출(아직 API 없음) =========
-  const [loading, setLoading] = useState(false);
-  const handleSubmit = async () => {
-    // 서버 업로드/제출 로직은 나중에 붙일 거라 지금은 막아둠
-    setLoading(true);
-    try {
-      alert("아직 제출 API 연결 전입니다. (임시 저장만 가능)");
-    } finally {
-      setLoading(false);
+  // ========= 제출 =========
+  const { mutate: submitMutation, isPending: loading } = useCreateSubmission();
+
+  const handleSubmit = () => {
+    const error = validateSubmission(form, details);
+    if (error) {
+      setValidationError(error);
+      return;
     }
+    setValidationError(null);
+
+    submitMutation(
+      {
+        form,
+        details,
+        files: attachments,
+      },
+      {
+        onSuccess: () => {
+          alert("제출이 완료되었습니다.");
+          router.push("/");
+        },
+        onError: (err) => {
+          console.error("[submit] error:", err);
+          alert(err.message || "제출 중 오류가 발생했습니다.");
+        },
+      },
+    );
   };
 
   return (
@@ -397,6 +425,12 @@ export default function DiveCreatePage() {
           onRemove={removeOne}
           maxCount={10}
         />
+
+        {validationError && (
+          <p className="text-[13px] text-red-500 text-center">
+            {validationError}
+          </p>
+        )}
 
         <div className="mx-auto max-w-105 py-3 grid grid-cols-2 gap-3">
           <button

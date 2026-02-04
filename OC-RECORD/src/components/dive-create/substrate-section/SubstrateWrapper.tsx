@@ -14,12 +14,12 @@ export default function SubstrateWrapper({ form, setSubstrate }: Props) {
   return (
     <>
       <SubstrateTargetSelector
-        target={form.substrate.target}
+        targetType={form.substrate.targetType}
         setSubstrate={setSubstrate}
       />
-      <SubstrateRange range={form.substrate.range} setSubstrate={setSubstrate} />
+      <SubstrateRange workScope={form.substrate.workScope} setSubstrate={setSubstrate} />
       <SubstrateCondition
-        condition={form.substrate.condition}
+        substrateState={form.substrate.substrateState}
         setSubstrate={setSubstrate}
       />
     </>

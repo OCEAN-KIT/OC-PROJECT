@@ -9,12 +9,12 @@ import type { OcRecordForm, SubstrateTarget } from "@/types/form";
 const SUBSTRATE_TARGETS: SubstrateTarget[] = ["암반", "어초", "구조물", "기타"];
 
 type Props = {
-  target: OcRecordForm["substrate"]["target"];
+  targetType: OcRecordForm["substrate"]["targetType"];
   setSubstrate: (patch: Partial<OcRecordForm["substrate"]>) => void;
 };
 
 export default function SubstrateTargetSelector({
-  target,
+  targetType,
   setSubstrate,
 }: Props) {
   return (
@@ -24,9 +24,9 @@ export default function SubstrateTargetSelector({
     >
       <OptionGrid<SubstrateTarget>
         options={SUBSTRATE_TARGETS}
-        value={target}
+        value={targetType}
         columns={4}
-        onChange={(opt) => setSubstrate({ target: opt })}
+        onChange={(opt) => setSubstrate({ targetType: opt })}
       />
     </SelectCard>
   );

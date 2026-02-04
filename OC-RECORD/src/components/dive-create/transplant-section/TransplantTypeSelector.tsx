@@ -16,12 +16,12 @@ const TRANSPLANT_TYPES: TransplantType[] = [
 ];
 
 type Props = {
-  transplantType: OcRecordForm["transplant"]["transplantType"];
+  speciesType: OcRecordForm["transplant"]["speciesType"];
   setTransplant: (patch: Partial<OcRecordForm["transplant"]>) => void;
 };
 
 export default function TransplantTypeSelector({
-  transplantType,
+  speciesType,
   setTransplant,
 }: Props) {
   return (
@@ -31,9 +31,9 @@ export default function TransplantTypeSelector({
     >
       <OptionGrid<TransplantType>
         options={TRANSPLANT_TYPES}
-        value={transplantType}
+        value={speciesType}
         columns={3}
-        onChange={(opt) => setTransplant({ transplantType: opt })}
+        onChange={(opt) => setTransplant({ speciesType: opt })}
       />
     </SelectCard>
   );

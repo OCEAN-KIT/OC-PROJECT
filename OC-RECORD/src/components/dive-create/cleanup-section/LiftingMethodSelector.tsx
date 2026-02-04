@@ -9,12 +9,12 @@ import type { OcRecordForm, LiftingMethod } from "@/types/form";
 const LIFTING_METHODS: LiftingMethod[] = ["수작업", "인양백", "크레인"];
 
 type Props = {
-  liftingMethod: OcRecordForm["cleanup"]["liftingMethod"];
+  method: OcRecordForm["cleanup"]["method"];
   setCleanup: (patch: Partial<OcRecordForm["cleanup"]>) => void;
 };
 
 export default function LiftingMethodSelector({
-  liftingMethod,
+  method,
   setCleanup,
 }: Props) {
   return (
@@ -24,9 +24,9 @@ export default function LiftingMethodSelector({
     >
       <OptionGrid<LiftingMethod>
         options={LIFTING_METHODS}
-        value={liftingMethod}
+        value={method}
         columns={3}
-        onChange={(opt) => setCleanup({ liftingMethod: opt })}
+        onChange={(opt) => setCleanup({ method: opt })}
       />
     </SelectCard>
   );

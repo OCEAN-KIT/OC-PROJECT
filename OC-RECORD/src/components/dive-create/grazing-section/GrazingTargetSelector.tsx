@@ -14,11 +14,11 @@ const GRAZING_TARGETS: GrazingTarget[] = [
 ];
 
 type Props = {
-  targets: OcRecordForm["grazing"]["targets"];
+  targetSpecies: OcRecordForm["grazing"]["targetSpecies"];
   setGrazing: (patch: Partial<OcRecordForm["grazing"]>) => void;
 };
 
-export default function GrazingTargetSelector({ targets, setGrazing }: Props) {
+export default function GrazingTargetSelector({ targetSpecies, setGrazing }: Props) {
   return (
     <section>
       <div className="flex items-center gap-2 mb-2">
@@ -31,9 +31,9 @@ export default function GrazingTargetSelector({ targets, setGrazing }: Props) {
 
       <MultiOptionGrid<GrazingTarget>
         options={GRAZING_TARGETS}
-        value={targets}
+        value={targetSpecies}
         columns={3}
-        onChange={(selected) => setGrazing({ targets: selected })}
+        onChange={(selected) => setGrazing({ targetSpecies: selected })}
       />
     </section>
   );

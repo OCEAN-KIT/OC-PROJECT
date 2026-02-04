@@ -8,24 +8,24 @@ import type { OcRecordForm } from "@/types/form";
 import CheonjiinKeyboard from "@/components/keyboard/CheonjiinKeyboard";
 
 type Props = {
-  range: OcRecordForm["substrate"]["range"];
+  workScope: OcRecordForm["substrate"]["workScope"];
   setSubstrate: (patch: Partial<OcRecordForm["substrate"]>) => void;
   maxLen?: number;
 };
 
 export default function SubstrateRange({
-  range,
+  workScope,
   setSubstrate,
   maxLen = 100,
 }: Props) {
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const value = useMemo(() => range ?? "", [range]);
+  const value = useMemo(() => workScope ?? "", [workScope]);
 
   const setValue = (next: string) => {
     const clipped = next.slice(0, maxLen);
-    setSubstrate({ range: clipped });
+    setSubstrate({ workScope: clipped });
   };
 
   const openKeyboard = () => {
@@ -40,6 +40,7 @@ export default function SubstrateRange({
       <SelectCard
         title="작업 범위"
         icon={<Maximize2 className="h-4 w-4 text-sky-600" />}
+        required
       >
         <input
           ref={inputRef}

@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchSubmissions } from "@/api/submissions";
+import { queryKeys } from "@/react-query/keys";
 import type { Submission } from "@/api/submissions";
 import MobileSubmissionList from "@/components/submission/submission-list";
 import { useRouter } from "next/navigation";
@@ -17,7 +18,7 @@ export default function MobileSubmissionsPage() {
   const [page, setPage] = useState(0);
 
   const { data, isFetching, refetch } = useQuery<SubmissionsPage>({
-    queryKey: ["submissions", page],
+    queryKey: queryKeys.submissions.page(page),
     queryFn: () => fetchSubmissions({ page, size: 20 }),
     placeholderData: (prev) => prev,
     staleTime: 30_000,

@@ -6,13 +6,13 @@ import OptionGrid from "@/components/ui/OptionGrid";
 import type { OcRecordForm, Rating3 } from "@/types/form";
 
 type Props = {
-  wave: OcRecordForm["env"]["wave"];
+  waveStatus: OcRecordForm["env"]["waveStatus"];
   setEnv: (patch: Partial<OcRecordForm["env"]>) => void;
 };
 
 const OPTIONS: Rating3[] = ["나쁨", "보통", "좋음"];
 
-export default function WaveSelector({ wave, setEnv }: Props) {
+export default function WaveSelector({ waveStatus, setEnv }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -43,7 +43,7 @@ export default function WaveSelector({ wave, setEnv }: Props) {
 
         <div className="mt-1 flex items-center justify-between">
           <span className="text-[13px] font-semibold text-sky-700 truncate">
-            {wave}
+            {waveStatus}
           </span>
           <ChevronDown
             className={[
@@ -62,14 +62,14 @@ export default function WaveSelector({ wave, setEnv }: Props) {
         >
           <div className="grid grid-cols-1 gap-2">
             {OPTIONS.map((opt) => {
-              const active = wave === opt;
+              const active = waveStatus === opt;
 
               return (
                 <button
                   key={opt}
                   type="button"
                   onClick={() => {
-                    setEnv({ wave: opt });
+                    setEnv({ waveStatus: opt });
                     setOpen(false);
                   }}
                   className={[

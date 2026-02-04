@@ -5,13 +5,13 @@ import { Eye, ChevronDown } from "lucide-react";
 import type { OcRecordForm, Rating3 } from "@/types/form";
 
 type Props = {
-  visibility: OcRecordForm["env"]["visibility"];
+  visibilityStatus: OcRecordForm["env"]["visibilityStatus"];
   setEnv: (patch: Partial<OcRecordForm["env"]>) => void;
 };
 
 const OPTIONS: Rating3[] = ["나쁨", "보통", "좋음"];
 
-export default function VisibilitySelector({ visibility, setEnv }: Props) {
+export default function VisibilitySelector({ visibilityStatus, setEnv }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -42,7 +42,7 @@ export default function VisibilitySelector({ visibility, setEnv }: Props) {
 
         <div className="mt-1 flex items-center justify-between">
           <span className="text-[13px] font-semibold text-sky-700 truncate">
-            {visibility}
+            {visibilityStatus}
           </span>
           <ChevronDown
             className={[
@@ -61,14 +61,14 @@ export default function VisibilitySelector({ visibility, setEnv }: Props) {
         >
           <div className="grid grid-cols-1 gap-2">
             {OPTIONS.map((opt) => {
-              const active = visibility === opt;
+              const active = visibilityStatus === opt;
 
               return (
                 <button
                   key={opt}
                   type="button"
                   onClick={() => {
-                    setEnv({ visibility: opt });
+                    setEnv({ visibilityStatus: opt });
                     setOpen(false);
                   }}
                   className={[

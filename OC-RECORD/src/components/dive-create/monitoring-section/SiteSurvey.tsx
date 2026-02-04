@@ -32,13 +32,13 @@ type Props = {
   setMonitoring: (patch: Partial<OcRecordForm["monitoring"]>) => void;
 };
 
-type TextFieldType = "entryCoord" | "exitCoord" | "direction";
+type TextFieldType = "entryCoordinate" | "exitCoordinate" | "direction";
 
 export default function SiteSurvey({ monitoring, setMonitoring }: Props) {
   const [activeField, setActiveField] = useState<TextFieldType | null>(null);
   const inputRefs = {
-    entryCoord: useRef<HTMLInputElement | null>(null),
-    exitCoord: useRef<HTMLInputElement | null>(null),
+    entryCoordinate: useRef<HTMLInputElement | null>(null),
+    exitCoordinate: useRef<HTMLInputElement | null>(null),
     direction: useRef<HTMLInputElement | null>(null),
   };
 
@@ -67,13 +67,13 @@ export default function SiteSurvey({ monitoring, setMonitoring }: Props) {
                 입수 좌표
               </label>
               <input
-                ref={inputRefs.entryCoord}
+                ref={inputRefs.entryCoordinate}
                 className="w-full h-11 rounded-xl border border-gray-200 px-3 text-[14px] outline-none"
-                value={monitoring.entryCoord}
+                value={monitoring.entryCoordinate}
                 readOnly
                 inputMode="none"
-                onFocus={() => openKeyboard("entryCoord")}
-                onClick={() => openKeyboard("entryCoord")}
+                onFocus={() => openKeyboard("entryCoordinate")}
+                onClick={() => openKeyboard("entryCoordinate")}
               />
             </div>
             <div>
@@ -81,13 +81,13 @@ export default function SiteSurvey({ monitoring, setMonitoring }: Props) {
                 출수 좌표
               </label>
               <input
-                ref={inputRefs.exitCoord}
+                ref={inputRefs.exitCoordinate}
                 className="w-full h-11 rounded-xl border border-gray-200 px-3 text-[14px] outline-none"
-                value={monitoring.exitCoord}
+                value={monitoring.exitCoordinate}
                 readOnly
                 inputMode="none"
-                onFocus={() => openKeyboard("exitCoord")}
-                onClick={() => openKeyboard("exitCoord")}
+                onFocus={() => openKeyboard("exitCoordinate")}
+                onClick={() => openKeyboard("exitCoordinate")}
               />
             </div>
             <div>
@@ -114,9 +114,9 @@ export default function SiteSurvey({ monitoring, setMonitoring }: Props) {
         >
           <OptionGrid<TerrainType>
             options={TERRAIN_TYPES}
-            value={monitoring.terrainType}
+            value={monitoring.terrain}
             columns={4}
-            onChange={(opt) => setMonitoring({ terrainType: opt })}
+            onChange={(opt) => setMonitoring({ terrain: opt })}
           />
         </SelectCard>
 
@@ -127,9 +127,9 @@ export default function SiteSurvey({ monitoring, setMonitoring }: Props) {
         >
           <OptionGrid<WhiteningLevel>
             options={WHITENING_LEVELS}
-            value={monitoring.whiteningLevel}
+            value={monitoring.barrenExtent}
             columns={3}
-            onChange={(opt) => setMonitoring({ whiteningLevel: opt })}
+            onChange={(opt) => setMonitoring({ barrenExtent: opt })}
           />
         </SelectCard>
 
@@ -143,13 +143,13 @@ export default function SiteSurvey({ monitoring, setMonitoring }: Props) {
           />
         </SelectCard>
 
-        {/* 암반 특성 */}
+        {/* 암반 특성 - [배열로 변경됨] 복수 선택 */}
         <SelectCard title="암반 특성">
           <OptionGrid<RockCharacteristic>
             options={ROCK_CHARACTERISTICS}
-            value={monitoring.rockCharacteristic}
+            value={monitoring.rockFeatures[0] ?? "매끈"}
             columns={3}
-            onChange={(opt) => setMonitoring({ rockCharacteristic: opt })}
+            onChange={(opt) => setMonitoring({ rockFeatures: [opt] })}
           />
         </SelectCard>
 
@@ -157,9 +157,9 @@ export default function SiteSurvey({ monitoring, setMonitoring }: Props) {
         <SelectCard title="해조 이식 적합성">
           <OptionGrid<TransplantSuitability>
             options={TRANSPLANT_SUITABILITIES}
-            value={monitoring.transplantSuitability}
+            value={monitoring.suitability}
             columns={2}
-            onChange={(opt) => setMonitoring({ transplantSuitability: opt })}
+            onChange={(opt) => setMonitoring({ suitability: opt })}
           />
         </SelectCard>
       </div>

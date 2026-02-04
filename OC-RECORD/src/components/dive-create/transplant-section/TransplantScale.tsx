@@ -8,25 +8,25 @@ import type { OcRecordForm } from "@/types/form";
 import CheonjiinKeyboard from "@/components/keyboard/CheonjiinKeyboard";
 
 type Props = {
-  transplantScale: OcRecordForm["transplant"]["transplantScale"];
+  scale: OcRecordForm["transplant"]["scale"];
   setTransplant: (patch: Partial<OcRecordForm["transplant"]>) => void;
   placeholder?: string;
   maxLen?: number;
 };
 
 export default function TransplantScale({
-  transplantScale,
+  scale,
   setTransplant,
   maxLen = 40,
 }: Props) {
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const value = useMemo(() => transplantScale ?? "", [transplantScale]);
+  const value = useMemo(() => scale ?? "", [scale]);
 
   const setValue = (next: string) => {
     const clipped = next.slice(0, maxLen);
-    setTransplant({ transplantScale: clipped });
+    setTransplant({ scale: clipped });
   };
 
   const openKeyboard = () => {
@@ -41,6 +41,7 @@ export default function TransplantScale({
       <SelectCard
         title="이식 규모"
         icon={<Ruler className="h-4 w-4 text-sky-600" />}
+        required
       >
         <input
           ref={inputRef}

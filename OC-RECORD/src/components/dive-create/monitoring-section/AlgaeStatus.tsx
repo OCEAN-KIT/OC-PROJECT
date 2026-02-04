@@ -27,7 +27,7 @@ export default function AlgaeStatus({ monitoring, setMonitoring }: Props) {
   const closeKeyboard = () => setOpen(false);
 
   const setValue = (value: string) => {
-    setMonitoring({ measurementId: value.slice(0, 50) });
+    setMonitoring({ seaweedIdNumber: value.slice(0, 50) });
   };
 
   return (
@@ -46,7 +46,7 @@ export default function AlgaeStatus({ monitoring, setMonitoring }: Props) {
               <input
                 ref={inputRef}
                 className="w-full h-11 rounded-xl border border-gray-200 px-3 text-[14px] outline-none"
-                value={monitoring.measurementId}
+                value={monitoring.seaweedIdNumber}
                 readOnly
                 inputMode="none"
                 onFocus={openKeyboard}
@@ -60,9 +60,9 @@ export default function AlgaeStatus({ monitoring, setMonitoring }: Props) {
         <SelectCard title="생육 상태">
           <OptionGrid<AlgaeCondition>
             options={ALGAE_CONDITIONS}
-            value={monitoring.algaeCondition}
+            value={monitoring.seaweedHealthStatus}
             columns={3}
-            onChange={(opt) => setMonitoring({ algaeCondition: opt })}
+            onChange={(opt) => setMonitoring({ seaweedHealthStatus: opt })}
           />
         </SelectCard>
       </div>
@@ -84,7 +84,7 @@ export default function AlgaeStatus({ monitoring, setMonitoring }: Props) {
             >
               <CheonjiinKeyboard
                 onChange={setValue}
-                initialValue={monitoring.measurementId}
+                initialValue={monitoring.seaweedIdNumber}
               />
             </div>
           </div>

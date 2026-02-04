@@ -15,11 +15,11 @@ const CLEANUP_TYPES: CleanupType[] = [
 ];
 
 type Props = {
-  types: OcRecordForm["cleanup"]["types"];
+  wasteTypes: OcRecordForm["cleanup"]["wasteTypes"];
   setCleanup: (patch: Partial<OcRecordForm["cleanup"]>) => void;
 };
 
-export default function CleanupTypeSelector({ types, setCleanup }: Props) {
+export default function CleanupTypeSelector({ wasteTypes, setCleanup }: Props) {
   return (
     <section>
       <div className="flex items-center gap-2 mb-2">
@@ -32,9 +32,9 @@ export default function CleanupTypeSelector({ types, setCleanup }: Props) {
 
       <MultiOptionGrid<CleanupType>
         options={CLEANUP_TYPES}
-        value={types}
+        value={wasteTypes}
         columns={3}
-        onChange={(selected) => setCleanup({ types: selected })}
+        onChange={(selected) => setCleanup({ wasteTypes: selected })}
       />
     </section>
   );
