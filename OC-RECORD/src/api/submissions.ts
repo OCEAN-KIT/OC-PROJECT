@@ -182,7 +182,7 @@ export async function createSubmission(
   console.log("[createSubmission] payload =", JSON.stringify(payload, null, 2));
   try {
     const { data } = await axiosInstance.post<SubmissionCreateResponse>(
-      "/api/admin/submissions",
+      "/api/admin/submissions/submit",
       payload,
     );
     return data;
