@@ -40,6 +40,7 @@ export default function SubstrateRange({
       <SelectCard
         title="작업 범위"
         icon={<Maximize2 className="h-4 w-4 text-sky-600" />}
+        required
       >
         <input
           ref={inputRef}

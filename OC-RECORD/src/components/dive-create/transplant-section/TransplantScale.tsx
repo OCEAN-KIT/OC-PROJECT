@@ -41,6 +41,7 @@ export default function TransplantScale({
       <SelectCard
         title="이식 규모"
         icon={<Ruler className="h-4 w-4 text-sky-600" />}
+        required
       >
         <input
           ref={inputRef}

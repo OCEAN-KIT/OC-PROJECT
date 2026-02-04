@@ -40,6 +40,7 @@ export default function SubstrateCondition({
       <SelectCard
         title="작업 후 기질 상태"
         icon={<FileCheck className="h-4 w-4 text-sky-600" />}
+        required
       >
         <input
           ref={inputRef}

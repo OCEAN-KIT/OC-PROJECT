@@ -93,7 +93,6 @@ export interface SubmissionCreateRequest {
     suitability: string;
     seaweedIdNumber: string;
     seaweedHealthStatus: string;
-    precisionMeasurement: boolean;
     leafLength: string;
     maxLeafWidth: string;
   };
@@ -182,7 +181,7 @@ export async function createSubmission(
   console.log("[createSubmission] payload =", JSON.stringify(payload, null, 2));
   try {
     const { data } = await axiosInstance.post<SubmissionCreateResponse>(
-      "/api/admin/submissions/submit",
+      "/api/admin/submissions",
       payload,
     );
     return data;
@@ -479,7 +478,6 @@ export function formToPayload({
         seaweedIdNumber: form.monitoring.seaweedIdNumber,
         seaweedHealthStatus:
           SEAWEED_HEALTH_MAP[form.monitoring.seaweedHealthStatus],
-        precisionMeasurement: form.monitoring.precisionMeasurement,
         leafLength: form.monitoring.leafLength,
         maxLeafWidth: form.monitoring.maxLeafWidth,
       };

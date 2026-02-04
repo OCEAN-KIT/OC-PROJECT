@@ -11,6 +11,7 @@ import {
   upsertDraft,
 } from "@/utils/diveDraftStorage";
 import { useCreateSubmission } from "@/hooks/useCreateSubmission";
+import { validateSubmission } from "@/utils/validateSubmission";
 
 import type { OcRecordForm } from "@/types/form";
 
@@ -19,10 +20,12 @@ import DetailsInput from "@/components/dive-create/common-section/DetailsInput";
 import MediaUploadSection from "@/components/dive-create/common-section/MediaUploadSection";
 import WorkTypeSection from "@/components/dive-create/WorkTypeSection";
 import CommonWrapper from "@/components/dive-create/common-section/CommonWrapper";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 const DEBUG = true;
 
 export default function DiveCreatePage() {
+  useAuthGuard({ mode: "gotoLogin" });
   const router = useRouter();
 
   // ========= 임시저장 draft =========
@@ -149,6 +152,12 @@ export default function DiveCreatePage() {
   // ========= 작업내용 =========
   const DETAILS_MAX = 2000;
   const [details, setDetails] = useState("");
+
+  // ========= 유효성 검증 에러 =========
+  const [validationError, setValidationError] = useState<string | null>(null);
+  useEffect(() => {
+    if (validationError) setValidationError(null);
+  }, [form, details]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ========= 첨부(사진/영상) =========
   const [attachments, setAttachments] = useState<File[]>([]);
@@ -336,11 +345,12 @@ export default function DiveCreatePage() {
   const { mutate: submitMutation, isPending: loading } = useCreateSubmission();
 
   const handleSubmit = () => {
-    // 필수값 검증
-    if (!form.basic.siteName.trim()) {
-      alert("활동 장소명을 입력해주세요.");
+    const error = validateSubmission(form, details);
+    if (error) {
+      setValidationError(error);
       return;
     }
+    setValidationError(null);
 
     submitMutation(
       {
@@ -415,6 +425,12 @@ export default function DiveCreatePage() {
           onRemove={removeOne}
           maxCount={10}
         />
+
+        {validationError && (
+          <p className="text-[13px] text-red-500 text-center">
+            {validationError}
+          </p>
+        )}
 
         <div className="mx-auto max-w-105 py-3 grid grid-cols-2 gap-3">
           <button

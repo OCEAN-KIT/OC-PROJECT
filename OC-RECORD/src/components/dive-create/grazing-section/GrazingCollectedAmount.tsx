@@ -40,6 +40,7 @@ export default function GrazingCollectedAmount({
       <SelectCard
         title="수거량"
         icon={<Scale className="h-4 w-4 text-sky-600" />}
+        required
       >
         <input
           ref={inputRef}

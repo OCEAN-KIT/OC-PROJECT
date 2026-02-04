@@ -22,6 +22,7 @@ export default function DepthTempInput({
       <div className="flex items-center gap-2 mb-3">
         <Gauge className="h-4 w-4 text-sky-600" />
         <h2 className="text-[14px] font-semibold text-gray-800">수심 / 수온</h2>
+        <span className="text-[11px] text-red-400 ml-auto">필수 입력</span>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
