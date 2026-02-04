@@ -31,11 +31,11 @@ export type ActivityType =
   | "MARINE_CLEANUP"
   | "OTHER";
 
-export type EnvStatus = "BAD" | "NORMAL" | "GOOD"; // TODO: 서버 스펙 확인 필요
+export type EnvStatus = "BAD" | "NORMAL" | "GOOD";
 
 export type HealthGrade = "A" | "B" | "C" | "D";
 
-// ============ 생성 요청 타입 (새 API 스펙) ============
+// ============ 생성 요청 타입 ============
 export interface SubmissionCreateRequest {
   siteName: string;
   siteNameOptionId?: number | null;
@@ -178,7 +178,6 @@ export interface SubmissionListResponse {
 export async function createSubmission(
   payload: SubmissionCreateRequest,
 ): Promise<SubmissionCreateResponse> {
-  console.log("[createSubmission] payload =", JSON.stringify(payload, null, 2));
   try {
     const { data } = await axiosInstance.post<SubmissionCreateResponse>(
       "/api/admin/submissions",

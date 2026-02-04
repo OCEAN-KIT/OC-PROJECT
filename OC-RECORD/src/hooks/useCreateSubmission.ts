@@ -7,6 +7,7 @@ import {
   createSubmission,
   type FormToPayloadParams,
 } from "@/api/submissions";
+import { queryKeys } from "@/react-query/keys";
 
 type Params = {
   form: FormToPayloadParams["form"];
@@ -47,7 +48,7 @@ export function useCreateSubmission() {
       return result;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["submissions"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.submissions.all });
     },
   });
 }
