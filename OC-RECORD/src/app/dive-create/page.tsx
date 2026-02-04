@@ -10,8 +10,7 @@ import {
   getDraftById,
   upsertDraft,
 } from "@/utils/diveDraftStorage";
-import { uploadImage } from "@/api/upload-image";
-import { formToPayload, createSubmission } from "@/api/submissions";
+import { useCreateSubmission } from "@/hooks/useCreateSubmission";
 
 import type { OcRecordForm } from "@/types/form";
 
@@ -334,69 +333,32 @@ export default function DiveCreatePage() {
   };
 
   // ========= 제출 =========
-  const [loading, setLoading] = useState(false);
-  const handleSubmit = async () => {
+  const { mutate: submitMutation, isPending: loading } = useCreateSubmission();
+
+  const handleSubmit = () => {
     // 필수값 검증
     if (!form.basic.siteName.trim()) {
       alert("활동 장소명을 입력해주세요.");
       return;
     }
 
-    setLoading(true);
-    try {
-      // 1. 첨부파일 업로드
-      const uploadedAttachments: Array<{
-        fileName: string;
-        fileUrl: string;
-        mimeType: string;
-        fileSize: number;
-      }> = [];
-
-      for (const file of attachments) {
-        const fileUrl = await uploadImage(file);
-        uploadedAttachments.push({
-          fileName: file.name,
-          fileUrl,
-          mimeType: file.type || "application/octet-stream",
-          fileSize: file.size,
-        });
-      }
-
-      // 2. payload 변환
-      // TODO: authorName, authorEmail은 로그인 사용자 정보에서 가져와야 함
-      const payload = formToPayload({
+    submitMutation(
+      {
         form,
         details,
-        attachments: uploadedAttachments,
-        authorName: "", // TODO: 로그인 사용자 이름
-        authorEmail: "", // TODO: 로그인 사용자 이메일
-        latitude: 0, // TODO: 위치 정보
-        longitude: 0,
-      });
-
-      if (DEBUG) {
-        console.log("[submit] payload =", JSON.stringify(payload, null, 2));
-      }
-
-      // 3. API 호출
-      const result = await createSubmission(payload);
-
-      if (result.success) {
-        alert("제출이 완료되었습니다.");
-        router.push("/"); // 또는 제출 완료 페이지로
-      } else {
-        const msg =
-          typeof result.message === "string"
-            ? result.message
-            : "제출에 실패했습니다.";
-        alert(msg);
-      }
-    } catch (err) {
-      console.error("[submit] error:", err);
-      alert("제출 중 오류가 발생했습니다.");
-    } finally {
-      setLoading(false);
-    }
+        files: attachments,
+      },
+      {
+        onSuccess: () => {
+          alert("제출이 완료되었습니다.");
+          router.push("/");
+        },
+        onError: (err) => {
+          console.error("[submit] error:", err);
+          alert(err.message || "제출 중 오류가 발생했습니다.");
+        },
+      },
+    );
   };
 
   return (

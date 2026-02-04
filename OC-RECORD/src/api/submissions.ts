@@ -389,10 +389,6 @@ export interface FormToPayloadParams {
     mimeType: string;
     fileSize: number;
   }>;
-  authorName: string;
-  authorEmail: string;
-  latitude?: number;
-  longitude?: number;
 }
 
 /** OcRecordForm → SubmissionCreateRequest 변환 함수 */
