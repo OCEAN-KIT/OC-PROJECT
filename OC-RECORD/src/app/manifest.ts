@@ -3,8 +3,8 @@ import type { MetadataRoute } from "next";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "/?source=pwa",
-    name: "OC-Diver",
-    short_name: "OC-Diver",
+    name: "OC-RECORD",
+    short_name: "OC-RECORD",
     description: "A Progressive Web App built with Next.js",
     start_url: "/?source=pwa",
     scope: "/",
@@ -39,7 +39,6 @@ export default function manifest(): MetadataRoute.Manifest {
       },
     ],
 
-    // ✅ 리치 설치 카드용 스크린샷(둘 다 필요)
     screenshots: [
       {
         src: "/images/ss540.png",

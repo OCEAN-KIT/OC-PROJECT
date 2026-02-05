@@ -4,7 +4,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "OC-Diver",
+  title: "OC-RECORD",
   description: "해양 활동 제출 애플리케이션",
 
   appleWebApp: {
