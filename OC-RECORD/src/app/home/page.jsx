@@ -6,13 +6,19 @@ import MainHeader from "@/components/mian-header";
 import MainButton from "@/components/ui/main-button";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function HomePage() {
   const router = useRouter();
   const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoLogin" });
 
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    router.prefetch("/submit-management");
+    router.prefetch("/dive-create");
+    router.prefetch("/dive-drafts");
+  }, [router]);
 
   async function handleLogOut() {
     setLoading(true);

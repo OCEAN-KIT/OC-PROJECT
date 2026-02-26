@@ -11,6 +11,7 @@ import { getMessagingSafe } from "@/lib/firebase";
 
 const VAPID_KEY = process.env.NEXT_PUBLIC_FB_VAPID_KEY!;
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL!;
+const PUSH_SW_SCOPE = "/firebase-cloud-messaging-push-scope";
 
 function getOrCreateDeviceId() {
   // 로컬에 없으면 새로 만들고 저장
@@ -38,7 +39,8 @@ export function useWebPush() {
       const swReg = await navigator.serviceWorker.register(
         "/firebase-messaging-sw.js",
         {
-          scope: "/",
+          // 앱 오프라인 캐시 SW(/sw.js)와 충돌하지 않도록 분리된 scope 사용
+          scope: PUSH_SW_SCOPE,
           updateViaCache: "none",
         }
       );

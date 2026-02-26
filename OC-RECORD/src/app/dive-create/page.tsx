@@ -28,6 +28,11 @@ export default function DiveCreatePage() {
   useAuthGuard({ mode: "gotoLogin" });
   const router = useRouter();
 
+  useEffect(() => {
+    router.prefetch("/dive-drafts");
+    router.prefetch("/home");
+  }, [router]);
+
   // ========= 임시저장 draft =========
   const [draftId, setDraftId] = useState<string | null>(null);
   const initializedRef = useRef(false);

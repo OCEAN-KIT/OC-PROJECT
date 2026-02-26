@@ -4,13 +4,16 @@ import { useEffect } from "react";
 
 export default function SWRegister() {
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      // classic SW (compat importScripts) → type 옵션 필요 없음
-      navigator.serviceWorker.register("/sw.js", {
+    if (!("serviceWorker" in navigator)) return;
+
+    navigator.serviceWorker
+      .register("/sw.js", {
         scope: "/",
         updateViaCache: "none",
+      })
+      .catch((error) => {
+        console.error("[sw] registration failed", error);
       });
-    }
   }, []);
   return null;
 }

@@ -1,1 +1,190 @@
-if(!self.define){let e,s={};const a=(a,n)=>(a=new URL(a+".js",n).href,s[a]||new Promise(s=>{if("document"in self){const e=document.createElement("script");e.src=a,e.onload=s,document.head.appendChild(e)}else e=a,importScripts(a),s()}).then(()=>{let e=s[a];if(!e)throw new Error(`Module ${a} didn’t register its module`);return e}));self.define=(n,i)=>{const c=e||("document"in self?document.currentScript.src:"")||location.href;if(s[c])return;let t={};const r=e=>a(e,c),o={module:{uri:c},exports:t,require:r};s[c]=Promise.all(n.map(e=>o[e]||r(e))).then(e=>(i(...e),t))}}define(["./workbox-4754cb34"],function(e){"use strict";importScripts(),self.skipWaiting(),e.clientsClaim(),e.precacheAndRoute([{url:"/_next/app-build-manifest.json",revision:"c5cd0d2f28e8ad7d211cee385cb50e76"},{url:"/_next/static/chunks/125-3a1c031a1c4bcc64.js",revision:"3a1c031a1c4bcc64"},{url:"/_next/static/chunks/239-e5a90e2a60ae59a5.js",revision:"e5a90e2a60ae59a5"},{url:"/_next/static/chunks/469-7070beb709c0f0dc.js",revision:"7070beb709c0f0dc"},{url:"/_next/static/chunks/493-ea66a77c9737e8d4.js",revision:"ea66a77c9737e8d4"},{url:"/_next/static/chunks/4bd1b696-c023c6e3521b1417.js",revision:"c023c6e3521b1417"},{url:"/_next/static/chunks/743-d4c993614f6175e9.js",revision:"d4c993614f6175e9"},{url:"/_next/static/chunks/943-a83e656267f13817.js",revision:"a83e656267f13817"},{url:"/_next/static/chunks/app/_not-found/page-c95ba1485d424286.js",revision:"c95ba1485d424286"},{url:"/_next/static/chunks/app/home/page-2fdad90533aebf3c.js",revision:"2fdad90533aebf3c"},{url:"/_next/static/chunks/app/image-upload-test/page-ecf3d6e725df5b4b.js",revision:"ecf3d6e725df5b4b"},{url:"/_next/static/chunks/app/layout-3da015e061711c26.js",revision:"3da015e061711c26"},{url:"/_next/static/chunks/app/login/page-790e47bf026e08ac.js",revision:"790e47bf026e08ac"},{url:"/_next/static/chunks/app/manifest.webmanifest/route-c2ce60eaa05f05be.js",revision:"c2ce60eaa05f05be"},{url:"/_next/static/chunks/app/page-c2ce60eaa05f05be.js",revision:"c2ce60eaa05f05be"},{url:"/_next/static/chunks/app/profile/page-783794387573b192.js",revision:"783794387573b192"},{url:"/_next/static/chunks/app/register/page-4778d6dfe2ab2370.js",revision:"4778d6dfe2ab2370"},{url:"/_next/static/chunks/framework-acd67e14855de5a2.js",revision:"acd67e14855de5a2"},{url:"/_next/static/chunks/main-52aa689111d0cdd7.js",revision:"52aa689111d0cdd7"},{url:"/_next/static/chunks/main-app-f57e735fd60d2b7f.js",revision:"f57e735fd60d2b7f"},{url:"/_next/static/chunks/pages/_app-6c493b83aa965ae0.js",revision:"6c493b83aa965ae0"},{url:"/_next/static/chunks/pages/_error-72a33df56bf599c8.js",revision:"72a33df56bf599c8"},{url:"/_next/static/chunks/polyfills-42372ed130431b0a.js",revision:"846118c33b2c0e922d7b3a7676f81f6f"},{url:"/_next/static/chunks/webpack-2eb758dea75faf50.js",revision:"2eb758dea75faf50"},{url:"/_next/static/css/919bca8e76b55595.css",revision:"919bca8e76b55595"},{url:"/_next/static/ixsDMU23yaITaucNHN5_F/_buildManifest.js",revision:"d24a97b102ad53e566abc359d39b2f8e"},{url:"/_next/static/ixsDMU23yaITaucNHN5_F/_ssgManifest.js",revision:"b6652df95db52feb4daf4eca35380933"},{url:"/file.svg",revision:"d09f95206c3fa0bb9bd9fefabfd0ea71"},{url:"/firebase-messaging-sw.js",revision:"ffaaac5b25a2af40f844fd57ab116ffc"},{url:"/globe.svg",revision:"2aaafa6a49b6563925fe440891e32717"},{url:"/icons/Ocean-Campus-Logo192.png",revision:"758283fcfa170f36ba29d056dd0d4419"},{url:"/icons/Ocean-Campus-Logo512.png",revision:"92b728d4b990b027886a76bef73d7db4"},{url:"/icons/oceanCampusLogo.png",revision:"98257bc9488e5d0314536622fd678737"},{url:"/images/Ellipse 2.svg",revision:"0c5094a87ccfb3e9126a457927956c43"},{url:"/images/ocn.svg",revision:"c00a1368b80891fdc2edcf6024921132"},{url:"/images/ss1280.png",revision:"1cfaa23b3c25496e11d7de73f664a52b"},{url:"/images/ss540.png",revision:"ffd25575c08a33f4703f2812bc8bbadf"},{url:"/next.svg",revision:"8e061864f388b47f33a1c3780831193e"},{url:"/vercel.svg",revision:"c0af2f507b369b085b35ef4bbe3bcf1e"},{url:"/window.svg",revision:"a2760511c65806022ad20adf74370ff3"}],{ignoreURLParametersMatching:[]}),e.cleanupOutdatedCaches(),e.registerRoute("/",new e.NetworkFirst({cacheName:"start-url",plugins:[{cacheWillUpdate:async({request:e,response:s,event:a,state:n})=>s&&"opaqueredirect"===s.type?new Response(s.body,{status:200,statusText:"OK",headers:s.headers}):s}]}),"GET"),e.registerRoute(/^https:\/\/fonts\.(?:gstatic)\.com\/.*/i,new e.CacheFirst({cacheName:"google-fonts-webfonts",plugins:[new e.ExpirationPlugin({maxEntries:4,maxAgeSeconds:31536e3})]}),"GET"),e.registerRoute(/^https:\/\/fonts\.(?:googleapis)\.com\/.*/i,new e.StaleWhileRevalidate({cacheName:"google-fonts-stylesheets",plugins:[new e.ExpirationPlugin({maxEntries:4,maxAgeSeconds:604800})]}),"GET"),e.registerRoute(/\.(?:eot|otf|ttc|ttf|woff|woff2|font.css)$/i,new e.StaleWhileRevalidate({cacheName:"static-font-assets",plugins:[new e.ExpirationPlugin({maxEntries:4,maxAgeSeconds:604800})]}),"GET"),e.registerRoute(/\.(?:jpg|jpeg|gif|png|svg|ico|webp)$/i,new e.StaleWhileRevalidate({cacheName:"static-image-assets",plugins:[new e.ExpirationPlugin({maxEntries:64,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\/_next\/image\?url=.+$/i,new e.StaleWhileRevalidate({cacheName:"next-image",plugins:[new e.ExpirationPlugin({maxEntries:64,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:mp3|wav|ogg)$/i,new e.CacheFirst({cacheName:"static-audio-assets",plugins:[new e.RangeRequestsPlugin,new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:mp4)$/i,new e.CacheFirst({cacheName:"static-video-assets",plugins:[new e.RangeRequestsPlugin,new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:js)$/i,new e.StaleWhileRevalidate({cacheName:"static-js-assets",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:css|less)$/i,new e.StaleWhileRevalidate({cacheName:"static-style-assets",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\/_next\/data\/.+\/.+\.json$/i,new e.StaleWhileRevalidate({cacheName:"next-data",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:json|xml|csv)$/i,new e.NetworkFirst({cacheName:"static-data-assets",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(({url:e})=>{if(!(self.origin===e.origin))return!1;const s=e.pathname;return!s.startsWith("/api/auth/")&&!!s.startsWith("/api/")},new e.NetworkFirst({cacheName:"apis",networkTimeoutSeconds:10,plugins:[new e.ExpirationPlugin({maxEntries:16,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(({url:e})=>{if(!(self.origin===e.origin))return!1;return!e.pathname.startsWith("/api/")},new e.NetworkFirst({cacheName:"others",networkTimeoutSeconds:10,plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(({url:e})=>!(self.origin===e.origin),new e.NetworkFirst({cacheName:"cross-origin",networkTimeoutSeconds:10,plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:3600})]}),"GET")});
+/* eslint-disable no-restricted-globals */
+
+const SW_VERSION = "oc-record-v2";
+const PAGE_CACHE = `${SW_VERSION}-pages`;
+const ASSET_CACHE = `${SW_VERSION}-assets`;
+const RUNTIME_CACHE = `${SW_VERSION}-runtime`;
+
+const PRECACHE_PAGES = [
+  "/",
+  "/login",
+  "/home",
+  "/dive-create",
+  "/dive-drafts",
+  "/submit-management",
+  "/profile",
+];
+
+const PRECACHE_ASSETS = [
+  "/manifest.webmanifest",
+  "/icons/Ocean-Campus-Logo192.png",
+  "/icons/Ocean-Campus-Logo512.png",
+  "/images/ocn.svg",
+];
+
+const STATIC_ASSET_PATTERN =
+  /\/(_next\/static|_next\/image)\/|\.(?:js|css|png|jpg|jpeg|gif|svg|webp|ico|woff2?|ttf)$/i;
+
+const OFFLINE_HTML = `<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>오프라인</title>
+    <style>
+      body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; padding: 24px; color: #111827; }
+      .card { max-width: 420px; margin: 12vh auto 0; border: 1px solid #e5e7eb; border-radius: 16px; padding: 20px; }
+      h1 { margin: 0 0 8px; font-size: 18px; }
+      p { margin: 0; color: #4b5563; line-height: 1.45; }
+      a { display: inline-block; margin-top: 14px; color: #0369a1; text-decoration: none; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>오프라인 상태입니다</h1>
+      <p>네트워크 연결이 복구되면 최신 데이터를 불러옵니다. 저장된 화면은 오프라인에서도 열 수 있습니다.</p>
+      <a href="/home">홈으로 이동</a>
+    </div>
+  </body>
+</html>`;
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    (async () => {
+      const pageCache = await caches.open(PAGE_CACHE);
+      const assetCache = await caches.open(ASSET_CACHE);
+
+      await Promise.allSettled(PRECACHE_PAGES.map((url) => pageCache.add(url)));
+      await Promise.allSettled(PRECACHE_ASSETS.map((url) => assetCache.add(url)));
+
+      await self.skipWaiting();
+    })()
+  );
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    (async () => {
+      const keys = await caches.keys();
+      await Promise.all(
+        keys
+          .filter((key) => key.startsWith("oc-record-") && !key.startsWith(SW_VERSION))
+          .map((key) => caches.delete(key))
+      );
+      await self.clients.claim();
+    })()
+  );
+});
+
+async function staleWhileRevalidate(request, cacheName) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+
+  const networkPromise = fetch(request)
+    .then((response) => {
+      if (response && response.ok) {
+        cache.put(request, response.clone());
+      }
+      return response;
+    })
+    .catch(() => null);
+
+  if (cached) {
+    return cached;
+  }
+
+  const network = await networkPromise;
+  if (network) {
+    return network;
+  }
+
+  throw new Error("No cached response and network unavailable");
+}
+
+async function networkFirstPage(request) {
+  const cache = await caches.open(PAGE_CACHE);
+
+  try {
+    const response = await fetch(request);
+    if (response && response.ok) {
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch {
+    const cached = await cache.match(request, { ignoreSearch: true });
+    if (cached) {
+      return cached;
+    }
+
+    const fallback =
+      (await cache.match("/home")) ||
+      (await cache.match("/login")) ||
+      (await cache.match("/"));
+
+    if (fallback) {
+      return fallback;
+    }
+
+    return new Response(OFFLINE_HTML, {
+      headers: { "Content-Type": "text/html; charset=utf-8" },
+    });
+  }
+}
+
+async function networkFirstRuntime(request) {
+  const cache = await caches.open(RUNTIME_CACHE);
+
+  try {
+    const response = await fetch(request);
+    if (response && response.ok) {
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch {
+    const cached = await cache.match(request, { ignoreSearch: true });
+    if (cached) {
+      return cached;
+    }
+    throw new Error("No runtime cache entry");
+  }
+}
+
+self.addEventListener("fetch", (event) => {
+  const { request } = event;
+
+  if (request.method !== "GET") {
+    return;
+  }
+
+  const url = new URL(request.url);
+  const isSameOrigin = url.origin === self.location.origin;
+  const isNavigation = request.mode === "navigate";
+  const isApi = isSameOrigin && url.pathname.startsWith("/api/");
+  const isRscRequest = request.headers.get("RSC") === "1" || url.searchParams.has("_rsc");
+  const isStaticAsset = STATIC_ASSET_PATTERN.test(url.pathname);
+
+  if (isNavigation) {
+    event.respondWith(networkFirstPage(request));
+    return;
+  }
+
+  if (isApi) {
+    // API는 최신성을 우선하고, 오프라인 fallback은 페이지 단에서 처리한다.
+    event.respondWith(fetch(request));
+    return;
+  }
+
+  if (isStaticAsset) {
+    event.respondWith(staleWhileRevalidate(request, ASSET_CACHE));
+    return;
+  }
+
+  if (isSameOrigin && isRscRequest) {
+    event.respondWith(networkFirstRuntime(request));
+    return;
+  }
+
+  if (isSameOrigin) {
+    event.respondWith(networkFirstRuntime(request));
+  }
+});
