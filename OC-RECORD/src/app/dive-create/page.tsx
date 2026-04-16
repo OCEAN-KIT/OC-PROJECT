@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { ClipLoader } from "react-spinners";
@@ -20,9 +20,94 @@ import DetailsInput from "@/components/dive-create/common-section/DetailsInput";
 import MediaUploadSection from "@/components/dive-create/common-section/MediaUploadSection";
 import WorkTypeSection from "@/components/dive-create/WorkTypeSection";
 import CommonWrapper from "@/components/dive-create/common-section/CommonWrapper";
+import UnsavedChangesModal from "@/components/ui/UnsavedChangesModal";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 const DEBUG = true;
+
+const createDefaultForm = (): OcRecordForm => ({
+  basic: {
+    siteName: "",
+    date: new Date().toISOString().slice(0, 10),
+    time: (() => {
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, "0");
+      const mm = String(now.getMinutes()).padStart(2, "0");
+      return `${hh}:${mm}`;
+    })(),
+    diveRound: 1,
+    workType: "이식",
+    workers: "",
+  },
+  env: {
+    avgDepthM: "",
+    maxDepthM: "",
+    waterTempC: "",
+    visibilityStatus: "보통",
+    waveStatus: "보통",
+    surgeStatus: "보통",
+    currentStatus: "보통",
+  },
+  transplant: {
+    speciesType: "감태",
+    locationType: "어초",
+    methodType: "로프 연승",
+    scale: "",
+    healthStatus: "A",
+  },
+  grazing: {
+    targetSpecies: ["성게"],
+    densityBeforeWork: "적음",
+    workScope: "국소",
+    note: "",
+    collectionAmount: "",
+  },
+  substrate: {
+    targetType: "암반",
+    workScope: "",
+    substrateState: "",
+  },
+  monitoring: {
+    entryCoordinate: "",
+    exitCoordinate: "",
+    direction: "",
+    terrain: "암반",
+    barrenExtent: "없음",
+    grazerDistribution: "낮음",
+    rockFeatures: ["매끈"], // [배열로 변경됨]
+    suitability: "적합",
+    seaweedIdNumber: "",
+    seaweedHealthStatus: "양호",
+    precisionMeasurement: false,
+    leafLength: "",
+    maxLeafWidth: "",
+  },
+  cleanup: {
+    wasteTypes: [],
+    method: "수작업",
+    collectionAmount: "",
+    uncollectedScale: "소",
+  },
+});
+
+const buildAttachmentMeta = (attachments: File[]) =>
+  attachments.map((file) => ({
+    name: file.name,
+    size: file.size,
+    type: file.type,
+    lastModified: file.lastModified,
+  }));
+
+const buildDraftSnapshot = (
+  targetForm: OcRecordForm,
+  targetDetails: string,
+  targetAttachments: File[],
+) =>
+  JSON.stringify({
+    form: targetForm,
+    details: targetDetails,
+    attachments: buildAttachmentMeta(targetAttachments),
+  });
 
 export default function DiveCreatePage() {
   useAuthGuard({ mode: "gotoLogin" });
@@ -35,6 +120,8 @@ export default function DiveCreatePage() {
 
   // ========= 임시저장 draft =========
   const [draftId, setDraftId] = useState<string | null>(null);
+  const [savedSnapshot, setSavedSnapshot] = useState<string | null>(null);
+  const [isExitConfirmOpen, setIsExitConfirmOpen] = useState(false);
   const initializedRef = useRef(false);
 
   // ========= 디바이스 =========
@@ -46,70 +133,7 @@ export default function DiveCreatePage() {
   }, []);
 
   // ========= form =========
-  const [form, setForm] = useState<OcRecordForm>({
-    basic: {
-      siteName: "",
-      date: new Date().toISOString().slice(0, 10),
-      time: (() => {
-        const now = new Date();
-        const hh = String(now.getHours()).padStart(2, "0");
-        const mm = String(now.getMinutes()).padStart(2, "0");
-        return `${hh}:${mm}`;
-      })(),
-      diveRound: 1,
-      workType: "이식",
-      workers: "",
-    },
-    env: {
-      avgDepthM: "",
-      maxDepthM: "",
-      waterTempC: "",
-      visibilityStatus: "보통",
-      waveStatus: "보통",
-      surgeStatus: "보통",
-      currentStatus: "보통",
-    },
-    transplant: {
-      speciesType: "감태",
-      locationType: "어초",
-      methodType: "로프 연승",
-      scale: "",
-      healthStatus: "A",
-    },
-    grazing: {
-      targetSpecies: ["성게"],
-      densityBeforeWork: "적음",
-      workScope: "국소",
-      note: "",
-      collectionAmount: "",
-    },
-    substrate: {
-      targetType: "암반",
-      workScope: "",
-      substrateState: "",
-    },
-    monitoring: {
-      entryCoordinate: "",
-      exitCoordinate: "",
-      direction: "",
-      terrain: "암반",
-      barrenExtent: "없음",
-      grazerDistribution: "낮음",
-      rockFeatures: ["매끈"], // [배열로 변경됨]
-      suitability: "적합",
-      seaweedIdNumber: "",
-      seaweedHealthStatus: "양호",
-      precisionMeasurement: false,
-      leafLength: "",
-      maxLeafWidth: "",
-    },
-    cleanup: {
-      wasteTypes: [],
-      method: "수작업",
-      collectionAmount: "",
-      uncollectedScale: "소",
-    },
-  });
+  const [form, setForm] = useState<OcRecordForm>(createDefaultForm);
 
   const setBasic = (patch: Partial<OcRecordForm["basic"]>) => {
     setForm((prev) => ({
@@ -168,6 +192,14 @@ export default function DiveCreatePage() {
   const [attachments, setAttachments] = useState<File[]>([]);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
+  const currentDraftSnapshot = useMemo(
+    () => buildDraftSnapshot(form, details, attachments),
+    [form, details, attachments],
+  );
+
+  const hasUnsavedChanges =
+    savedSnapshot !== null && currentDraftSnapshot !== savedSnapshot;
+
   const onPickFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const next = [...attachments, ...files].slice(0, 10);
@@ -215,67 +247,99 @@ export default function DiveCreatePage() {
     setDraftId(id);
 
     const existing = fromParam ? getDraftById(fromParam) : null;
+    const baseForm = createDefaultForm();
     if (!existing) {
       if (DEBUG) console.log("[draft] new draft id =", id);
+      setSavedSnapshot(buildDraftSnapshot(baseForm, "", []));
       return;
     }
 
     if (DEBUG) console.log("[draft] load existing draft =", existing);
 
-    setBasic({
-      siteName: existing.siteName ?? "",
-      date: existing.date ?? form.basic.date,
-      time: existing.time ?? form.basic.time,
-      diveRound: existing.diveRound ?? form.basic.diveRound,
-      workType: existing.workType ?? form.basic.workType,
-      workers: existing.workers ?? form.basic.workers,
-    });
+    const loadedDetails = existing.details ?? "";
+    const loadedForm: OcRecordForm = {
+      ...baseForm,
+      basic: {
+        ...baseForm.basic,
+        siteName: existing.siteName ?? baseForm.basic.siteName,
+        date: existing.date ?? baseForm.basic.date,
+        time: existing.time ?? baseForm.basic.time,
+        diveRound: existing.diveRound ?? baseForm.basic.diveRound,
+        workType: existing.workType ?? baseForm.basic.workType,
+        workers: existing.workers ?? baseForm.basic.workers,
+      },
+      env: {
+        ...baseForm.env,
+        avgDepthM: existing.avgDepthM ?? baseForm.env.avgDepthM,
+        maxDepthM: existing.maxDepthM ?? baseForm.env.maxDepthM,
+        waterTempC: existing.waterTempC ?? baseForm.env.waterTempC,
+        visibilityStatus:
+          existing.visibilityStatus ?? baseForm.env.visibilityStatus,
+        waveStatus: existing.waveStatus ?? baseForm.env.waveStatus,
+        surgeStatus: existing.surgeStatus ?? baseForm.env.surgeStatus,
+        currentStatus: existing.currentStatus ?? baseForm.env.currentStatus,
+      },
+      transplant: existing.transplant
+        ? { ...baseForm.transplant, ...existing.transplant }
+        : baseForm.transplant,
+      grazing: existing.grazing
+        ? { ...baseForm.grazing, ...existing.grazing }
+        : baseForm.grazing,
+      substrate: existing.substrate
+        ? { ...baseForm.substrate, ...existing.substrate }
+        : baseForm.substrate,
+      monitoring: existing.monitoring
+        ? { ...baseForm.monitoring, ...existing.monitoring }
+        : baseForm.monitoring,
+      cleanup: existing.cleanup
+        ? { ...baseForm.cleanup, ...existing.cleanup }
+        : baseForm.cleanup,
+    };
 
-    setEnv({
-      avgDepthM: existing.avgDepthM ?? form.env.avgDepthM,
-      maxDepthM: existing.maxDepthM ?? form.env.maxDepthM,
-      waterTempC: existing.waterTempC ?? form.env.waterTempC,
-      visibilityStatus: existing.visibilityStatus ?? form.env.visibilityStatus,
-      waveStatus: existing.waveStatus ?? form.env.waveStatus,
-      surgeStatus: existing.surgeStatus ?? form.env.surgeStatus,
-      currentStatus: existing.currentStatus ?? form.env.currentStatus,
-    });
+    setBasic(loadedForm.basic);
+    setEnv(loadedForm.env);
+    setTransplant(loadedForm.transplant);
+    setGrazing(loadedForm.grazing);
+    setSubstrate(loadedForm.substrate);
+    setMonitoring(loadedForm.monitoring);
+    setCleanup(loadedForm.cleanup);
 
     // workType에 따라 해당 섹션만 복원
     switch (existing.workType) {
       case "이식":
         if (existing.transplant) {
-          setTransplant(existing.transplant);
+          setTransplant(loadedForm.transplant);
         }
         break;
       case "조식동물 작업":
         if (existing.grazing) {
-          setGrazing(existing.grazing);
+          setGrazing(loadedForm.grazing);
         }
         break;
       case "부착기질 개선":
         if (existing.substrate) {
-          setSubstrate(existing.substrate);
+          setSubstrate(loadedForm.substrate);
         }
         break;
       case "모니터링":
         if (existing.monitoring) {
-          setMonitoring(existing.monitoring);
+          setMonitoring(loadedForm.monitoring);
         }
         break;
       case "해양정화":
         if (existing.cleanup) {
-          setCleanup(existing.cleanup);
+          setCleanup(loadedForm.cleanup);
         }
         break;
     }
 
-    setDetails(existing.details ?? "");
+    setDetails(loadedDetails);
+    setSavedSnapshot(buildDraftSnapshot(loadedForm, loadedDetails, attachments));
     // attachments(File)은 localStorage 복원 불가 → 유지 안 함
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ========= 임시저장 =========
-  const handleSaveDraft = () => {
+  const handleSaveDraft = (opts: { silent?: boolean } = {}) => {
     const nowIso = new Date().toISOString();
 
     const baseDraft = {
@@ -343,7 +407,31 @@ export default function DiveCreatePage() {
       console.log("[draft] attachments (not persisted):", attachments.length);
     }
 
-    alert("임시 저장했습니다.");
+    setSavedSnapshot(buildDraftSnapshot(form, details, attachments));
+
+    if (!opts.silent) alert("임시 저장했습니다.");
+  };
+
+  const handleBack = () => {
+    if (!hasUnsavedChanges) {
+      router.back();
+      return;
+    }
+
+    setIsExitConfirmOpen(true);
+  };
+
+  const handleKeepEditing = () => setIsExitConfirmOpen(false);
+
+  const handleLeaveWithoutSave = () => {
+    setIsExitConfirmOpen(false);
+    router.back();
+  };
+
+  const handleSaveAndLeave = () => {
+    setIsExitConfirmOpen(false);
+    handleSaveDraft({ silent: true });
+    router.back();
   };
 
   // ========= 제출 =========
@@ -382,7 +470,7 @@ export default function DiveCreatePage() {
         <div className="mx-auto max-w-105 px-4 h-14 flex items-center gap-2">
           <button
             type="button"
-            onClick={() => router.back()}
+            onClick={handleBack}
             className="rounded-xl p-1.5 hover:bg-gray-100 active:scale-[0.98] transition"
             aria-label="뒤로가기"
           >
@@ -393,6 +481,15 @@ export default function DiveCreatePage() {
           </h1>
         </div>
       </header>
+
+      <UnsavedChangesModal
+        isOpen={isExitConfirmOpen}
+        onCancel={handleKeepEditing}
+        onKeepEditing={handleKeepEditing}
+        onSaveAndLeave={handleSaveAndLeave}
+        onLeaveWithoutSave={handleLeaveWithoutSave}
+        disabled={loading}
+      />
 
       <main className="mx-auto max-w-105 px-4 pt-4 pb-40 space-y-4">
         <CommonWrapper
