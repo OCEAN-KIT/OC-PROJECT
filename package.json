@@ -1,0 +1,14 @@
+{
+  "name": "oc-project",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:record": "npm run dev -w @ocean-kit/oc-record",
+    "dev:dashboard": "npm run dev -w @ocean-kit/oc-dashboard",
+    "dev:admin": "npm run dev -w @ocean-kit/oc-admin",
+    "build": "npm run build --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present"
+  }
+}
