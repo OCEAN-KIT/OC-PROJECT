@@ -1,0 +1,450 @@
+@import "tailwindcss";
+
+:root {
+  --ds-primary: #6366f1;
+  --ds-secondary: #818cf8;
+  --ds-cta: #f97316;
+  --ds-bg: #020617;
+  --ds-text: #e2e8f0;
+  --ds-muted: #cbd5e1;
+  --ds-border: rgba(255, 255, 255, 0.26);
+  --ds-panel: rgba(30, 41, 59, 0.34);
+  --ds-panel-strong: rgba(15, 23, 42, 0.64);
+  --ds-panel-tint: rgba(99, 102, 241, 0.18);
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  --shadow-sm: 0 1px 2px rgba(2, 6, 23, 0.35);
+  --shadow-md: 0 10px 24px rgba(2, 6, 23, 0.35);
+  --shadow-lg: 0 20px 36px rgba(2, 6, 23, 0.42);
+  --shadow-xl: 0 28px 52px rgba(2, 6, 23, 0.54);
+}
+
+@theme inline {
+  --color-background: var(--ds-bg);
+  --color-foreground: var(--ds-text);
+  --font-sans: var(--font-work-sans);
+  --font-mono: var(--font-outfit);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(
+      1200px 700px at 8% -14%,
+      rgba(99, 102, 241, 0.22),
+      transparent 58%
+    ),
+    radial-gradient(
+      1100px 560px at 96% -14%,
+      rgba(249, 115, 22, 0.2),
+      transparent 64%
+    ),
+    radial-gradient(
+      860px 420px at 50% 114%,
+      rgba(99, 102, 241, 0.2),
+      transparent 70%
+    ),
+    var(--ds-bg);
+  color: var(--ds-text);
+  font-family: var(--font-work-sans), "Work Sans", "Segoe UI", sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+a,
+button,
+[role="button"] {
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+button,
+[role="button"] {
+  cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid rgba(129, 140, 248, 0.92);
+  outline-offset: 2px;
+}
+
+.oc-panel {
+  background:
+    linear-gradient(
+      165deg,
+      color-mix(in srgb, var(--ds-panel) 80%, #ffffff 20%) 0%,
+      color-mix(in srgb, var(--ds-panel-strong) 86%, var(--ds-panel-tint) 14%)
+        100%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(99, 102, 241, 0.08) 48%,
+      rgba(249, 115, 22, 0.08) 100%
+    );
+  border: 1px solid var(--ds-border);
+  box-shadow:
+    var(--shadow-lg),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  backdrop-filter: saturate(160%) blur(0px);
+  -webkit-backdrop-filter: saturate(160%) blur(0px);
+}
+
+.oc-panel-plain {
+  background: rgba(15, 23, 42, 0.44);
+  border: 1px solid var(--ds-border);
+  box-shadow:
+    var(--shadow-md),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  backdrop-filter: saturate(150%) blur(10px);
+  -webkit-backdrop-filter: saturate(150%) blur(10px);
+}
+
+.oc-soft-divider {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(129, 140, 248, 0.42) 48%,
+    transparent 100%
+  );
+}
+
+.oc-kpi-glow {
+  box-shadow:
+    0 0 0 1px rgba(129, 140, 248, 0.36),
+    0 12px 24px rgba(99, 102, 241, 0.16);
+}
+
+.oc-glass-subtle {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: linear-gradient(
+    150deg,
+    rgba(255, 255, 255, 0.14),
+    rgba(99, 102, 241, 0.07)
+  );
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.oc-detail-shell {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background:
+    linear-gradient(
+      175deg,
+      rgba(15, 23, 42, 0.58) 0%,
+      rgba(30, 41, 59, 0.52) 45%,
+      rgba(15, 23, 42, 0.62) 100%
+    ),
+    radial-gradient(
+      circle at 90% 10%,
+      rgba(129, 140, 248, 0.1),
+      transparent 55%
+    );
+  box-shadow:
+    0 20px 40px rgba(2, 6, 23, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.oc-detail-card {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.09),
+    rgba(99, 102, 241, 0.05)
+  );
+  box-shadow:
+    0 8px 18px rgba(2, 6, 23, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.13);
+}
+
+.oc-detail-chip {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(15, 23, 42, 0.46);
+  color: rgba(248, 250, 252, 0.9);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Custom map markers */
+.oc-marker {
+  --marker-color: #40c7ff;
+  --marker-shadow: rgba(4, 18, 28, 0.45);
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.oc-marker__halo {
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--marker-color) 45%, transparent) 0%,
+    color-mix(in srgb, var(--marker-color) 8%, transparent) 55%,
+    transparent 70%
+  );
+  filter: blur(0.2px);
+  animation: markerPulse 2.6s ease-in-out infinite;
+}
+
+.oc-marker__core {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle at 30% 30%,
+    #ffffff,
+    color-mix(in srgb, var(--marker-color) 70%, #083344) 60%
+  );
+  border: 2px solid color-mix(in srgb, var(--marker-color) 80%, #06131a);
+  box-shadow:
+    0 6px 12px var(--marker-shadow),
+    0 0 0 4px color-mix(in srgb, var(--marker-color) 18%, transparent);
+  z-index: 2;
+}
+
+.oc-marker__stem {
+  position: absolute;
+  bottom: 8px;
+  width: 12px;
+  height: 12px;
+  background: #0b3a46;
+  background: color-mix(in srgb, var(--marker-color) 85%, #06222f);
+  border-radius: 2px 2px 10px 2px;
+  transform: rotate(45deg);
+  box-shadow: 0 4px 10px var(--marker-shadow);
+  z-index: 1;
+}
+
+.oc-marker__label {
+  position: absolute;
+  left: 50%;
+  top: -6px;
+  transform: translate(-50%, -100%) scale(0.96);
+  padding: 6px 12px;
+  border-radius: 9999px;
+  background: rgba(7, 15, 24, 0.72);
+  color: #e5f7ff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 10px 30px rgba(4, 12, 18, 0.45);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.oc-marker:hover .oc-marker__label {
+  opacity: 1;
+  transform: translate(-50%, -110%) scale(1);
+}
+
+.oc-marker:not(.oc-marker--special):hover .oc-marker__core {
+  animation: markerBounce 380ms ease;
+}
+
+.oc-marker.is-selected .oc-marker__core {
+  box-shadow:
+    0 10px 18px var(--marker-shadow),
+    0 0 0 6px color-mix(in srgb, var(--marker-color) 30%, transparent);
+}
+
+.oc-marker--special {
+  width: 70px;
+  height: 86px;
+}
+
+.oc-marker--special .oc-marker__halo {
+  inset: -8px -6px 8px;
+  border-radius: 50% 50% 55% 55%;
+  animation-duration: 2.2s;
+}
+
+.oc-marker--special .oc-marker__core {
+  width: 26px;
+  height: 26px;
+  border-radius: 10px;
+  background: linear-gradient(
+    160deg,
+    #f8fdff,
+    color-mix(in srgb, var(--marker-color) 65%, #0a2a36) 60%
+  );
+  border: 3px solid color-mix(in srgb, var(--marker-color) 80%, #06222c);
+  box-shadow:
+    0 14px 26px rgba(2, 14, 20, 0.6),
+    0 0 0 10px color-mix(in srgb, var(--marker-color) 25%, transparent);
+  z-index: 2;
+}
+
+.oc-marker--special .oc-marker__stem {
+  width: 20px;
+  height: 36px;
+  bottom: 4px;
+  border-radius: 8px;
+  transform: none;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--marker-color) 80%, #06222c),
+    color-mix(in srgb, var(--marker-color) 35%, #04141d)
+  );
+  box-shadow:
+    0 12px 24px rgba(2, 12, 18, 0.65),
+    0 0 0 4px color-mix(in srgb, var(--marker-color) 18%, transparent);
+}
+
+.oc-marker--special::after {
+  content: "";
+  position: absolute;
+  width: 90px;
+  height: 20px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--marker-color) 60%, #ffffff) 35%,
+    color-mix(in srgb, var(--marker-color) 35%, transparent) 70%,
+    transparent 100%
+  );
+  opacity: 0.65;
+  filter: blur(0.2px);
+  animation: lighthouseSweep 2.6s ease-in-out infinite;
+  z-index: 0;
+}
+
+.oc-marker--special .oc-marker__label {
+  font-size: 14px;
+  padding: 8px 16px;
+  background: rgba(6, 15, 24, 0.86);
+  top: auto;
+  bottom: -12px;
+  transform: translate(-50%, 100%) scale(1);
+  opacity: 1;
+  transition: none;
+  box-shadow:
+    0 12px 30px rgba(3, 12, 18, 0.5),
+    0 0 0 1px color-mix(in srgb, var(--marker-color) 25%, transparent);
+}
+
+.oc-marker--special:hover .oc-marker__label {
+  transform: translate(-50%, 100%) scale(1);
+  opacity: 1;
+}
+
+.oc-marker--special:hover .oc-marker__core {
+  animation: lighthouseBounce 420ms ease;
+}
+
+.oc-marker--special.is-selected::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 230, 138, 0.95) 35%,
+    rgba(255, 214, 94, 0.65) 70%,
+    transparent 100%
+  );
+  opacity: 0.85;
+}
+
+@keyframes markerPulse {
+  0%,
+  100% {
+    transform: scale(0.9);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
+@keyframes markerBounce {
+  0% {
+    transform: translateY(0);
+  }
+  45% {
+    transform: translateY(-5px) scale(1.05);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes lighthouseSweep {
+  0%,
+  100% {
+    transform: rotate(-18deg) scaleX(0.9);
+    opacity: 0.35;
+  }
+  50% {
+    transform: rotate(18deg) scaleX(1.05);
+    opacity: 0.85;
+  }
+}
+
+@keyframes lighthouseBounce {
+  0% {
+    transform: translateY(0);
+  }
+  45% {
+    transform: translateY(-6px) scale(1.04);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* 말풍선 꼬다리(arrow) 제거 */
+.region-popup .mapboxgl-popup-tip {
+  display: none !important;
+}
+
+/* Mapbox 기본 컨텐츠 박스 스타일 제거 */
+.region-popup .mapboxgl-popup-content {
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
