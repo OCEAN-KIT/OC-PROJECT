@@ -1,0 +1,16 @@
+{
+  "name": "@ocean-kit/shared-auth",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@ocean-kit/shared-api": "*",
+    "@ocean-kit/shared-types": "*",
+    "axios": "^1.12.2"
+  },
+  "exports": {
+    "./login": "./src/login.ts",
+    "./signup": "./src/signup.ts",
+    "./logout": "./src/logout.ts"
+  }
+}

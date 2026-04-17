@@ -3,9 +3,33 @@
 
 import { useState } from "react";
 import { registerSchema, RegisterFormData } from "@/libs/validation/register";
-import { signUp1, signUp2, signUp3 } from "@/api/auth";
+import { requestLogin } from "@ocean-kit/shared-auth/login";
+import { completeSignUp, requestSignUp } from "@ocean-kit/shared-auth/signup";
 import { useRouter } from "next/navigation";
-import { AxiosError } from "axios";
+
+function getValidationErrorMessage(error: unknown): string | null {
+  if (!error || typeof error !== "object") return null;
+
+  const issues = (error as { issues?: { message?: unknown }[] }).issues;
+  if (
+    Array.isArray(issues) &&
+    issues.length > 0 &&
+    typeof issues[0]?.message === "string"
+  ) {
+    return issues[0].message;
+  }
+
+  const errors = (error as { errors?: { message?: unknown }[] }).errors;
+  if (
+    Array.isArray(errors) &&
+    errors.length > 0 &&
+    typeof errors[0]?.message === "string"
+  ) {
+    return errors[0].message;
+  }
+
+  return null;
+}
 
 export default function RegisterPage() {
   const [form, setForm] = useState<RegisterFormData>({
@@ -37,28 +61,17 @@ export default function RegisterPage() {
       registerSchema.parse(form);
       setErrorMsg("");
 
-      // 가입 흐름 (요청대로 유지)
-      await signUp1(form.id, form.password);
-
-      const res2 = await signUp2(form.id, form.password);
-      const token = res2.data.access;
-
-      await signUp3(form.nickname, form.email, form.phone);
+      await requestSignUp(form.id, form.password);
+      await requestLogin(form.id, form.password);
+      await completeSignUp(form.nickname, form.email, form.phone);
 
       router.push("/home");
     } catch (err: unknown) {
-      console.error("회원가입 에러:", err);
-      const axiosErr = err as AxiosError;
-
-      if (axiosErr.response?.status === 409) {
-        setErrorMsg("이미 사용 중인 아이디입니다.");
-      } else if (
-        err &&
-        typeof err === "object" &&
-        "errors" in (err as Record<string, unknown>)
-      ) {
-        const zodErr = err as { errors: { message: string }[] };
-        setErrorMsg(zodErr.errors[0].message);
+      const validationError = getValidationErrorMessage(err);
+      if (validationError) {
+        setErrorMsg(validationError);
+      } else if (err instanceof Error) {
+        setErrorMsg(err.message);
       } else {
         setErrorMsg("회원가입 중 오류가 발생했습니다.");
       }

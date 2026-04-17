@@ -1,4 +1,4 @@
-import axiosInstance from "@/utils/axiosInstance";
+import axiosInstance from "@ocean-kit/shared-api/axiosInstance";
 import type { ApiResponse, GrowthLogPayload } from "../../create/api/types";
 import type { GrowthLogsResponse } from "./types";
 

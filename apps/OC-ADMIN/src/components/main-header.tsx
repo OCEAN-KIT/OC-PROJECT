@@ -6,8 +6,8 @@ import { useMyInfo } from "@/hooks/useMyInfo";
 import { useQueryClient } from "@tanstack/react-query";
 import { UserRound, LogOut, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
-import { logOut } from "@/api/auth";
 import { useRouter } from "next/navigation";
+import { requestLogout } from "@ocean-kit/shared-auth/logout";
 
 export default function MainHeader() {
   const { data, isLoading } = useMyInfo();
@@ -15,6 +15,7 @@ export default function MainHeader() {
   const queryClient = useQueryClient();
 
   const [open, setOpen] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
   const anchorRef = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -53,11 +54,17 @@ export default function MainHeader() {
 
   const handleLogout = async () => {
     try {
-      await logOut();
-    } finally {
+      setLogoutError("");
+      await requestLogout();
       queryClient.removeQueries();
       setOpen(false);
       router.replace("/login");
+    } catch (error) {
+      if (error instanceof Error) {
+        setLogoutError(error.message);
+      } else {
+        setLogoutError("로그아웃 중 오류가 발생했습니다.");
+      }
     }
   };
 
@@ -106,6 +113,9 @@ export default function MainHeader() {
                 대시보드 관리
               </Link>
               <div className="h-px bg-gray-100" />
+              {logoutError && (
+                <p className="px-3 py-2 text-xs text-red-600">{logoutError}</p>
+              )}
               <button
                 role="menuitem"
                 onClick={handleLogout}

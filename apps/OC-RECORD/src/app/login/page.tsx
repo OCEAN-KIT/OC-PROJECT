@@ -1,7 +1,7 @@
 // app/(auth)/login/page.tsx
 "use client";
 
-import { logIn } from "@/api/auth";
+import { logIn } from "@/api/auth/login";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { ClipLoader } from "react-spinners";
 import { useRouter } from "next/navigation";

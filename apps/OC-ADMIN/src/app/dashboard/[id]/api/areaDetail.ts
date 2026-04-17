@@ -1,4 +1,4 @@
-import axiosInstance from "@/utils/axiosInstance";
+import axiosInstance from "@ocean-kit/shared-api/axiosInstance";
 import type { BasicPayload, ApiResponse } from "../../create/api/types";
 import type { AreaDetailResponse } from "./types";
 

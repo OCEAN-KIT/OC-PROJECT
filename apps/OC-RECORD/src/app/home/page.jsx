@@ -1,7 +1,7 @@
 // app/page.jsx
 "use client";
 
-import { logOut } from "@/api/auth";
+import { logOut } from "@/api/auth/logout";
 import MainHeader from "@/components/mian-header";
 import MainButton from "@/components/ui/main-button";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
@@ -13,6 +13,7 @@ export default function HomePage() {
   const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoLogin" });
 
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     router.prefetch("/submit-management");
@@ -21,10 +22,20 @@ export default function HomePage() {
   }, [router]);
 
   async function handleLogOut() {
-    setLoading(true);
-    await logOut();
-    setLoading(false);
-    router.replace("/login");
+    try {
+      setErrorMsg("");
+      setLoading(true);
+      await logOut();
+      router.replace("/login");
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMsg(error.message);
+      } else {
+        setErrorMsg("로그아웃 중 오류가 발생했습니다.");
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -59,6 +70,10 @@ export default function HomePage() {
             </MainButton>
           </div>
         </div>
+
+        {errorMsg && (
+          <p className="mt-4 text-center text-sm text-red-600">{errorMsg}</p>
+        )}
 
         <button
           className="mt-8 mx-auto block text-[14px] font-medium text-gray-700 cursor-pointer"

@@ -1,5 +1,5 @@
 // src/api/user.ts
-import axiosInstance from "@/utils/axiosInstance";
+import axiosInstance from "@ocean-kit/shared-api/axiosInstance";
 
 type MyInfoResp = {
   success: boolean;

@@ -1,4 +1,4 @@
-import axiosInstance from "@/utils/axiosinstance";
+import axiosInstance from "@ocean-kit/shared-api/axiosInstance";
 import {
   AreaDetails,
   AreaDetailsResponse,
