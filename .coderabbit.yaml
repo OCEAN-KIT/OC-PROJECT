@@ -1,0 +1,57 @@
+language: "ko-KR"
+
+reviews:
+  profile: "chill"
+
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches: ["main", "develop", "dev"]
+
+  path_filters:
+    - "!**/.next/**"
+    - "!**/node_modules/**"
+    - "!**/dist/**"
+    - "!**/build/**"
+    - "!**/coverage/**"
+    - "!**/.turbo/**"
+    - "!**/.cache/**"
+    - "!**/.vercel/**"
+    - "!**/out/**"
+    - "!**/*.log"
+    - "!**/*.lock"
+    - "!**/pnpm-lock.yaml"
+    - "!**/next-env.d.ts"
+    - "!**/.DS_Store"
+
+  path_instructions:
+    - path: "**/*"
+      instructions: |
+        - 리뷰는 한국어로 작성.
+        - 프로젝트 전반 폴더 구조와 모듈 경계가 올바른지 평가.
+        - 파일과 컴포넌트 책임이 과도하면 응집도와 결합도 기준으로 분리안을 제시.
+        - TypeScript에서 any와 과도한 as 캐스팅을 지양하고 도메인 타입의 의미가 분명한지 확인.
+        - React에서 불필요한 파생 상태, useEffect 동기화 패턴 남용을 지적하고 더 단순한 구조를 제안.
+        - 불필요한 리렌더링, key 안정성, 상태 범위, 큰 컴포넌트 재렌더링 같은 기본 성능 이슈를 확인.
+
+    - path: "**/src/app/**/*.ts*"
+      instructions: |
+        - Next.js App Router 기준으로 server/client 컴포넌트 경계가 적절한지 확인.
+        - "use client"가 필요한 최소 범위로 유지되는지 검토.
+        - 라우팅, 쿼리스트링, 폼 상태 흐름이 예측 가능하고 일관적인지 확인.
+
+    - path: "**/components/**/*.tsx"
+      instructions: |
+        - 공통 컴포넌트와 도메인 전용 컴포넌트 위치가 재사용성과 확장성 측면에서 적절한지 확인.
+        - props 설계와 상태 위치가 일관적인지 검토.
+        - 모바일 터치 영역과 접근성 기본 요건을 충족하는지 확인.
+
+    - path: "**/api/**/*.ts*"
+      instructions: |
+        - 네트워크 호출 규약(baseURL, headers, credentials, 에러 처리)이 일관적인지 확인.
+        - UI가 raw 응답을 직접 다루지 않도록 타입과 정규화 계층이 있는지 검토.
+
+    - path: "**/utils/**/*.ts*"
+      instructions: |
+        - 유틸 함수가 UI와 도메인에 과도하게 결합되지 않고 순수하게 유지되는지 확인.
+        - 예외 케이스와 파싱 실패 같은 에러 처리가 기본적으로 안전한지 확인.
