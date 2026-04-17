@@ -537,7 +537,7 @@ export default function DiveCreatePage() {
         <div className="mx-auto max-w-105 py-3 grid grid-cols-2 gap-3">
           <button
             type="button"
-            onClick={handleSaveDraft}
+            onClick={() => handleSaveDraft()}
             className="h-12 rounded-xl bg-gray-100 text-gray-800 font-semibold hover:bg-gray-200 active:translate-y-px"
           >
             임시 저장

@@ -2,6 +2,10 @@ import axiosInstance from "@/utils/axiosInstance";
 import type { ApiResponse, MediaLogPayload } from "../../create/api/types";
 import type { MediaLogsResponse } from "./types";
 
+type PatchMediaLogPayload = Omit<MediaLogPayload, "mediaUrl"> & {
+  mediaUrl?: string;
+};
+
 export async function getMediaLogs(
   areaId: number,
 ): Promise<MediaLogsResponse> {
@@ -25,7 +29,7 @@ export async function postMediaLog(
 export async function patchMediaLog(
   areaId: number,
   logId: number,
-  payload: MediaLogPayload,
+  payload: PatchMediaLogPayload,
 ): Promise<ApiResponse<null>> {
   const res = await axiosInstance.patch<ApiResponse<null>>(
     `/api/dashboard/areas/${areaId}/media-logs/${logId}`,
