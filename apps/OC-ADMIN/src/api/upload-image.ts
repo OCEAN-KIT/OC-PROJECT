@@ -1,4 +1,4 @@
-import axiosInstance from "@ocean-kit/shared-api/axiosInstance";
+import axiosInstance from "@ocean-kit/shared-axios/axiosInstance";
 
 export async function uploadImage(image: File): Promise<string> {
   const ext = (image.name.split(".").pop() || "jpg").toLowerCase();

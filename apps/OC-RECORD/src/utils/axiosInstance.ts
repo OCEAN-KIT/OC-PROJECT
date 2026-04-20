@@ -1,6 +1,6 @@
 // utils/axiosInstance.ts
 import { AxiosHeaders } from "axios";
-import { createAxiosInstance } from "@ocean-kit/shared-api/axiosInstance";
+import { createAxiosInstance } from "@ocean-kit/shared-axios/axiosInstance";
 
 const axiosInstance = createAxiosInstance();
 

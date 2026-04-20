@@ -1,23 +1,20 @@
-import axiosInstance from "@ocean-kit/shared-api/axiosInstance";
+import axiosInstance from "@ocean-kit/shared-axios/axiosInstance";
+import { getAreas as getSharedAreas } from "@ocean-kit/dashboard-domain/api/areas";
 import type { AreaFilters, AreasResponse } from "./types";
 
 export async function getAreas(
   page: number,
   filters: AreaFilters,
 ): Promise<AreasResponse> {
-  const res = await axiosInstance.get<AreasResponse>("/api/dashboard/areas", {
-    params: {
-      page,
-      ...(filters.region && { region: filters.region }),
-      ...(filters.level && { level: filters.level }),
-      ...(filters.habitat && { habitat: filters.habitat }),
-      ...(filters.from && { from: filters.from }),
-      ...(filters.to && { to: filters.to }),
-      ...(filters.keyword && { keyword: filters.keyword }),
-    },
+  return getSharedAreas({
+    page,
+    ...(filters.region && { region: filters.region }),
+    ...(filters.level && { level: filters.level }),
+    ...(filters.habitat && { habitat: filters.habitat }),
+    ...(filters.from && { from: filters.from }),
+    ...(filters.to && { to: filters.to }),
+    ...(filters.keyword && { keyword: filters.keyword }),
   });
-
-  return res.data;
 }
 
 export async function deleteArea(areaId: number): Promise<void> {

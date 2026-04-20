@@ -1,9 +1,9 @@
-import type { AreaDetails } from "@/app/api/types";
+import type { AreaDetail } from "@ocean-kit/dashboard-domain/types/areaDetail";
 import EnvironmentSummaryCard from "./environment-summary-card";
 import TemperatureChart from "./temperature-chart";
 
 type Props = {
-  data: AreaDetails;
+  data: AreaDetail;
 };
 
 export default function EnvironmentTab({ data }: Props) {

@@ -1,4 +1,4 @@
-import axiosInstance from "@ocean-kit/shared-api/axiosInstance";
+import axiosInstance from "@ocean-kit/shared-axios/axiosInstance";
 import { extractFilename, saveBlobAsFile } from "@/utils/download";
 
 type ID = number | string;

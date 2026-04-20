@@ -1,4 +1,4 @@
-import type { ChartData } from "@/app/api/types";
+import type { ChartData } from "@ocean-kit/dashboard-domain/types/areaDetail";
 import SvgReveal from "@/components/charts/SvgReveal";
 
 type Props = {

@@ -1,10 +1,10 @@
-import type { AreaDetails } from "@/app/api/types";
+import type { AreaDetail } from "@ocean-kit/dashboard-domain/types/areaDetail";
 import AttachmentStatusCard from "./attachment-status-card";
 import SurvivalStatusCard from "./survival-status-card";
 import GrowthChart from "./growth-chart";
 
 type Props = {
-  data: AreaDetails;
+  data: AreaDetail;
 };
 
 export default function EcologyTab({ data }: Props) {

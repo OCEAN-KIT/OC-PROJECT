@@ -1,5 +1,5 @@
 // src/api/submissions.ts
-import axiosInstance from "@ocean-kit/shared-api/axiosInstance";
+import axiosInstance from "@ocean-kit/shared-axios/axiosInstance";
 import type { FilterState } from "@/components/filter-bar/types";
 import { debugAxiosError } from "./_debugAxios";
 import { isAxiosError } from "axios";

@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import type { AreaDetails } from "@/app/api/types";
+import type { AreaDetail } from "@ocean-kit/dashboard-domain/types/areaDetail";
 import { STAGE_META, STAGE_ORDER, type StageName } from "@/constants/stageMeta";
 import { MapPin, Ruler, Waves, Shell, Calendar, Activity } from "lucide-react";
 
 type Props = {
-  data: AreaDetails;
+  data: AreaDetail;
 };
 
 /* ── Bento card wrapper ── */

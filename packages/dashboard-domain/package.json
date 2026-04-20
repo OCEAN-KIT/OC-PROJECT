@@ -1,0 +1,16 @@
+{
+  "name": "@ocean-kit/dashboard-domain",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@ocean-kit/shared-axios": "*",
+    "@ocean-kit/shared-types": "*"
+  },
+  "exports": {
+    "./api/areaDetail": "./src/api/areaDetail.ts",
+    "./api/areas": "./src/api/areas.ts",
+    "./types/areaDetail": "./src/types/areaDetail.ts",
+    "./types/areas": "./src/types/areas.ts"
+  }
+}

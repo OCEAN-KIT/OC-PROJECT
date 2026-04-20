@@ -1,44 +1,14 @@
 import type {
-  ApiResponse,
-  RestorationRegion,
+  AreasResponse,
   HabitatType,
   ProjectLevel,
-  AreaAttachmentStatus,
-} from "@/app/dashboard/create/api/types";
+  RestorationRegion,
+} from "@ocean-kit/dashboard-domain/types/areas";
 
-// ── 대시보드 구역 목록 응답 ──
-
-export type AreaItem = {
-  id: number;
-  name: string;
-  restorationRegion: RestorationRegion;
-  startDate: string;
-  endDate: string;
-  habitat: HabitatType;
-  depth: number;
-  areaSize: number;
-  level: ProjectLevel;
-  attachmentStatus: AreaAttachmentStatus;
-  lat: number;
-  lon: number;
-};
-
-export type PagedAreaData = {
-  content: AreaItem[];
-  page: number;
-  size: number;
-  totalPages: number;
-  totalElements: number;
-  first: boolean;
-  last: boolean;
-  hasNext: boolean;
-  hasPrevious: boolean;
-};
-
-export type AreasResponse = ApiResponse<PagedAreaData>;
+export type { AreasResponse, HabitatType, ProjectLevel, RestorationRegion };
 
 export type AreaFilters = {
-  region: string;
+  region: RestorationRegion | "";
   level: ProjectLevel | "";
   habitat: HabitatType | "";
   from: string;

@@ -14,30 +14,6 @@ export type PagedData<T> = {
   hasPrevious: boolean;
 };
 
-// ── 상세조회 ──
-
-export type AreaOverview = {
-  name: string;
-  areaId: number;
-  restorationRegion: string;
-  startDate: string | number[];
-  endDate: string | number[];
-  currentStatus: { name: string; description: string };
-  areaSize: number;
-  avgDepth: number;
-  habitatType: string;
-  lat: number;
-  lon: number;
-  attachmentStatus: string;
-};
-
-export type AreaDetailData = {
-  id: number;
-  overview: AreaOverview;
-};
-
-export type AreaDetailResponse = ApiResponse<AreaDetailData>;
-
 // ── 이식로그 ──
 
 export type TransplantLogItem = {

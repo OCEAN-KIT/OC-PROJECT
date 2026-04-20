@@ -1,13 +1,5 @@
-import axiosInstance from "@ocean-kit/shared-api/axiosInstance";
+import axiosInstance from "@ocean-kit/shared-axios/axiosInstance";
 import type { BasicPayload, ApiResponse } from "../../create/api/types";
-import type { AreaDetailResponse } from "./types";
-
-export async function getAreaDetail(id: number): Promise<AreaDetailResponse> {
-  const res = await axiosInstance.get<AreaDetailResponse>(
-    `/api/dashboard/areas/${id}`,
-  );
-  return res.data;
-}
 
 export async function patchBasicInfo(
   id: number,
