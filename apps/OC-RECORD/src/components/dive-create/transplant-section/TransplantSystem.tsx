@@ -4,7 +4,7 @@ import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
 import { Network } from "lucide-react";
 
-import type { OcRecordForm, TransplantSystem } from "@/types/form";
+import type { OcRecordForm, TransplantSystem } from "@ocean-kit/submission-domain/types/form";
 
 type Props = {
   methodType: OcRecordForm["transplant"]["methodType"];

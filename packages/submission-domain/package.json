@@ -1,0 +1,14 @@
+{
+  "name": "@ocean-kit/submission-domain",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@ocean-kit/shared-types": "*"
+  },
+  "exports": {
+    "./constants/formMappings": "./src/constants/formMappings.ts",
+    "./types/form": "./src/types/form.ts",
+    "./types/submission": "./src/types/submission.ts"
+  }
+}

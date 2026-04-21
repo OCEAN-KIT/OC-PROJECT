@@ -4,7 +4,7 @@ import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
 import { AlertTriangle } from "lucide-react";
 
-import type { OcRecordForm, UncollectedWasteScale } from "@/types/form";
+import type { OcRecordForm, UncollectedWasteScale } from "@ocean-kit/submission-domain/types/form";
 
 const UNCOLLECTED_WASTE_SCALES: UncollectedWasteScale[] = ["소", "중", "대"];
 

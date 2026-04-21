@@ -1,7 +1,7 @@
 "use client";
 
 import { Gauge } from "lucide-react";
-import type { OcRecordForm } from "@/types/form";
+import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
 import { inputCls } from "../styles";
 
 type Props = {

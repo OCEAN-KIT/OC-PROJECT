@@ -3,7 +3,7 @@
 import MultiOptionGrid from "@/components/ui/MultiOptionGrid";
 import { Fish } from "lucide-react";
 
-import type { OcRecordForm, GrazingTarget } from "@/types/form";
+import type { OcRecordForm, GrazingTarget } from "@ocean-kit/submission-domain/types/form";
 
 const GRAZING_TARGETS: GrazingTarget[] = [
   "성게",

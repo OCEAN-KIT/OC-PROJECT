@@ -4,7 +4,7 @@ import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
 import { MapPin } from "lucide-react";
 
-import type { OcRecordForm, TransplantPlace } from "@/types/form";
+import type { OcRecordForm, TransplantPlace } from "@ocean-kit/submission-domain/types/form";
 
 const TRANSPLANT_PLACES: TransplantPlace[] = ["어초", "암반", "기타"];
 

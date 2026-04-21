@@ -4,7 +4,7 @@ import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
 import { Sprout } from "lucide-react";
 
-import type { OcRecordForm, TransplantType } from "@/types/form";
+import type { OcRecordForm, TransplantType } from "@ocean-kit/submission-domain/types/form";
 
 const TRANSPLANT_TYPES: TransplantType[] = [
   "감태",

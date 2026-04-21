@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Activity, ChevronDown } from "lucide-react";
-import type { OcRecordForm, Rating3 } from "@/types/form";
+import type { OcRecordForm, Rating3 } from "@ocean-kit/submission-domain/types/form";
 
 type Props = {
   surgeStatus: OcRecordForm["env"]["surgeStatus"];

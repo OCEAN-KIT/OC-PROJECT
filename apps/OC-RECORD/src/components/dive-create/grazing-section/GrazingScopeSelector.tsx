@@ -5,7 +5,7 @@ import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
 import { MapPin } from "lucide-react";
 
-import type { OcRecordForm, GrazingScope } from "@/types/form";
+import type { OcRecordForm, GrazingScope } from "@ocean-kit/submission-domain/types/form";
 import CheonjiinKeyboard from "@/components/keyboard/CheonjiinKeyboard";
 
 const SCOPES: GrazingScope[] = ["국소", "구역", "광범위"];

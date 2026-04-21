@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     "@ocean-kit/shared-axios",
     "@ocean-kit/shared-auth",
     "@ocean-kit/shared-types",
+    "@ocean-kit/submission-domain",
   ],
 };
 

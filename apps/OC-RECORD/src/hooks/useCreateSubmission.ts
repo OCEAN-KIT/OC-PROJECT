@@ -2,12 +2,9 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { uploadImage } from "@/api/upload-image";
-import {
-  formToPayload,
-  createSubmission,
-  type FormToPayloadParams,
-} from "@/api/submissions";
+import { createSubmission } from "@/api/createSubmission";
 import { queryKeys } from "@/react-query/keys";
+import { formToPayload, type FormToPayloadParams } from "@/utils/formToPayload";
 
 type Params = {
   form: FormToPayloadParams["form"];

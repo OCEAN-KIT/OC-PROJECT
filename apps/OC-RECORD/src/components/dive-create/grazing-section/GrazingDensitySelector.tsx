@@ -4,7 +4,7 @@ import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
 import { Activity } from "lucide-react";
 
-import type { OcRecordForm, GrazingDensity } from "@/types/form";
+import type { OcRecordForm, GrazingDensity } from "@ocean-kit/submission-domain/types/form";
 
 const DENSITIES: GrazingDensity[] = ["적음", "보통", "많음"];
 
