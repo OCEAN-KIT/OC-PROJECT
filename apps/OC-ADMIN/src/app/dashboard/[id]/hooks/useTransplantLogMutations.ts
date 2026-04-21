@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "@/hooks/queryKeys";
 import {
-  postTransplantLog,
-  patchTransplantLog,
   deleteTransplantLog,
-} from "../api/transplantLogs";
-import type { TransplantLogPayload } from "../../create/api/types";
+  patchTransplantLog,
+  postTransplantLog,
+} from "@ocean-kit/dashboard-domain/api/areaTransplantLogs";
+import type { TransplantLogPayload } from "@ocean-kit/dashboard-domain/types/areaLogPayloads";
+import { queryKeys } from "@/hooks/queryKeys";
 
 export function usePostTransplantLog(areaId: number) {
   const queryClient = useQueryClient();
@@ -27,8 +27,13 @@ export function usePatchTransplantLog(areaId: number) {
 
   return useMutation({
     mutationKey: ["areas", areaId, "patch-transplant-log"],
-    mutationFn: ({ logId, payload }: { logId: number; payload: TransplantLogPayload }) =>
-      patchTransplantLog(areaId, logId, payload),
+    mutationFn: ({
+      logId,
+      payload,
+    }: {
+      logId: number;
+      payload: TransplantLogPayload;
+    }) => patchTransplantLog(areaId, logId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.areas.transplantLogs(areaId),

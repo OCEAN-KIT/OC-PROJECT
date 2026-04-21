@@ -5,10 +5,12 @@ import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { ClipLoader } from "react-spinners";
+import {
+  BASIC_PAYLOAD_INIT,
+  type BasicPayload,
+} from "@ocean-kit/dashboard-domain/types/areaBasicInfo";
 import BasicInfoSection from "./components/BasicInfoSection";
 import usePostBasicInfo from "./hooks/usePostBasicInfo";
-import { BASIC_PAYLOAD_INIT } from "./api/types";
-import type { BasicPayload } from "./api/types";
 
 export default function CreateAreaPage() {
   const { checking } = useAuthGuard({ mode: "gotoLogin" });

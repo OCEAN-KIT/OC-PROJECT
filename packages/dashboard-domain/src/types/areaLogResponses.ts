@@ -1,6 +1,7 @@
-import type { ApiResponse } from "../../create/api/types";
+// 작업영역 로그 조회 API에서 공통으로 사용하는 응답 타입.
+// 이식/성장/환경/미디어 로그 목록과 대표 종 조회 응답을 여기서 정의한다.
 
-// ── 페이지드 응답 공통 ──
+import type { ApiResponse } from "@ocean-kit/shared-types/api";
 
 export type PagedData<T> = {
   content: T[];
@@ -13,8 +14,6 @@ export type PagedData<T> = {
   hasNext: boolean;
   hasPrevious: boolean;
 };
-
-// ── 이식로그 ──
 
 export type TransplantLogItem = {
   id: number;
@@ -33,8 +32,6 @@ export type TransplantLogItem = {
 
 export type TransplantLogsResponse = ApiResponse<PagedData<TransplantLogItem>>;
 
-// ── 성장로그 ──
-
 export type GrowthLogItem = {
   id: number;
   recordDate: string;
@@ -47,7 +44,13 @@ export type GrowthLogItem = {
 
 export type GrowthLogsResponse = ApiResponse<PagedData<GrowthLogItem>>;
 
-// ── 환경로그 ──
+export type RepresentativeSpeciesData = {
+  speciesId: number | null;
+  speciesName: string | null;
+};
+
+export type RepresentativeSpeciesResponse =
+  ApiResponse<RepresentativeSpeciesData>;
 
 export type EnvironmentLogItem = {
   id: number;
@@ -66,8 +69,6 @@ export type EnvironmentLogItem = {
 export type EnvironmentLogsResponse = ApiResponse<
   PagedData<EnvironmentLogItem>
 >;
-
-// ── 미디어로그 ──
 
 export type MediaLogItem = {
   id: number;

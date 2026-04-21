@@ -8,7 +8,7 @@ import AreaList from "./components/area-list/AreaList";
 import AreaPagination from "./components/AreaPagination";
 import ClipLoader from "react-spinners/ClipLoader";
 import { useGetAreas } from "./hooks/useAreas";
-import type { AreaFilters } from "./api/types";
+import type { AreaFilters } from "./types";
 
 const FILTERS_INIT: AreaFilters = {
   region: "",

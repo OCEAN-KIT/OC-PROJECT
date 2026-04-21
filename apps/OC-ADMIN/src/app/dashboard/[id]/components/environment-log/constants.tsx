@@ -1,7 +1,7 @@
 import type {
-  EnvironmentLogPayload,
   EnvironmentCondition,
-} from "../../../create/api/types";
+  EnvironmentLogPayload,
+} from "@ocean-kit/dashboard-domain/types/areaLogPayloads";
 
 // ── 상태 옵션 ──
 

@@ -1,8 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  deleteMediaLog,
+  patchMediaLog,
+  postMediaLog,
+} from "@ocean-kit/dashboard-domain/api/areaMediaLogs";
+import type { MediaCategory } from "@ocean-kit/dashboard-domain/types/areaLogPayloads";
 import { uploadImage } from "@/api/upload-image";
 import { queryKeys } from "@/hooks/queryKeys";
-import { postMediaLog, patchMediaLog, deleteMediaLog } from "../api/mediaLogs";
-import type { MediaCategory } from "../../create/api/types";
 
 type PostMediaLogInput = {
   file: File;

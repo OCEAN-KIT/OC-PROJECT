@@ -1,9 +1,9 @@
 "use client";
 
 import type { ChangeEvent } from "react";
+import type { BasicPayload } from "@ocean-kit/dashboard-domain/types/areaBasicInfo";
 import { MapPin, Pencil } from "lucide-react";
 import { ClipLoader } from "react-spinners";
-import type { BasicPayload } from "../api/types";
 
 // ── select 옵션 ──
 const regionOptions = [

@@ -3,7 +3,10 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { Plus, ChevronUp, ChevronDown, Star, Trash2 } from "lucide-react";
-import type { GrowthLogPayload, GrowthStatus } from "../../../create/api/types";
+import type {
+  GrowthLogPayload,
+  GrowthStatus,
+} from "@ocean-kit/dashboard-domain/types/areaLogPayloads";
 import {
   usePostGrowthLog,
   useDeleteGrowthLog,
@@ -20,7 +23,11 @@ type Props = {
   onToggleRepresentative: () => void;
 };
 
-export default function GrowthLogCard({ section, isRepresentative, onToggleRepresentative }: Props) {
+export default function GrowthLogCard({
+  section,
+  isRepresentative,
+  onToggleRepresentative,
+}: Props) {
   const { id } = useParams();
   const areaId = Number(id);
   const { mutate: postLog } = usePostGrowthLog(areaId);

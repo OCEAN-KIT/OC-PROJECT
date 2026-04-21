@@ -1,6 +1,10 @@
+// 작업영역 이식 로그 조회/생성/수정/삭제 API.
+// 작업영역별 이식 로그 목록과 개별 로그 변경 요청을 담당한다.
+
 import axiosInstance from "@ocean-kit/shared-axios/axiosInstance";
-import type { ApiResponse, TransplantLogPayload } from "../../create/api/types";
-import type { TransplantLogsResponse } from "./types";
+import type { ApiResponse } from "@ocean-kit/shared-types/api";
+import type { TransplantLogPayload } from "../types/areaLogPayloads";
+import type { TransplantLogsResponse } from "../types/areaLogResponses";
 
 export async function getTransplantLogs(
   areaId: number,
@@ -8,6 +12,7 @@ export async function getTransplantLogs(
   const res = await axiosInstance.get<TransplantLogsResponse>(
     `/api/dashboard/areas/${areaId}/transplants`,
   );
+
   return res.data;
 }
 
@@ -19,6 +24,7 @@ export async function postTransplantLog(
     `/api/dashboard/areas/${areaId}/transplants`,
     payload,
   );
+
   return res.data;
 }
 
@@ -31,6 +37,7 @@ export async function patchTransplantLog(
     `/api/dashboard/areas/${areaId}/transplants/${logId}`,
     payload,
   );
+
   return res.data;
 }
 
@@ -41,5 +48,6 @@ export async function deleteTransplantLog(
   const res = await axiosInstance.delete<ApiResponse<null>>(
     `/api/dashboard/areas/${areaId}/transplants/${logId}`,
   );
+
   return res.data;
 }

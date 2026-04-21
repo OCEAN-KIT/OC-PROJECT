@@ -1,4 +1,7 @@
-import type { GrowthLogPayload, GrowthStatus } from "../../../create/api/types";
+import type {
+  GrowthLogPayload,
+  GrowthStatus,
+} from "@ocean-kit/dashboard-domain/types/areaLogPayloads";
 
 // ── 상태 옵션 ──
 

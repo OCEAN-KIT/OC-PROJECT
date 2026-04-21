@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { TrendingUp, Plus, ChevronUp } from "lucide-react";
-import type { GrowthLogPayload } from "../../../create/api/types";
+import type { GrowthLogPayload } from "@ocean-kit/dashboard-domain/types/areaLogPayloads";
 import {
   usePostGrowthLog,
   usePatchRepresentativeSpecies,
@@ -31,7 +31,8 @@ export default function GrowthLogSection({
   const { id } = useParams();
   const areaId = Number(id);
   const { mutate: postLog } = usePostGrowthLog(areaId);
-  const { mutate: patchRepresentativeSpecies } = usePatchRepresentativeSpecies(areaId);
+  const { mutate: patchRepresentativeSpecies } =
+    usePatchRepresentativeSpecies(areaId);
   const { data: representativeSpecies } = useRepresentativeSpecies(areaId);
   const { data: speciesList = [] } = useSpecies();
   const [showAddForm, setShowAddForm] = useState(false);

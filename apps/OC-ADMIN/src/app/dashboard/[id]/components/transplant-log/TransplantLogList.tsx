@@ -3,10 +3,10 @@
 import { useMemo } from "react";
 import { Plus } from "lucide-react";
 import type {
+  SpeciesAttachmentStatus,
   TransplantLogPayload,
   TransplantMethod,
-  SpeciesAttachmentStatus,
-} from "../../../create/api/types";
+} from "@ocean-kit/dashboard-domain/types/areaLogPayloads";
 import { useSpecies } from "@/hooks/useSpecies";
 import {
   transplantMethods,

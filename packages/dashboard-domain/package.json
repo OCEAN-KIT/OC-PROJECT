@@ -8,9 +8,17 @@
     "@ocean-kit/shared-types": "*"
   },
   "exports": {
+    "./api/areaBasicInfo": "./src/api/areaBasicInfo.ts",
     "./api/areaDetail": "./src/api/areaDetail.ts",
+    "./api/areaEnvironmentLogs": "./src/api/areaEnvironmentLogs.ts",
+    "./api/areaGrowthLogs": "./src/api/areaGrowthLogs.ts",
+    "./api/areaMediaLogs": "./src/api/areaMediaLogs.ts",
+    "./api/areaTransplantLogs": "./src/api/areaTransplantLogs.ts",
     "./api/areas": "./src/api/areas.ts",
+    "./types/areaBasicInfo": "./src/types/areaBasicInfo.ts",
     "./types/areaDetail": "./src/types/areaDetail.ts",
+    "./types/areaLogPayloads": "./src/types/areaLogPayloads.ts",
+    "./types/areaLogResponses": "./src/types/areaLogResponses.ts",
     "./types/areas": "./src/types/areas.ts"
   }
 }

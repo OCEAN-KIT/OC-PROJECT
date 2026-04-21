@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { Leaf, Plus, ChevronUp } from "lucide-react";
-import type { TransplantLogPayload } from "../../../create/api/types";
+import type { TransplantLogPayload } from "@ocean-kit/dashboard-domain/types/areaLogPayloads";
 import { usePostTransplantLog } from "../../hooks/useTransplantLogMutations";
 import { useSpecies } from "@/hooks/useSpecies";
 import {
