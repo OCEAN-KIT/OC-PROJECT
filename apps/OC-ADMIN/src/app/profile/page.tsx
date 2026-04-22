@@ -1,7 +1,8 @@
 // src/app/profile/page.tsx
 "use client";
 
-import { updateMyInfo } from "@/api/user";
+import { updateMyInfo } from "@ocean-kit/shared-auth/user";
+import axiosInstance from "@ocean-kit/shared-axios/axiosInstance";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useMyInfo } from "@/hooks/useMyInfo";
 import { useState } from "react";
@@ -79,7 +80,11 @@ export default function ProfilePage() {
       setSaving(true);
       setSaveErr("");
 
-      const res = await updateMyInfo(form.nickname, form.email, form.phone);
+      const res = await updateMyInfo(axiosInstance, {
+        nickname: form.nickname,
+        email: form.email,
+        phone: form.phone,
+      });
       if (!res?.success) throw new Error("update failed");
 
       await refetch();
