@@ -4,9 +4,11 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@ocean-kit/shared-types": "*"
+    "@ocean-kit/shared-types": "*",
+    "axios": "^1.12.2"
   },
   "exports": {
+    "./api/submissions": "./src/api/submissions.ts",
     "./constants/formMappings": "./src/constants/formMappings.ts",
     "./types/form": "./src/types/form.ts",
     "./types/submission": "./src/types/submission.ts"

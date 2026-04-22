@@ -1,17 +1,12 @@
+import { getSubmissionList } from "@ocean-kit/submission-domain/api/submissions";
+import type {
+  GetSubmissionListParams,
+  SubmissionListItemServer,
+  SubmissionListResponse,
+} from "@ocean-kit/submission-domain/types/submission";
 import axiosInstance from "@/utils/axiosInstance";
-import type { ActivityType } from "@ocean-kit/submission-domain/types/submission";
 
-/** 서버가 주는 목록 아이템 원형 */
-export interface SubmissionListItemServer {
-  submissionId: number;
-  siteName: string;
-  activityType: ActivityType;
-  submittedAt: string; // ISO
-  status: "PENDING" | "APPROVED" | "REJECTED" | string;
-  authorName: string;
-  authorEmail: string;
-  attachmentCount: number;
-}
+export type { SubmissionListItemServer, SubmissionListResponse };
 
 /** 프런트에서 쓰기 쉬운 목록 아이템 */
 export interface Submission {
@@ -37,24 +32,6 @@ export interface PageMeta {
   hasPrevious: boolean;
 }
 
-/** 목록 응답 래퍼 */
-export interface SubmissionListResponse {
-  success: boolean;
-  data: {
-    content: SubmissionListItemServer[];
-    page: number;
-    size: number;
-    totalPages: number;
-    totalElements: number;
-    first: boolean;
-    last: boolean;
-    hasNext: boolean;
-    hasPrevious: boolean;
-  };
-  code?: string;
-  message?: string | Record<string, unknown>;
-}
-
 /** 목록 조회 */
 export async function fetchSubmissions(params?: {
   page?: number;
@@ -64,17 +41,14 @@ export async function fetchSubmissions(params?: {
 }) {
   const { page = 0, size = 20, status, keyword } = params ?? {};
 
-  const { data } = await axiosInstance.get<SubmissionListResponse>(
-    "/api/admin/submissions",
-    {
-      params: {
-        page,
-        size,
-        status,
-        keyword,
-      },
-    },
-  );
+  const queryParams: GetSubmissionListParams = {
+    page,
+    size,
+    status,
+    keyword,
+  };
+
+  const data = await getSubmissionList(axiosInstance, queryParams);
 
   // 401/403 등은 axiosInstance 인터셉터에서 처리되거나 여기서 throw
   if (!data?.success) {

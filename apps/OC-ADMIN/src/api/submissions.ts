@@ -1,5 +1,13 @@
 // src/api/submissions.ts
 import axiosInstance from "@ocean-kit/shared-axios/axiosInstance";
+import {
+  getSubmissionDetail,
+  getSubmissionList,
+} from "@ocean-kit/submission-domain/api/submissions";
+import type {
+  GetSubmissionListParams,
+  SubmissionListResponse,
+} from "@ocean-kit/submission-domain/types/submission";
 import type { FilterState } from "@/components/filter-bar/types";
 import { debugAxiosError } from "./_debugAxios";
 import { isAxiosError } from "axios";
@@ -68,17 +76,15 @@ function normalizeFilters(filters: ListFilters) {
 }
 
 /** 서버 → 프론트 모델 매핑 (목록) */
-function mapServerToClient(data: unknown): {
+function mapServerToClient(data: SubmissionListResponse): {
   items: Submission[];
   total: number;
 } {
-  const root = (data ?? {}) as Record<string, unknown>;
-  const paged = (root.data ?? {}) as Record<string, unknown>;
-  const content = (paged.content ?? []) as unknown[];
+  const paged = data.data;
+  const content = paged.content ?? [];
 
   const items: Submission[] = content.map((row) => {
-    const r = (row ?? {}) as Record<string, unknown>;
-    const statusRaw = String(r.status ?? "").toLowerCase() as ReviewStatus | "";
+    const statusRaw = String(row.status ?? "").toLowerCase() as ReviewStatus | "";
     const status: ReviewStatus =
       statusRaw === "pending" ||
       statusRaw === "approved" ||
@@ -88,20 +94,18 @@ function mapServerToClient(data: unknown): {
         : "pending";
 
     return {
-      id: String(r.submissionId ?? ""),
-      site: String(r.siteName ?? ""),
-      datetime: String(r.submittedAt ?? ""),
-      task: String(r.activityType ?? ""),
-      author: String(r.authorName ?? ""),
-      fileCount: Number(r.attachmentCount ?? 0),
+      id: String(row.submissionId),
+      site: row.siteName,
+      datetime: row.submittedAt,
+      task: row.activityType,
+      author: row.authorName,
+      fileCount: row.attachmentCount,
       status,
     };
   });
 
   const total =
-    typeof (paged.totalElements as number | undefined) === "number"
-      ? (paged.totalElements as number)
-      : items.length;
+    typeof paged.totalElements === "number" ? paged.totalElements : items.length;
 
   return { items, total };
 }
@@ -123,15 +127,10 @@ export async function fetchSubmissions(params: {
     page: pageZero,
     size: pageSize,
     ...baseFilters,
-  });
+  }) as GetSubmissionListParams;
 
   try {
-    const { data } = await axiosInstance.get("/api/admin/submissions", {
-      params: queryParams,
-    });
-
-    const mapped = mapServerToClient(data);
-    return mapped;
+    return mapServerToClient(await getSubmissionList(axiosInstance, queryParams));
   } catch (err) {
     // 500/C001일 때 status 없이 1회 재시도
     if (isAxiosError(err)) {
@@ -150,10 +149,9 @@ export async function fetchSubmissions(params: {
         delete (retryParams as Record<string, unknown>).status;
 
         try {
-          const { data } = await axiosInstance.get("/api/admin/submissions", {
-            params: retryParams,
-          });
-          return mapServerToClient(data);
+          return mapServerToClient(
+            await getSubmissionList(axiosInstance, retryParams),
+          );
         } catch (e2) {
           return debugAxiosError(e2, "fetchSubmissions(retry)", {
             retryParams,
@@ -233,118 +231,11 @@ export async function bulkDelete(ids: string[]) {
   }
 }
 
-import type { ActivityType, EnvStatus, HealthGrade } from "@/types/activity";
-
-export type SubmissionDetailServer = {
-  submissionId: number;
-  siteName: string;
-  activityType: ActivityType;
-  recordDate?: string;
-  divingRound?: number;
-  workDescription?: string;
-  submittedAt: number[];
-  status: "PENDING" | "APPROVED" | "REJECTED" | "DELETED";
-  authorName: string;
-  authorEmail: string;
-  attachmentCount: number;
-  feedbackText?: string;
-
-  // 공통 환경 정보
-  basicEnv?: {
-    recordDate?: string;
-    avgDepthM?: number;
-    maxDepthM?: number;
-    waterTempC?: number;
-    visibilityStatus?: EnvStatus;
-    waveStatus?: EnvStatus;
-    surgeStatus?: EnvStatus;
-    currentStatus?: EnvStatus;
-  };
-
-  // 참여자 정보
-  participants?: {
-    participantNames?: string;
-  };
-
-  // 작업유형별 상세 정보
-  transplantActivity?: {
-    speciesType?: string;
-    locationType?: string;
-    methodType?: string;
-    scale?: string;
-    healthStatus?: HealthGrade;
-  };
-
-  grazerRemovalActivity?: {
-    targetSpecies?: string[];
-    densityBeforeWork?: string;
-    workScope?: string;
-    note?: string;
-    collectionAmount?: string;
-  };
-
-  substrateImprovementActivity?: {
-    targetType?: string;
-    workScope?: string;
-    substrateState?: string;
-  };
-
-  monitoringActivity?: {
-    entryCoordinate?: string;
-    exitCoordinate?: string;
-    direction?: string;
-    terrain?: string;
-    barrenExtent?: string;
-    grazerDistribution?: string;
-    rockFeatures?: string[];
-    suitability?: string;
-    seaweedIdNumber?: string;
-    seaweedHealthStatus?: string;
-    leafLength?: string;
-    maxLeafWidth?: string;
-  };
-
-  marineCleanupActivity?: {
-    wasteTypes?: string[];
-    method?: string;
-    collectionAmount?: string;
-    uncollectedScale?: string;
-  };
-
-  attachments?: Array<{
-    attachmentId: number;
-    fileName: string;
-    fileUrl: string;
-    mimeType: string;
-    fileSize: number;
-    uploadedAt: string;
-  }>;
-  rejectReason?: string;
-  auditLogs?: Array<{
-    logId: number;
-    action: string;
-    performedBy: string;
-    comment?: string;
-    createdAt: string;
-  }>;
-  createdAt: string;
-  modifiedAt: string;
-};
-
-type SubmissionDetailResponse = {
-  success: boolean;
-  data: SubmissionDetailServer;
-  errors?: Record<string, unknown>;
-  code?: string;
-  message?: unknown;
-};
+export type { SubmissionDetailServer } from "@ocean-kit/submission-domain/types/submission";
 
 export async function getSubmissionDetails(id: number) {
   try {
-    const { data } = await axiosInstance.get<SubmissionDetailResponse>(
-      `/api/admin/submissions/${id}`,
-    );
-    return data;
+    return await getSubmissionDetail(axiosInstance, id);
   } catch (err) {
     return debugAxiosError(err, "getSubmissionDetails()", { id });
   }
