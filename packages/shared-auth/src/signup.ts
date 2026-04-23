@@ -16,6 +16,21 @@ const COMPLETE_SIGN_UP_ERROR_MESSAGES = {
   400: "회원가입 정보를 확인해 주세요.",
 };
 
+export function getValidationErrorMessage(error: unknown): string | null {
+  if (!error || typeof error !== "object") return null;
+
+  const issues = (error as { issues?: { message?: unknown }[] }).issues;
+  if (
+    Array.isArray(issues) &&
+    issues.length > 0 &&
+    typeof issues[0]?.message === "string"
+  ) {
+    return issues[0].message;
+  }
+
+  return null;
+}
+
 export async function requestSignUp(
   username: string,
   password: string,
