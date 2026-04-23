@@ -1,11 +1,11 @@
-import type { AreaDetails } from "@/app/api/types";
+import type { AreaDetail } from "@ocean-kit/dashboard-domain/types/areaDetail";
 import SpeciesTable from "./species-table";
 import MethodDonutChart from "./method-donut-chart";
 import RecentWorkChart from "./recent-work-chart";
 import StatCard from "./stat-card";
 
 type Props = {
-  data: AreaDetails;
+  data: AreaDetail;
 };
 
 export default function StatusTab({ data }: Props) {

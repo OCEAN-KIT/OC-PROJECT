@@ -1,11 +1,11 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import type { AreaDetails } from "@/app/api/types";
+import type { AreaDetail } from "@ocean-kit/dashboard-domain/types/areaDetail";
 import { getStageColor } from "@/constants/stageMeta";
 
 type Props = {
-  overview: AreaDetails["overview"];
+  overview: AreaDetail["overview"];
   onClose: () => void;
 };
 

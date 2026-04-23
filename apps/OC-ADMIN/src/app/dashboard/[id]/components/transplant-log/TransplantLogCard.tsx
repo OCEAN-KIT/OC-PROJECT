@@ -4,10 +4,10 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { Plus, ChevronUp, ChevronDown, Trash2 } from "lucide-react";
 import type {
+  SpeciesAttachmentStatus,
   TransplantLogPayload,
   TransplantMethod,
-  SpeciesAttachmentStatus,
-} from "../../../create/api/types";
+} from "@ocean-kit/dashboard-domain/types/areaLogPayloads";
 import {
   usePostTransplantLog,
   useDeleteTransplantLog,

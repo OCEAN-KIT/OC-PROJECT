@@ -2,7 +2,8 @@
   "name": "oc-project",
   "private": true,
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "packages/*"
   ],
   "scripts": {
     "dev:record": "npm run dev -w @ocean-kit/oc-record",

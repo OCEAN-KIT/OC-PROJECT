@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
+import { getMediaLogs } from "@ocean-kit/dashboard-domain/api/areaMediaLogs";
+import type { MediaCategory } from "@ocean-kit/dashboard-domain/types/areaLogPayloads";
 import { queryKeys } from "@/hooks/queryKeys";
-import { getMediaLogs } from "../api/mediaLogs";
 import type { MediaLogEntry } from "../components/MediaLogSection";
-import type { MediaCategory } from "../../create/api/types";
 
 export default function useMediaLogs(areaId: number) {
   return useQuery({

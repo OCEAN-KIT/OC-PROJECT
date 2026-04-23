@@ -1,8 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
+import {
+  getGrowthLogs,
+  getRepresentativeSpecies,
+} from "@ocean-kit/dashboard-domain/api/areaGrowthLogs";
+import type { GrowthStatus } from "@ocean-kit/dashboard-domain/types/areaLogPayloads";
 import { queryKeys } from "@/hooks/queryKeys";
-import { getGrowthLogs, getRepresentativeSpecies } from "../api/growthLogs";
 import type { GrowthSpeciesSection } from "../components/growth-log";
-import type { GrowthStatus } from "../../create/api/types";
 
 export default function useGrowthLogs(areaId: number) {
   return useQuery({

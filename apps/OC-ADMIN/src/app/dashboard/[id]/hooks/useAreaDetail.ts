@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
+import { getAreaDetail } from "@ocean-kit/dashboard-domain/api/areaDetail";
+import type { BasicPayload } from "@ocean-kit/dashboard-domain/types/areaBasicInfo";
 import { queryKeys } from "@/hooks/queryKeys";
-import { getAreaDetail } from "../api/areaDetail";
-import type { BasicPayload } from "../../create/api/types";
 import {
   toRegionCode,
   toHabitatCode,

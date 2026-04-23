@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { Search, Filter } from "lucide-react";
 import {
-  type RestorationRegion,
-  type ProjectLevel,
   type HabitatType,
-} from "./area-list/constants";
-import type { AreaFilters } from "../api/types";
+  type ProjectLevel,
+  type RestorationRegion,
+} from "@ocean-kit/dashboard-domain/types/areas";
+import type { AreaFilters } from "../types";
 
 type Props = {
   filters: AreaFilters;

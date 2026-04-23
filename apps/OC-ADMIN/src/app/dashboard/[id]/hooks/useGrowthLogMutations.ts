@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "@/hooks/queryKeys";
 import {
-  postGrowthLog,
-  patchGrowthLog,
   deleteGrowthLog,
+  patchGrowthLog,
   patchRepresentativeSpecies,
-} from "../api/growthLogs";
-import type { GrowthLogPayload } from "../../create/api/types";
+  postGrowthLog,
+} from "@ocean-kit/dashboard-domain/api/areaGrowthLogs";
+import type { GrowthLogPayload } from "@ocean-kit/dashboard-domain/types/areaLogPayloads";
+import { queryKeys } from "@/hooks/queryKeys";
 
 export function usePostGrowthLog(areaId: number) {
   const queryClient = useQueryClient();
@@ -28,8 +28,13 @@ export function usePatchGrowthLog(areaId: number) {
 
   return useMutation({
     mutationKey: ["areas", areaId, "patch-growth-log"],
-    mutationFn: ({ logId, payload }: { logId: number; payload: GrowthLogPayload }) =>
-      patchGrowthLog(areaId, logId, payload),
+    mutationFn: ({
+      logId,
+      payload,
+    }: {
+      logId: number;
+      payload: GrowthLogPayload;
+    }) => patchGrowthLog(areaId, logId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.areas.growthLogs(areaId),

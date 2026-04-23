@@ -1,10 +1,8 @@
 // utils/axiosInstance.ts
-import axios, { AxiosHeaders, type InternalAxiosRequestConfig } from "axios";
+import { AxiosHeaders } from "axios";
+import { createAxiosInstance } from "@ocean-kit/shared-axios/axiosInstance";
 
-const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-  withCredentials: true,
-});
+const axiosInstance = createAxiosInstance();
 
 axiosInstance.interceptors.request.use((config) => {
   const isInternalApi =

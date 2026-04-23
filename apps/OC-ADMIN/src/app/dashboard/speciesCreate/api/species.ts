@@ -1,4 +1,4 @@
-import axiosInstance from "@/utils/axiosInstance";
+import axiosInstance from "@ocean-kit/shared-axios/axiosInstance";
 import type {
   SpeciesListResponse,
   CreateSpeciesRequest,

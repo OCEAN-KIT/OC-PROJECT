@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { AreaDetails } from "@/app/api/types";
+import type { AreaDetail } from "@ocean-kit/dashboard-domain/types/areaDetail";
 import { METHOD_META, getMethodMeta } from "@/constants/method";
 import styles from "./status-tab.module.css";
 
@@ -61,7 +61,7 @@ function MethodTooltip() {
 }
 
 type Props = {
-  list: AreaDetails["status"]["speciesList"];
+  list: AreaDetail["status"]["speciesList"];
 };
 
 export default function SpeciesTable({ list }: Props) {

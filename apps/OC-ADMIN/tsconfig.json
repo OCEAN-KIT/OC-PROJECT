@@ -5,7 +5,8 @@
     "noUnusedLocals": false, // 안 쓰는 변수 경고 X
     "noUnusedParameters": false, // 안 쓰는 파라미터 경고 X
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@ocean-kit/dashboard-domain/*": ["../../packages/dashboard-domain/src/*"]
     }
   },
   "include": [
@@ -14,8 +15,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/components/PortOneDemoButton.ㅓsx",
-    "src/lib/portone.js",
-    "public/firebase-messaging-sw.js"
+    "src/lib/portone.js"
   ],
   "exclude": ["node_modules"]
 }

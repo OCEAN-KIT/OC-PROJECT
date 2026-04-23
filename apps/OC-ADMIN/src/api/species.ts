@@ -1,5 +1,5 @@
-import axiosInstance from "@/utils/axiosInstance";
-import type { ApiResponse } from "@/app/dashboard/create/api/types";
+import axiosInstance from "@ocean-kit/shared-axios/axiosInstance";
+import type { ApiResponse } from "@ocean-kit/shared-types/api";
 
 export type Species = {
   id: number;

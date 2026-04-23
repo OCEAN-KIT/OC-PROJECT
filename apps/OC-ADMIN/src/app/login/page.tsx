@@ -1,10 +1,9 @@
 // app/login/page.tsx
-// 디자인만 변경 — 로그인 로직/함수 시그니처는 절대 수정 안 함
 "use client";
 
-import { logIn } from "@/api/auth";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { queryKeys } from "@/hooks/queryKeys";
+import { requestLogin } from "@ocean-kit/shared-auth/login";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation"; // ⬅️ 추가
 import { useState } from "react"; // ⬅️ useEffect 추가
@@ -31,12 +30,15 @@ export default function LoginPage() {
     try {
       setErrorMsg("");
       setSyncing(true);
-      await logIn(form.id, form.password);
+      await requestLogin(form.id, form.password);
       router.push("/home");
       queryClient.invalidateQueries({ queryKey: queryKeys.myInfo });
     } catch (err) {
-      console.error("로그인 에러:", err);
-      setErrorMsg("로그인 중 오류가 발생했습니다.");
+      if (err instanceof Error) {
+        setErrorMsg(err.message);
+      } else {
+        setErrorMsg("로그인 중 오류가 발생했습니다.");
+      }
     } finally {
       setSyncing(false);
     }

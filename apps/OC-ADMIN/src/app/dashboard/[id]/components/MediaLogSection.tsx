@@ -19,7 +19,7 @@ import {
   usePatchMediaLog,
   useDeleteMediaLog,
 } from "../hooks/useMediaLogMutations";
-import type { MediaLogPayload } from "../../create/api/types";
+import type { MediaLogPayload } from "@ocean-kit/dashboard-domain/types/areaLogPayloads";
 
 // ── UI 전용 타입 ──
 export type MediaLogEntry = MediaLogPayload & { id: number };

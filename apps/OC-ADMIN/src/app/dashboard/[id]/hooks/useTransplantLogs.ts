@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { queryKeys } from "@/hooks/queryKeys";
-import { getTransplantLogs } from "../api/transplantLogs";
-import type { SpeciesSection } from "../components/transplant-log";
+import { getTransplantLogs } from "@ocean-kit/dashboard-domain/api/areaTransplantLogs";
 import type {
-  TransplantMethod,
   SpeciesAttachmentStatus,
-} from "../../create/api/types";
+  TransplantMethod,
+} from "@ocean-kit/dashboard-domain/types/areaLogPayloads";
+import { queryKeys } from "@/hooks/queryKeys";
+import type { SpeciesSection } from "../components/transplant-log";
 
 export default function useTransplantLogs(areaId: number) {
   return useQuery({

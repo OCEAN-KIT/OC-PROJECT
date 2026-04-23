@@ -1,8 +1,8 @@
-import type { AreaDetails } from "@/app/api/types";
+import type { AreaDetail } from "@ocean-kit/dashboard-domain/types/areaDetail";
 import { getMethodMeta } from "@/constants/method";
 
 type Props = {
-  distribution: AreaDetails["status"]["methodDistribution"];
+  distribution: AreaDetail["status"]["methodDistribution"];
 };
 
 export default function MethodDonutChart({ distribution }: Props) {

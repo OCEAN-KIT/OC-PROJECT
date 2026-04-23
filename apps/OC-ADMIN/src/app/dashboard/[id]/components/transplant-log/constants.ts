@@ -1,8 +1,8 @@
 import type {
+  SpeciesAttachmentStatus,
   TransplantLogPayload,
   TransplantMethod,
-  SpeciesAttachmentStatus,
-} from "../../../create/api/types";
+} from "@ocean-kit/dashboard-domain/types/areaLogPayloads";
 
 // ── 이식 방식 옵션 ──
 

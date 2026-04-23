@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
-import { postBasicInfo } from "../api/basicInfo";
-import type { BasicPayload } from "../api/types";
+import { postBasicInfo } from "@ocean-kit/dashboard-domain/api/areaBasicInfo";
+import type { BasicPayload } from "@ocean-kit/dashboard-domain/types/areaBasicInfo";
 
 export default function usePostBasicInfo() {
   return useMutation({

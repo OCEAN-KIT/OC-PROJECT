@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { patchBasicInfo } from "@ocean-kit/dashboard-domain/api/areaBasicInfo";
+import type { BasicPayload } from "@ocean-kit/dashboard-domain/types/areaBasicInfo";
 import { queryKeys } from "@/hooks/queryKeys";
-import { patchBasicInfo } from "../api/areaDetail";
-import type { BasicPayload } from "../../create/api/types";
 
 export default function useUpdateBasicInfo(id: number) {
   const queryClient = useQueryClient();

@@ -4,9 +4,9 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
 import type {
-  EnvironmentLogPayload,
   EnvironmentCondition,
-} from "../../../create/api/types";
+  EnvironmentLogPayload,
+} from "@ocean-kit/dashboard-domain/types/areaLogPayloads";
 import {
   usePostEnvironmentLog,
   useDeleteEnvironmentLog,

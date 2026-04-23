@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "@/hooks/queryKeys";
 import {
-  postEnvironmentLog,
-  patchEnvironmentLog,
   deleteEnvironmentLog,
-} from "../api/environmentLogs";
-import type { EnvironmentLogPayload } from "../../create/api/types";
+  patchEnvironmentLog,
+  postEnvironmentLog,
+} from "@ocean-kit/dashboard-domain/api/areaEnvironmentLogs";
+import type { EnvironmentLogPayload } from "@ocean-kit/dashboard-domain/types/areaLogPayloads";
+import { queryKeys } from "@/hooks/queryKeys";
 
 export function usePostEnvironmentLog(areaId: number) {
   const queryClient = useQueryClient();
@@ -27,8 +27,13 @@ export function usePatchEnvironmentLog(areaId: number) {
 
   return useMutation({
     mutationKey: ["areas", areaId, "patch-environment-log"],
-    mutationFn: ({ logId, payload }: { logId: number; payload: EnvironmentLogPayload }) =>
-      patchEnvironmentLog(areaId, logId, payload),
+    mutationFn: ({
+      logId,
+      payload,
+    }: {
+      logId: number;
+      payload: EnvironmentLogPayload;
+    }) => patchEnvironmentLog(areaId, logId, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.areas.environmentLogs(areaId),

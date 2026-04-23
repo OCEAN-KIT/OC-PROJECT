@@ -23,8 +23,10 @@ import EnvironmentLogSection from "./components/environment-log";
 import type { EnvironmentLogEntry } from "./components/environment-log";
 import MediaLogSection from "./components/MediaLogSection";
 import type { MediaLogEntry } from "./components/MediaLogSection";
-import { BASIC_PAYLOAD_INIT } from "../create/api/types";
-import type { BasicPayload } from "../create/api/types";
+import {
+  BASIC_PAYLOAD_INIT,
+  type BasicPayload,
+} from "@ocean-kit/dashboard-domain/types/areaBasicInfo";
 import useAreaDetail from "./hooks/useAreaDetail";
 import useTransplantLogs from "./hooks/useTransplantLogs";
 import useGrowthLogs from "./hooks/useGrowthLogs";

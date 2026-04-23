@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import type { AreaDetails } from "@/app/api/types";
+import type { AreaDetail } from "@ocean-kit/dashboard-domain/types/areaDetail";
 import BeforeAfterCard from "./before-after-card";
 import TimelineView from "./timeline-view";
 
 type Props = {
-  data: AreaDetails;
+  data: AreaDetail;
 };
 
 const SUB_TABS = [
