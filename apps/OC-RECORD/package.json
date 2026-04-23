@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@ocean-kit/shared-auth": "*",
+    "@ocean-kit/shared-axios": "*",
     "@ocean-kit/submission-domain": "*",
     "@tanstack/react-query": "^5.90.1",
     "@tanstack/react-query-devtools": "^5.90.1",

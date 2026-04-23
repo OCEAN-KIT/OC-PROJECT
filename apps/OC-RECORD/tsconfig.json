@@ -2,10 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "@/*": ["./src/*"],
-      "@ocean-kit/submission-domain/*": [
-        "../../packages/submission-domain/src/*"
-      ]
+      "@/*": ["./src/*"]
     }
   },
   "include": [

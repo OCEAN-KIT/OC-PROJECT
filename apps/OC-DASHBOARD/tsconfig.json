@@ -2,8 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "paths": {
-      "@/*": ["./src/*"],
-      "@ocean-kit/dashboard-domain/*": ["../../packages/dashboard-domain/src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": [
