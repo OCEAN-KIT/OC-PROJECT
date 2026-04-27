@@ -4,7 +4,7 @@ import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
 import { Truck } from "lucide-react";
 
-import type { OcRecordForm, LiftingMethod } from "@/types/form";
+import type { OcRecordForm, LiftingMethod } from "@ocean-kit/submission-domain/types/form";
 
 const LIFTING_METHODS: LiftingMethod[] = ["수작업", "인양백", "크레인"];
 

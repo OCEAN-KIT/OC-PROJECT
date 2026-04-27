@@ -13,7 +13,7 @@ import {
 import { useCreateSubmission } from "@/hooks/useCreateSubmission";
 import { validateSubmission } from "@/utils/validateSubmission";
 
-import type { OcRecordForm } from "@/types/form";
+import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
 
 import WorkTypeSelector from "@/components/dive-create/common-section/WorkTypeSelector";
 import DetailsInput from "@/components/dive-create/common-section/DetailsInput";

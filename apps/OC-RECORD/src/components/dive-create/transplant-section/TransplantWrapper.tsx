@@ -1,6 +1,6 @@
 "use client";
 
-import type { OcRecordForm } from "@/types/form";
+import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
 import TransplantTypeSelector from "./TransplantTypeSelector";
 import TransplantPlaceSelector from "./TransplantPlaceSelector";
 import TransplantSystemSelector from "./TransplantSystem";

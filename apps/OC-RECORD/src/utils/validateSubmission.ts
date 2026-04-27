@@ -1,4 +1,4 @@
-import type { OcRecordForm } from "@/types/form";
+import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
 
 interface RequiredField {
   value: string;

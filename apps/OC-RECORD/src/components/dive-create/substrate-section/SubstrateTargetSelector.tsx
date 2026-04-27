@@ -4,7 +4,7 @@ import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
 import { Layers } from "lucide-react";
 
-import type { OcRecordForm, SubstrateTarget } from "@/types/form";
+import type { OcRecordForm, SubstrateTarget } from "@ocean-kit/submission-domain/types/form";
 
 const SUBSTRATE_TARGETS: SubstrateTarget[] = ["암반", "어초", "구조물", "기타"];
 

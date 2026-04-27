@@ -11,6 +11,7 @@
   "exports": {
     "./login": "./src/login.ts",
     "./signup": "./src/signup.ts",
-    "./logout": "./src/logout.ts"
+    "./logout": "./src/logout.ts",
+    "./user": "./src/user.ts"
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import type { OcRecordForm } from "@/types/form";
+import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
 import { cardCls } from "../styles";
 import { Hash } from "lucide-react";
 

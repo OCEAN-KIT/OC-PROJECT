@@ -6,7 +6,8 @@
     "noUnusedParameters": false, // 안 쓰는 파라미터 경고 X
     "paths": {
       "@/*": ["./src/*"],
-      "@ocean-kit/dashboard-domain/*": ["../../packages/dashboard-domain/src/*"]
+      "@ocean-kit/dashboard-domain/*": ["../../packages/dashboard-domain/src/*"],
+      "@ocean-kit/submission-domain/*": ["../../packages/submission-domain/src/*"]
     }
   },
   "include": [

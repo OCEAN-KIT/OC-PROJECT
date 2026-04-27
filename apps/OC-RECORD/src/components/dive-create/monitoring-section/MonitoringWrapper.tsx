@@ -1,6 +1,6 @@
 "use client";
 
-import type { OcRecordForm } from "@/types/form";
+import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
 import SiteSurvey from "./SiteSurvey";
 import AlgaeStatus from "./AlgaeStatus";
 import PreciseMeasurement from "./PreciseMeasurement";

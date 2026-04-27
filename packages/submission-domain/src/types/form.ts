@@ -1,3 +1,10 @@
+// record 잠수기록 작성 화면에서 사용하는 폼 타입과 선택 enum.
+// 활동 제출 payload로 변환되기 전의 화면 상태를 정의한다.
+
+import type { HealthGrade } from "./submission";
+
+export type { HealthGrade };
+
 ////////////// 공통 영역 ////////////////
 export type WorkType =
   | "이식"
@@ -8,8 +15,6 @@ export type WorkType =
   | "기타";
 
 export type Rating3 = "나쁨" | "보통" | "좋음";
-
-export type HealthGrade = "A" | "B" | "C" | "D";
 
 ////////////// 이식 ////////////////
 export type TransplantType =
@@ -83,10 +88,10 @@ export type UncollectedWasteScale = "소" | "중" | "대";
 export type OcRecordForm = {
   basic: {
     siteName: string; // 활동 장소명(사이트명)
-    date: string; // 활동 날짜 (YYYY-MM-DD) → API: recordDate
+    date: string; // 활동 날짜 (YYYY-MM-DD) -> API: recordDate
     time: string; // 활동 시간 (HH:MM) - 프론트 전용
-    diveRound: number; // 다이빙 회차 → API: divingRound
-    workType: WorkType; // 작업 유형 → API: activityType
+    diveRound: number; // 다이빙 회차 -> API: divingRound
+    workType: WorkType; // 작업 유형 -> API: activityType
     workers: string; // 작업자(참여자) 정보 텍스트 - 프론트 전용 (API: participants로 분리)
   };
   env: {

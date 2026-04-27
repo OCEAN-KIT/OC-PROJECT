@@ -4,7 +4,7 @@ import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
 import { Activity } from "lucide-react";
 
-import type { HealthGrade, OcRecordForm } from "@/types/form";
+import type { HealthGrade, OcRecordForm } from "@ocean-kit/submission-domain/types/form";
 
 type Props = {
   healthStatus: OcRecordForm["transplant"]["healthStatus"];

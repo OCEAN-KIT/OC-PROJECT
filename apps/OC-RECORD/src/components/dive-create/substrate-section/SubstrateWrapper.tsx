@@ -1,6 +1,6 @@
 "use client";
 
-import type { OcRecordForm } from "@/types/form";
+import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
 import SubstrateTargetSelector from "./SubstrateTargetSelector";
 import SubstrateRange from "./SubstrateRange";
 import SubstrateCondition from "./SubstrateCondition";
