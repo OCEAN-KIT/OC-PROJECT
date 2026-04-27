@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@ocean-kit/shared-types": "*",
+    "@ocean-kit/shared-types": "workspace:*",
     "axios": "^1.12.2"
   },
   "exports": {

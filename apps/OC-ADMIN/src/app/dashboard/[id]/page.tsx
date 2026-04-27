@@ -35,7 +35,8 @@ import useMediaLogs from "./hooks/useMediaLogs";
 import useUpdateBasicInfo from "./hooks/useUpdateBasicInfo";
 import DashboardDetailNotFound from "./not-found";
 
-function SkeletonBar({ className = "" }: { className?: string }) {
+function SkeletonBar({ className = "" }: { className?: string }) 
+useS
   return (
     <div className={`animate-pulse rounded-lg bg-gray-200 ${className}`} />
   );

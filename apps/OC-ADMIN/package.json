@@ -9,11 +9,11 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@ocean-kit/dashboard-domain": "*",
-    "@ocean-kit/shared-auth": "*",
-    "@ocean-kit/shared-axios": "*",
-    "@ocean-kit/shared-types": "*",
-    "@ocean-kit/submission-domain": "*",
+    "@ocean-kit/dashboard-domain": "workspace:*",
+    "@ocean-kit/shared-auth": "workspace:*",
+    "@ocean-kit/shared-axios": "workspace:*",
+    "@ocean-kit/shared-types": "workspace:*",
+    "@ocean-kit/submission-domain": "workspace:*",
     "@tanstack/react-query": "^5.90.1",
     "@tanstack/react-query-devtools": "^5.90.1",
     "axios": "^1.12.2",
