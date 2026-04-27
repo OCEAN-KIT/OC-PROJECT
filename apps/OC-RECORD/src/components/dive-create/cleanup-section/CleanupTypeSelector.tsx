@@ -3,7 +3,7 @@
 import MultiOptionGrid from "@/components/ui/MultiOptionGrid";
 import { Trash2 } from "lucide-react";
 
-import type { OcRecordForm, CleanupType } from "@/types/form";
+import type { OcRecordForm, CleanupType } from "@ocean-kit/submission-domain/types/form";
 
 const CLEANUP_TYPES: CleanupType[] = [
   "그물",

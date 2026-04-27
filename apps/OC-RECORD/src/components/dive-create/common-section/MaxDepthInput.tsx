@@ -2,7 +2,7 @@
 
 import SelectCard from "@/components/ui/SelectCard";
 import { ArrowDown } from "lucide-react";
-import type { OcRecordForm } from "@/types/form";
+import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
 import { cardCls } from "../styles";
 
 type Props = {

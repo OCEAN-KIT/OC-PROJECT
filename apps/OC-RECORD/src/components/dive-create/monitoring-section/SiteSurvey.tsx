@@ -13,7 +13,7 @@ import type {
   GrazerDistribution,
   RockCharacteristic,
   TransplantSuitability,
-} from "@/types/form";
+} from "@ocean-kit/submission-domain/types/form";
 
 const TERRAIN_TYPES: TerrainType[] = ["암반", "모래", "혼합", "기타"];
 const WHITENING_LEVELS: WhiteningLevel[] = ["없음", "진행", "심각"];

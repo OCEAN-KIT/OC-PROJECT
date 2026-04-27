@@ -4,7 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import { FileCheck } from "lucide-react";
 
 import SelectCard from "@/components/ui/SelectCard";
-import type { OcRecordForm } from "@/types/form";
+import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
 import CheonjiinKeyboard from "@/components/keyboard/CheonjiinKeyboard";
 
 type Props = {

@@ -5,7 +5,7 @@ import { Ruler } from "lucide-react";
 import SelectCard from "@/components/ui/SelectCard";
 import CheonjiinKeyboard from "@/components/keyboard/CheonjiinKeyboard";
 
-import type { OcRecordForm } from "@/types/form";
+import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
 
 type Props = {
   monitoring: OcRecordForm["monitoring"];

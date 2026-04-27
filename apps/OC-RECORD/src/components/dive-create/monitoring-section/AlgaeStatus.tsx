@@ -6,7 +6,7 @@ import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
 import CheonjiinKeyboard from "@/components/keyboard/CheonjiinKeyboard";
 
-import type { OcRecordForm, AlgaeCondition } from "@/types/form";
+import type { OcRecordForm, AlgaeCondition } from "@ocean-kit/submission-domain/types/form";
 
 const ALGAE_CONDITIONS: AlgaeCondition[] = ["양호", "쇠약", "탈락"];
 

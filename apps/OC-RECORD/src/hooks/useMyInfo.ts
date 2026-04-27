@@ -2,12 +2,13 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { myInfo } from "@/api/user";
+import { myInfo } from "@ocean-kit/shared-auth/user";
+import axiosInstance from "@/utils/axiosInstance";
 
 export function useMyInfo() {
   return useQuery({
     queryKey: ["myInfo"],
-    queryFn: myInfo,
+    queryFn: () => myInfo(axiosInstance),
     refetchOnMount: "always",
     refetchOnWindowFocus: true,
     refetchOnReconnect: "always",

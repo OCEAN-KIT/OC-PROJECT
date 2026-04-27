@@ -1,6 +1,6 @@
 "use client";
 
-import type { OcRecordForm } from "@/types/form";
+import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
 import CleanupTypeSelector from "./CleanupTypeSelector";
 import LiftingMethodSelector from "./LiftingMethodSelector";
 import CleanupCollectedAmount from "./CleanupCollectedAmount";

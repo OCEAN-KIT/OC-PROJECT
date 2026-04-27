@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Waves, ChevronDown } from "lucide-react";
 import OptionGrid from "@/components/ui/OptionGrid";
-import type { OcRecordForm, Rating3 } from "@/types/form";
+import type { OcRecordForm, Rating3 } from "@ocean-kit/submission-domain/types/form";
 
 type Props = {
   waveStatus: OcRecordForm["env"]["waveStatus"];

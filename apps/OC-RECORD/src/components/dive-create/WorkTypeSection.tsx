@@ -1,6 +1,6 @@
 "use client";
 
-import type { OcRecordForm } from "@/types/form";
+import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
 
 import TransplantWrapper from "@/components/dive-create/transplant-section/TransplantWrapper";
 import GrazingWrapper from "@/components/dive-create/grazing-section/GrazingWrapper";
