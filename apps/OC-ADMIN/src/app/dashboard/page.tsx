@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useAuthGuard } from "@/hooks/useAuthGuard";
+// import { useAuthGuard } from "@/hooks/useAuthGuard";
 import AreaPageHeader from "./components/AreaPageHeader";
 import AreaSearchFilter from "./components/AreaSearchFilter";
 import AreaList from "./components/area-list/AreaList";
@@ -20,7 +20,7 @@ const FILTERS_INIT: AreaFilters = {
 };
 
 export default function DashboardPage() {
-  useAuthGuard({ mode: "gotoLogin" });
+  // useAuthGuard({ mode: "gotoLogin" });
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<AreaFilters>(FILTERS_INIT);
 

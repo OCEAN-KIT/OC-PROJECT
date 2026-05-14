@@ -16,10 +16,10 @@ import RejectModal from "@/components/reject-reason-modal";
 import FilterBar from "@/components/filter-bar/filter-bar";
 import type { ListFilters } from "@/api/submissions";
 import { ClipLoader } from "react-spinners";
-import { useAuthGuard } from "@/hooks/useAuthGuard";
+// import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 export default function HomePage() {
-  useAuthGuard({ mode: "gotoLogin" });
+  // useAuthGuard({ mode: "gotoLogin" });
 
   const [page, setPage] = useState(1);
   const pageSize = 10;

@@ -2,14 +2,14 @@
 "use client";
 
 import { updateMyInfo } from "@ocean-kit/shared-auth/user";
-import { useAuthGuard } from "@/hooks/useAuthGuard";
+// import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useMyInfo } from "@/hooks/useMyInfo";
 import { useState } from "react";
 import axiosInstance from "@/utils/axiosInstance";
 
 export default function ProfilePage() {
   const { data, isLoading, error, refetch } = useMyInfo();
-  const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoLogin" });
+  // const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoLogin" });
 
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -21,7 +21,7 @@ export default function ProfilePage() {
     phone: "",
   });
 
-  if (checking || !isLoggedIn) return null;
+  // if (checking || !isLoggedIn) return null;
 
   const profile = data?.data;
 
