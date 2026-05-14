@@ -6,7 +6,7 @@ import MainHeader from "@/components/mian-header";
 import MainButton from "@/components/ui/main-button";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function HomePage() {
   const router = useRouter();
@@ -14,6 +14,7 @@ export default function HomePage() {
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const isLoggingOutRef = useRef(false);
 
   useEffect(() => {
     router.prefetch("/submit-management");
@@ -22,6 +23,10 @@ export default function HomePage() {
   }, [router]);
 
   async function handleLogOut() {
+    if (isLoggingOutRef.current) return;
+
+    isLoggingOutRef.current = true;
+
     try {
       setErrorMsg("");
       setLoading(true);
@@ -34,6 +39,7 @@ export default function HomePage() {
         setErrorMsg("로그아웃 중 오류가 발생했습니다.");
       }
     } finally {
+      isLoggingOutRef.current = false;
       setLoading(false);
     }
   }
@@ -76,12 +82,13 @@ export default function HomePage() {
         )}
 
         <button
-          className="mt-8 mx-auto block text-[14px] font-medium text-gray-700 cursor-pointer"
+          className="mt-8 mx-auto block text-[14px] font-medium text-gray-700 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
           onClick={handleLogOut}
           type="button"
+          disabled={loading}
         >
           {loading ? "로그아웃 중..." : "로그아웃"}
-          <span className="inline-block translate-y-1px cursor-pointer">›</span>
+          <span className="inline-block translate-y-1px">›</span>
         </button>
       </div>
     </div>

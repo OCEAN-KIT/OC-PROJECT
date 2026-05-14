@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
   "dependencies": {
-    "@ocean-kit/shared-types": "*",
+    "@ocean-kit/shared-types": "workspace:*",
     "axios": "^1.12.2"
   },
   "exports": {

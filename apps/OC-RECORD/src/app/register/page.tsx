@@ -3,32 +3,12 @@
 import { useState } from "react";
 import { registerSchema, RegisterFormData } from "@/lib/validation/register";
 import { logIn } from "@/api/auth/login";
-import { completeSignUp, requestSignUp } from "@ocean-kit/shared-auth/signup";
+import {
+  completeSignUp,
+  getValidationErrorMessage,
+  requestSignUp,
+} from "@ocean-kit/shared-auth/signup";
 import { useRouter } from "next/navigation";
-
-function getValidationErrorMessage(error: unknown): string | null {
-  if (!error || typeof error !== "object") return null;
-
-  const issues = (error as { issues?: { message?: unknown }[] }).issues;
-  if (
-    Array.isArray(issues) &&
-    issues.length > 0 &&
-    typeof issues[0]?.message === "string"
-  ) {
-    return issues[0].message;
-  }
-
-  const errors = (error as { errors?: { message?: unknown }[] }).errors;
-  if (
-    Array.isArray(errors) &&
-    errors.length > 0 &&
-    typeof errors[0]?.message === "string"
-  ) {
-    return errors[0].message;
-  }
-
-  return null;
-}
 
 export default function RegisterPage() {
   const [form, setForm] = useState<RegisterFormData>({
