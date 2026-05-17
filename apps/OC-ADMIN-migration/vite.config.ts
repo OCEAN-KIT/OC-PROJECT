@@ -7,7 +7,11 @@ import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 const config = defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '')
+  const env: Record<string, string | undefined> = loadEnv(
+    mode,
+    process.cwd(),
+    '',
+  )
 
   return {
     define: {

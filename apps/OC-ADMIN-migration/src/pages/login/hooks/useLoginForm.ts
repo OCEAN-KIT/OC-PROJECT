@@ -1,3 +1,8 @@
+/*
+ * 로그인 폼의 입력 상태와 제출 의도를 관리하는 form hook입니다.
+ * UI는 values/updateField/submitLogin만 알면 되게 만들고,
+ * 실제 인증 요청과 라우팅은 useLoginMutation에 위임합니다.
+ */
 import { useState } from 'react'
 import type { LoginFormField, LoginFormValues } from '../types'
 import { useLoginMutation } from './useLoginMutation'

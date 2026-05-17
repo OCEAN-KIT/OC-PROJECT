@@ -9,7 +9,7 @@ import {
   useBulkRejectMutation,
   useDeleteMutation,
 } from "@/hooks/submissions";
-import { useSubmissionSelection } from "@/hooks/useSubmissionSelction"; // ✅ 오타 주의
+import { useSubmissionSelection } from "@/hooks/useSubmissionSelction";
 import ReviewList from "@/components/review-list/review-list";
 import ReviewBulkActions from "@/components/review-list/review-bulk-actions";
 import RejectModal from "@/components/reject-reason-modal";

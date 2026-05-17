@@ -1,3 +1,8 @@
+/*
+ * 로그인 입력 폼 UI입니다.
+ * 이메일/비밀번호 입력, 에러 표시, 제출 버튼 렌더링을 담당하고
+ * 실제 상태 변경과 로그인 요청은 useLoginForm의 계약을 통해 사용합니다.
+ */
 import { useLoginForm } from '../hooks/useLoginForm'
 
 export function LoginForm() {

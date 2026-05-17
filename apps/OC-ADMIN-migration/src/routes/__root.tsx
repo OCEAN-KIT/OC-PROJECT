@@ -1,11 +1,18 @@
+/*
+ * 앱 전체의 root route입니다.
+ * HTML document shell, 공통 provider, head/meta, global css, devtools를 연결하고
+ * 실제 화면 레이아웃은 AppLayout에 위임합니다.
+ */
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
+import { AppLayout } from '#/shared/layouts/app/AppLayout'
 import { QueryProvider } from '#/shared/providers/QueryProvider'
 
 import appCss from '../styles.css?url'
 
 export const Route = createRootRoute({
+  component: AppLayout,
   head: () => ({
     meta: [
       {

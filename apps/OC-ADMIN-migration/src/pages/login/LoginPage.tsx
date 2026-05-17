@@ -1,9 +1,14 @@
+/*
+ * 로그인 화면의 페이지 shell입니다.
+ * 배경, 카드, 브랜드 영역 같은 화면 골격만 담당하고
+ * 입력 상태와 제출 로직은 LoginForm/useLoginForm 쪽으로 분리합니다.
+ */
 import { LoginForm } from './components/LoginForm'
 
 export function LoginPage() {
   return (
     <div
-      className="flex min-h-[calc(100dvh-4rem)] items-center justify-center bg-gray-50 px-4 py-10 text-gray-900"
+      className="flex min-h-dvh items-center justify-center bg-gray-50 px-4 py-10 text-gray-900"
       style={{
         paddingTop: 'env(safe-area-inset-top)',
         paddingBottom: 'env(safe-area-inset-bottom)',

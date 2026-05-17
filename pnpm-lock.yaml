@@ -102,6 +102,12 @@ importers:
       '@ocean-kit/shared-auth':
         specifier: workspace:*
         version: link:../../packages/shared-auth
+      '@ocean-kit/shared-axios':
+        specifier: workspace:*
+        version: link:../../packages/shared-axios
+      '@ocean-kit/submission-domain':
+        specifier: workspace:*
+        version: link:../../packages/submission-domain
       '@tailwindcss/vite':
         specifier: ^4.1.18
         version: 4.2.4(vite@8.0.10(@types/node@22.19.17)(jiti@2.6.1))
@@ -129,6 +135,9 @@ importers:
       '@tanstack/router-plugin':
         specifier: ^1.132.0
         version: 1.167.32(@tanstack/react-router@1.169.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(vite@8.0.10(@types/node@22.19.17)(jiti@2.6.1))
+      axios:
+        specifier: ^1.12.2
+        version: 1.15.0
       lucide-react:
         specifier: ^0.545.0
         version: 0.545.0(react@19.2.5)
@@ -138,6 +147,9 @@ importers:
       react-dom:
         specifier: ^19.2.0
         version: 19.2.5(react@19.2.5)
+      react-spinners:
+        specifier: ^0.17.0
+        version: 0.17.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       tailwindcss:
         specifier: ^4.1.18
         version: 4.2.2
@@ -7199,6 +7211,11 @@ snapshots:
     dependencies:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
+
+  react-spinners@0.17.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
+    dependencies:
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
 
   react@19.1.0: {}
 
