@@ -5,7 +5,7 @@
  * pending 상태인 항목만 선택 대상으로 계산하고,
  * 단일/전체 토글, 초기화, 목록 변경 시 사라진 선택 id 정리를 제공합니다.
  */
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Submission } from "../api/submissions";
 
 export function useSubmissionSelection(items: Submission[]) {
@@ -29,20 +29,23 @@ export function useSubmissionSelection(items: Submission[]) {
     });
   }, [selectableIdSet]);
 
-  const toggleOne = (id: string) => {
-    if (!selectableIdSet.has(id)) return;
-    setSelected((prev) => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
-  };
-  const toggleAll = () => {
+  const toggleOne = useCallback(
+    (id: string) => {
+      if (!selectableIdSet.has(id)) return;
+      setSelected((prev) => {
+        const next = new Set(prev);
+        next.has(id) ? next.delete(id) : next.add(id);
+        return next;
+      });
+    },
+    [selectableIdSet]
+  );
+  const toggleAll = useCallback(() => {
     setSelected((prev) =>
       prev.size === total ? new Set() : new Set(selectableIds)
     );
-  };
-  const clear = () => setSelected(new Set());
+  }, [selectableIds, total]);
+  const clear = useCallback(() => setSelected(new Set()), []);
   return {
     selected,
     toggleOne,

@@ -5,6 +5,7 @@
  * 목록 헤더와 ReviewCard 반복 렌더링만 담당하며,
  * loading/empty/error 같은 목록 영역 상태는 상위 SubmissionListSection이 담당합니다.
  */
+import { memo } from "react";
 import ReviewCard from "../review-card/ReviewCard";
 import { REVIEW_GRID } from "../review-grid";
 import type { Submission } from "../../api/submissions";
@@ -18,7 +19,7 @@ type Props = {
   onDeleteOne: (id: string) => void;
 };
 
-export default function ReviewList({
+function ReviewList({
   items,
   selected = new Set(),
   onToggleOne,
@@ -49,10 +50,10 @@ export default function ReviewList({
             key={it.id}
             review={it}
             selected={selected.has(String(it.id))}
-            onToggle={() => onToggleOne(String(it.id))}
-            onApprove={() => onApproveOne(String(it.id))}
-            onReject={() => onRejectOne(String(it.id))}
-            onDelete={() => onDeleteOne(String(it.id))}
+            onToggle={onToggleOne}
+            onApprove={onApproveOne}
+            onReject={onRejectOne}
+            onDelete={onDeleteOne}
           />
         ))}
       </div>
@@ -60,3 +61,5 @@ export default function ReviewList({
     </div>
   );
 }
+
+export default memo(ReviewList);

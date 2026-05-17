@@ -5,6 +5,7 @@
  * 날짜/상태/활동 라벨 계산은 presentation helper에 위임하고,
  * 선택 셀, 상태 칩, 액션 버튼은 하위 컴포넌트로 분리해 카드 구조만 드러냅니다.
  */
+import { memo, useCallback } from "react";
 import type { KeyboardEvent, MouseEvent } from "react";
 import { CalendarClock, MapPin, Paperclip, User2 } from "lucide-react";
 import type { Submission } from "../../api/submissions";
@@ -19,13 +20,13 @@ import { getReviewCardPresentation } from "./utils/reviewCardPresentation";
 type ReviewCardProps = {
   review: Submission;
   selected?: boolean;
-  onToggle?: () => void;
-  onApprove?: () => void;
-  onReject?: () => void;
-  onDelete?: () => void;
+  onToggle?: (id: string) => void;
+  onApprove?: (id: string) => void;
+  onReject?: (id: string) => void;
+  onDelete?: (id: string) => void;
 };
 
-export default function ReviewCard({
+function ReviewCard({
   review,
   selected = false,
   onToggle,
@@ -36,26 +37,48 @@ export default function ReviewCard({
   const openDetail = useReviewCardNavigation(review.id);
   const presentation = getReviewCardPresentation(review);
 
-  const handleCardClick = (event: MouseEvent<HTMLDivElement>) => {
-    if (isInteractiveCardTarget(event.target)) {
-      return;
-    }
+  const handleToggle = useCallback(() => {
+    onToggle?.(review.id);
+  }, [onToggle, review.id]);
 
-    openDetail();
-  };
+  const handleApprove = useCallback(() => {
+    onApprove?.(review.id);
+  }, [onApprove, review.id]);
 
-  const handleCardKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (isInteractiveCardTarget(event.target)) {
-      return;
-    }
+  const handleReject = useCallback(() => {
+    onReject?.(review.id);
+  }, [onReject, review.id]);
 
-    if (event.key !== "Enter" && event.key !== " ") {
-      return;
-    }
+  const handleDelete = useCallback(() => {
+    onDelete?.(review.id);
+  }, [onDelete, review.id]);
 
-    event.preventDefault();
-    openDetail();
-  };
+  const handleCardClick = useCallback(
+    (event: MouseEvent<HTMLDivElement>) => {
+      if (isInteractiveCardTarget(event.target)) {
+        return;
+      }
+
+      openDetail();
+    },
+    [openDetail],
+  );
+
+  const handleCardKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLDivElement>) => {
+      if (isInteractiveCardTarget(event.target)) {
+        return;
+      }
+
+      if (event.key !== "Enter" && event.key !== " ") {
+        return;
+      }
+
+      event.preventDefault();
+      openDetail();
+    },
+    [openDetail],
+  );
 
   return (
     <div
@@ -70,7 +93,7 @@ export default function ReviewCard({
           id={review.id}
           isSelectable={presentation.isSelectable}
           selected={selected}
-          onToggle={onToggle}
+          onToggle={handleToggle}
         />
 
         <div className="flex min-w-0 items-center gap-1.5 text-gray-700">
@@ -101,11 +124,13 @@ export default function ReviewCard({
 
         <ReviewCardActions
           isPending={presentation.isPending}
-          onApprove={onApprove}
-          onReject={onReject}
-          onDelete={onDelete}
+          onApprove={handleApprove}
+          onReject={handleReject}
+          onDelete={handleDelete}
         />
       </div>
     </div>
   );
 }
+
+export default memo(ReviewCard);

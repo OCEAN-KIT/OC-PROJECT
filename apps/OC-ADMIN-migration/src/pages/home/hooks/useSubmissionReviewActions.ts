@@ -26,11 +26,13 @@ export function useSubmissionReviewActions({
   openRejectModal,
   closeRejectModal,
 }: UseSubmissionReviewActionsParams) {
-  const approveOne = useApproveMutation()
-  const rejectOne = useRejectMutation()
-  const bulkApprove = useBulkApproveMutation()
-  const bulkReject = useBulkRejectMutation()
-  const deleteOne = useDeleteMutation()
+  const { mutate: approveOne } = useApproveMutation()
+  const { mutate: rejectOne, isPending: isRejectPending } = useRejectMutation()
+  const { mutate: bulkApprove, isPending: isBulkApprovePending } =
+    useBulkApproveMutation()
+  const { mutate: bulkReject, isPending: isBulkRejectPending } =
+    useBulkRejectMutation()
+  const { mutate: deleteOne } = useDeleteMutation()
 
   const handleSuccessfulReject = useCallback(() => {
     closeRejectModal()
@@ -39,14 +41,14 @@ export function useSubmissionReviewActions({
 
   const handleApproveOne = useCallback(
     (id: string) => {
-      approveOne.mutate(id)
+      approveOne(id)
     },
     [approveOne],
   )
 
   const handleDeleteOne = useCallback(
     (id: string) => {
-      deleteOne.mutate(id)
+      deleteOne(id)
     },
     [deleteOne],
   )
@@ -65,7 +67,7 @@ export function useSubmissionReviewActions({
       return
     }
 
-    bulkApprove.mutate(selectedIds, { onSuccess: clearSelection })
+    bulkApprove(selectedIds, { onSuccess: clearSelection })
   }, [bulkApprove, clearSelection, selected])
 
   const handleOpenBulkReject = useCallback(() => {
@@ -79,17 +81,14 @@ export function useSubmissionReviewActions({
       }
 
       if (ids.length === 1) {
-        rejectOne.mutate(
+        rejectOne(
           { id: ids[0], reason },
           { onSuccess: handleSuccessfulReject },
         )
         return
       }
 
-      bulkReject.mutate(
-        { ids, reason },
-        { onSuccess: handleSuccessfulReject },
-      )
+      bulkReject({ ids, reason }, { onSuccess: handleSuccessfulReject })
     },
     [bulkReject, handleSuccessfulReject, rejectOne],
   )
@@ -101,7 +100,7 @@ export function useSubmissionReviewActions({
     handleBulkApprove,
     handleOpenBulkReject,
     handleRejectSubmit,
-    isBulkActionPending: bulkApprove.isPending || bulkReject.isPending,
-    isRejectSubmitting: rejectOne.isPending || bulkReject.isPending,
+    isBulkActionPending: isBulkApprovePending || isBulkRejectPending,
+    isRejectSubmitting: isRejectPending || isBulkRejectPending,
   }
 }
