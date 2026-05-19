@@ -26,10 +26,6 @@ export function useMainHeaderActions({
     },
   })
 
-  const handleDashboardClick = () => {
-    closeMenu()
-  }
-
   const handleLogoutClick = () => {
     if (logoutMutation.isPending) {
       return
@@ -39,7 +35,6 @@ export function useMainHeaderActions({
   }
 
   return {
-    handleDashboardClick,
     handleLogoutClick,
     logoutError:
       logoutMutation.error instanceof Error ? logoutMutation.error.message : '',

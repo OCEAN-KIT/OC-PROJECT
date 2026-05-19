@@ -14,7 +14,7 @@ type HeaderAccountDropdownProps = {
   buttonRef: RefObject<HTMLButtonElement | null>
   menuRef: RefObject<HTMLDivElement | null>
   onToggle: () => void
-  onDashboardClick: () => void
+  onDashboardLinkClick: () => void
   onLogoutClick: () => void
   logoutError: string
   isLoggingOut: boolean
@@ -27,7 +27,7 @@ export function HeaderAccountDropdown({
   buttonRef,
   menuRef,
   onToggle,
-  onDashboardClick,
+  onDashboardLinkClick,
   onLogoutClick,
   logoutError,
   isLoggingOut,
@@ -45,7 +45,7 @@ export function HeaderAccountDropdown({
         <HeaderAccountMenu
           accountMenuLabel={accountMenuLabel}
           menuRef={menuRef}
-          onDashboardClick={onDashboardClick}
+          onDashboardLinkClick={onDashboardLinkClick}
           onLogoutClick={onLogoutClick}
           logoutError={logoutError}
           isLoggingOut={isLoggingOut}

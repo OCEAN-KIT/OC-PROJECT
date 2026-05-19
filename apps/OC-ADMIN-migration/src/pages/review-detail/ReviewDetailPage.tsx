@@ -1,16 +1,71 @@
-import { useParams } from '@tanstack/react-router'
+import RejectModal from '#/pages/home/components/reject-reason-modal'
+import type { SubmissionDetailServer } from './api/reviewDetail'
+import { PhotoLightbox } from './components/PhotoLightbox'
+import { RejectReasonBanner } from './components/RejectReasonBanner'
+import { ReviewDetailCard } from './components/ReviewDetailCard'
+import { ReviewDetailLayout } from './components/ReviewDetailLayout'
+import { ReviewDetailState } from './components/ReviewDetailState'
+import { ReviewDetailTopBar } from './components/ReviewDetailTopBar'
+import { useReviewDetailActions } from './hooks/useReviewDetailActions'
+import { useReviewDetailPage } from './hooks/useReviewDetailPage'
 
 export function ReviewDetailPage() {
-  const { submissionId } = useParams({ from: '/review/$submissionId' })
+  const page = useReviewDetailPage()
+
+  if (page.isFetching) {
+    return <ReviewDetailState type="loading" />
+  }
+
+  if (page.isError || !page.detail) {
+    return <ReviewDetailState type="error" onRetry={page.onRetry} />
+  }
 
   return (
-    <main className="min-h-[calc(100dvh-4rem)] bg-gray-50 px-6 py-10 text-gray-900">
-      <section className="mx-auto max-w-[1500px] rounded-2xl bg-white p-6 ring-1 ring-black/5">
-        <h1 className="text-2xl font-bold">Review Detail</h1>
-        <p className="mt-2 text-sm text-gray-600">
-          제출 상세 페이지 이식 전 임시 화면입니다. ID: {submissionId}
-        </p>
-      </section>
-    </main>
+    <ReviewDetailLoaded
+      detail={page.detail}
+      photos={page.photos}
+      lightboxIndex={page.lightboxIndex}
+      setLightboxIndex={page.setLightboxIndex}
+    />
+  )
+}
+
+type ReviewDetailLoadedProps = {
+  detail: SubmissionDetailServer
+  photos: string[]
+  lightboxIndex: number | null
+  setLightboxIndex: (index: number | null) => void
+}
+
+function ReviewDetailLoaded({
+  detail,
+  photos,
+  lightboxIndex,
+  setLightboxIndex,
+}: ReviewDetailLoadedProps) {
+  const actions = useReviewDetailActions({ detail })
+
+  return (
+    <ReviewDetailLayout>
+      <ReviewDetailTopBar detail={detail} {...actions.topBarProps} />
+      <RejectReasonBanner reason={detail.rejectReason} />
+
+      <ReviewDetailCard
+        detail={detail}
+        photos={photos}
+        onOpenPhoto={setLightboxIndex}
+      />
+  
+      <RejectModal {...actions.rejectModalProps} />
+
+      {lightboxIndex !== null && photos[lightboxIndex] && (
+        <PhotoLightbox
+          photos={photos}
+          index={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          onChangeIndex={setLightboxIndex}
+        />
+      )}
+    </ReviewDetailLayout>
   )
 }

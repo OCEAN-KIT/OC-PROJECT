@@ -3,22 +3,24 @@
  * 필터, 현재 페이지, 목록 query, 페이지 이동 props를 한곳에 묶어
  * HomePage controller가 목록 조회의 세부 상태를 직접 들고 있지 않게 합니다.
  */
-import { useEffect, useState } from 'react'
+import { useNavigate, useSearch } from '@tanstack/react-router'
+import { useCallback, useEffect } from 'react'
+import type { SetStateAction } from 'react'
 import type { ListFilters } from '../api/submissions'
+import {
+  getHomeFiltersFromSearch,
+  getHomeSearchFromFilters,
+  type HomeSearch,
+} from '../homeSearch'
 import { useSubmissionsQuery } from './submissions'
 
 const PAGE_SIZE = 10
 
-const initialFilters: ListFilters = {
-  status: 'all',
-  q: '',
-  dateFrom: null,
-  dateTo: null,
-}
-
 export function useSubmissionListState() {
-  const [page, setPage] = useState(1)
-  const [filters, setFilters] = useState<ListFilters>(initialFilters)
+  const search = useSearch({ from: '/home' })
+  const navigate = useNavigate()
+  const page = search.page
+  const filters = getHomeFiltersFromSearch(search)
 
   const { data, isFetching, isError, refetch } = useSubmissionsQuery(
     page,
@@ -31,17 +33,50 @@ export function useSubmissionListState() {
 
   useEffect(() => {
     if (page > totalPages) {
-      setPage(totalPages)
+      void navigate({
+        to: '/home',
+        search: { ...search, page: totalPages },
+        replace: true,
+      })
     }
-  }, [page, totalPages])
+  }, [navigate, page, search, totalPages])
 
-  const handleSearch = () => setPage(1)
-  const handlePrev = () => setPage((currentPage) => Math.max(1, currentPage - 1))
-  const handleNext = () =>
-    setPage((currentPage) => Math.min(totalPages, currentPage + 1))
-  const handleRetry = () => {
+  const updateSearch = useCallback(
+    (nextSearch: HomeSearch) => {
+      void navigate({
+        to: '/home',
+        search: nextSearch,
+        replace: true,
+      })
+    },
+    [navigate],
+  )
+
+  const handleFiltersChange = useCallback(
+    (nextFilters: SetStateAction<ListFilters>) => {
+      const filtersValue =
+        typeof nextFilters === 'function' ? nextFilters(filters) : nextFilters
+
+      updateSearch(getHomeSearchFromFilters(search, filtersValue))
+    },
+    [filters, search, updateSearch],
+  )
+
+  const handleSearch = useCallback(() => {
+    updateSearch({ ...search, page: 1 })
+  }, [search, updateSearch])
+
+  const handlePrev = useCallback(() => {
+    updateSearch({ ...search, page: Math.max(1, page - 1) })
+  }, [page, search, updateSearch])
+
+  const handleNext = useCallback(() => {
+    updateSearch({ ...search, page: Math.min(totalPages, page + 1) })
+  }, [page, search, totalPages, updateSearch])
+
+  const handleRetry = useCallback(() => {
     void refetch()
-  }
+  }, [refetch])
 
   return {
     items,
@@ -53,7 +88,7 @@ export function useSubmissionListState() {
     },
     toolbarProps: {
       filters,
-      onFiltersChange: setFilters,
+      onFiltersChange: handleFiltersChange,
       onSearch: handleSearch,
       isFetching,
     },

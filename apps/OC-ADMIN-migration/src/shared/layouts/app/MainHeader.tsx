@@ -4,6 +4,7 @@
  * 각각 전용 hook과 HeaderAccountDropdown에 위임합니다.
  */
 import { Link } from '@tanstack/react-router'
+import { DEFAULT_HOME_SEARCH } from '#/pages/home/homeSearch'
 import { HeaderAccountDropdown } from './components/HeaderAccountDropdown'
 import { useHeaderAccountMenu } from './hooks/useHeaderAccountMenu'
 import { useMainHeaderActions } from './hooks/useMainHeaderActions'
@@ -19,7 +20,11 @@ export function MainHeader() {
   return (
     <header className="w-full bg-[#2C67BC] text-white">
       <div className="mx-auto flex h-16 max-w-[1500px] items-center justify-between px-4">
-        <Link to="/home" className="text-3xl font-extrabold tracking-tight">
+        <Link
+          to="/home"
+          search={DEFAULT_HOME_SEARCH}
+          className="text-3xl font-extrabold tracking-tight"
+        >
           OceanCampus
         </Link>
 
@@ -30,7 +35,7 @@ export function MainHeader() {
           buttonRef={accountMenu.anchorRef}
           menuRef={accountMenu.menuRef}
           onToggle={accountMenu.toggleMenu}
-          onDashboardClick={headerActions.handleDashboardClick}
+          onDashboardLinkClick={accountMenu.closeMenu}
           onLogoutClick={headerActions.handleLogoutClick}
           logoutError={headerActions.logoutError}
           isLoggingOut={headerActions.isLoggingOut}

@@ -3,13 +3,14 @@
  * 대시보드 이동, 로그아웃 버튼, 로그아웃 에러/로딩 표시를 렌더링하고
  * 실제 navigation/logout mutation은 상위에서 전달한 콜백으로 실행합니다.
  */
+import { Link } from '@tanstack/react-router'
 import { LayoutDashboard, LogOut } from 'lucide-react'
 import type { RefObject } from 'react'
 
 type HeaderAccountMenuProps = {
   accountMenuLabel: string
   menuRef: RefObject<HTMLDivElement | null>
-  onDashboardClick: () => void
+  onDashboardLinkClick: () => void
   onLogoutClick: () => void
   logoutError: string
   isLoggingOut: boolean
@@ -18,7 +19,7 @@ type HeaderAccountMenuProps = {
 export function HeaderAccountMenu({
   accountMenuLabel,
   menuRef,
-  onDashboardClick,
+  onDashboardLinkClick,
   onLogoutClick,
   logoutError,
   isLoggingOut,
@@ -34,15 +35,15 @@ export function HeaderAccountMenu({
         {accountMenuLabel}
       </div>
       <div className="h-px bg-gray-100" />
-      <button
-        type="button"
+      <Link
+        to="/dashboard"
         role="menuitem"
-        onClick={onDashboardClick}
+        onClick={onDashboardLinkClick}
         className="flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-sm hover:bg-gray-50"
       >
         <LayoutDashboard className="h-4 w-4" />
         대시보드 관리
-      </button>
+      </Link>
       <div className="h-px bg-gray-100" />
       {logoutError && (
         <p className="px-3 py-2 text-xs text-red-600">{logoutError}</p>

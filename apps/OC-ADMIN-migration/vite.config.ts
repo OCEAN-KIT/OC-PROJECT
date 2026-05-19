@@ -18,6 +18,9 @@ const config = defineConfig(({ mode }) => {
       'process.env.NEXT_PUBLIC_API_BASE_URL': JSON.stringify(
         env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000',
       ),
+      'process.env.NEXT_PUBLIC_S3_PUBLIC_BASE': JSON.stringify(
+        env.NEXT_PUBLIC_S3_PUBLIC_BASE ?? '',
+      ),
     },
     resolve: { tsconfigPaths: true },
     plugins: [devtools(), tailwindcss(), tanstackStart(), viteReact()],
