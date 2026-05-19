@@ -18,9 +18,11 @@ export default function useAreaListState() {
   const { data, isLoading, isError } = useGetAreas(page, filters)
 
   const areas = data?.data.content ?? []
+  const totalElements = data?.data.totalElements ?? 0
 
   return {
     areas,
+    totalElements,
     listSectionProps: {
       isLoading,
       isError,

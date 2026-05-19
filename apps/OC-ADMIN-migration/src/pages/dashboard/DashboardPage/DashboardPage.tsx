@@ -1,14 +1,13 @@
 import { useState } from 'react'
-import { ClipLoader } from 'react-spinners'
 import AreaList from './components/area-list/AreaList'
 import AreaPagination from './components/AreaPagination/AreaPagination'
 import AreaPageHeader from './components/AreaPageHeader/AreaPageHeader'
 import AreaSearchFilter from './components/AreaSearchFilter/AreaSearchFilter'
 import DashBoardLayout from './components/DashBoardLayout/DashBoardLayout'
-import { useGetAreas } from './hooks/useAreas'
 import type { AreaFilters } from './types'
 import AreaListSection from './components/area-list/AreaListSection'
 import useAreaListState from './hooks/useAreaListState'
+import AreaResultSummary from './components/AreaResultSummary/AreaResultSummary'
 
 const FILTERS_INIT: AreaFilters = {
   region: '',
@@ -37,12 +36,7 @@ export default function DashboardPage() {
         onSearch={() => setCurrentPage(1)}
       />
 
-      <div className="mb-4 flex items-center justify-between">
-        <p className="text-sm text-gray-500">
-          총<span className="font-semibold text-gray-900">{totalElements}</span>
-          개의 작업영역
-        </p>
-      </div>
+      <AreaResultSummary totalElements={areaList.totalElements} />
 
       <AreaListSection {...areaList.listSectionProps}>
         <AreaList areas={areaList.areas} />
