@@ -99,6 +99,9 @@ importers:
 
   apps/OC-ADMIN-migration:
     dependencies:
+      '@ocean-kit/dashboard-domain':
+        specifier: workspace:*
+        version: link:../../packages/dashboard-domain
       '@ocean-kit/shared-auth':
         specifier: workspace:*
         version: link:../../packages/shared-auth

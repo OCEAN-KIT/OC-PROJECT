@@ -14,6 +14,8 @@ import { Route as HomeRouteImport } from './routes/home'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ReviewSubmissionIdRouteImport } from './routes/review.$submissionId'
+import { Route as DashboardSpeciesCreateRouteImport } from './routes/dashboard.speciesCreate'
+import { Route as DashboardCreateRouteImport } from './routes/dashboard.create'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -40,46 +42,78 @@ const ReviewSubmissionIdRoute = ReviewSubmissionIdRouteImport.update({
   path: '/review/$submissionId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardSpeciesCreateRoute = DashboardSpeciesCreateRouteImport.update({
+  id: '/speciesCreate',
+  path: '/speciesCreate',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardCreateRoute = DashboardCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => DashboardRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/dashboard/create': typeof DashboardCreateRoute
+  '/dashboard/speciesCreate': typeof DashboardSpeciesCreateRoute
   '/review/$submissionId': typeof ReviewSubmissionIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/dashboard/create': typeof DashboardCreateRoute
+  '/dashboard/speciesCreate': typeof DashboardSpeciesCreateRoute
   '/review/$submissionId': typeof ReviewSubmissionIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/dashboard/create': typeof DashboardCreateRoute
+  '/dashboard/speciesCreate': typeof DashboardSpeciesCreateRoute
   '/review/$submissionId': typeof ReviewSubmissionIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/home' | '/login' | '/review/$submissionId'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/home'
+    | '/login'
+    | '/dashboard/create'
+    | '/dashboard/speciesCreate'
+    | '/review/$submissionId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/home' | '/login' | '/review/$submissionId'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/home'
+    | '/login'
+    | '/dashboard/create'
+    | '/dashboard/speciesCreate'
+    | '/review/$submissionId'
   id:
     | '__root__'
     | '/'
     | '/dashboard'
     | '/home'
     | '/login'
+    | '/dashboard/create'
+    | '/dashboard/speciesCreate'
     | '/review/$submissionId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
   ReviewSubmissionIdRoute: typeof ReviewSubmissionIdRoute
@@ -122,12 +156,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReviewSubmissionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/speciesCreate': {
+      id: '/dashboard/speciesCreate'
+      path: '/speciesCreate'
+      fullPath: '/dashboard/speciesCreate'
+      preLoaderRoute: typeof DashboardSpeciesCreateRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/create': {
+      id: '/dashboard/create'
+      path: '/create'
+      fullPath: '/dashboard/create'
+      preLoaderRoute: typeof DashboardCreateRouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
 
+interface DashboardRouteChildren {
+  DashboardCreateRoute: typeof DashboardCreateRoute
+  DashboardSpeciesCreateRoute: typeof DashboardSpeciesCreateRoute
+}
+
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardCreateRoute: DashboardCreateRoute,
+  DashboardSpeciesCreateRoute: DashboardSpeciesCreateRoute,
+}
+
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRoute,
+  DashboardRoute: DashboardRouteWithChildren,
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
   ReviewSubmissionIdRoute: ReviewSubmissionIdRoute,

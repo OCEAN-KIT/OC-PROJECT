@@ -15,6 +15,7 @@
     "check": "prettier --check ."
   },
   "dependencies": {
+    "@ocean-kit/dashboard-domain": "workspace:*",
     "@ocean-kit/shared-auth": "workspace:*",
     "@ocean-kit/shared-axios": "workspace:*",
     "@ocean-kit/submission-domain": "workspace:*",
