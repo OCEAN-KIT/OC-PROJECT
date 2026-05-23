@@ -9,17 +9,17 @@ import {
   useBulkRejectMutation,
   useDeleteMutation,
 } from "@/hooks/submissions";
-import { useSubmissionSelection } from "@/hooks/useSubmissionSelction"; // ✅ 오타 주의
+import { useSubmissionSelection } from "@/hooks/useSubmissionSelction";
 import ReviewList from "@/components/review-list/review-list";
 import ReviewBulkActions from "@/components/review-list/review-bulk-actions";
 import RejectModal from "@/components/reject-reason-modal";
 import FilterBar from "@/components/filter-bar/filter-bar";
 import type { ListFilters } from "@/api/submissions";
 import { ClipLoader } from "react-spinners";
-import { useAuthGuard } from "@/hooks/useAuthGuard";
+// import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 export default function HomePage() {
-  useAuthGuard({ mode: "gotoLogin" });
+  // useAuthGuard({ mode: "gotoLogin" });
 
   const [page, setPage] = useState(1);
   const pageSize = 10;

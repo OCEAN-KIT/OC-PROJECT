@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAuthGuard } from "@/hooks/useAuthGuard";
+// import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useRouter, useParams } from "next/navigation";
 import {
   ArrowLeft,
@@ -13,7 +13,7 @@ import {
   TriangleAlert,
   type LucideIcon,
 } from "lucide-react";
-import { ClipLoader } from "react-spinners";
+// import { ClipLoader } from "react-spinners";
 import BasicInfoSection from "../create/components/BasicInfoSection";
 import TransplantLogSection from "./components/transplant-log";
 import type { SpeciesSection } from "./components/transplant-log";
@@ -290,7 +290,7 @@ function SectionErrorCard({
 }
 
 export default function EditAreaPage() {
-  const { checking } = useAuthGuard({ mode: "gotoLogin" });
+  // const { checking } = useAuthGuard({ mode: "gotoLogin" });
   const router = useRouter();
   const { id } = useParams();
   const areaId = Number(id);
@@ -394,6 +394,7 @@ export default function EditAreaPage() {
     if (mediaData) setMediaPayload(mediaData);
   }, [mediaData]);
 
+  /*
   if (checking) {
     return (
       <div className="flex h-[calc(100vh-64px)] items-center justify-center">
@@ -401,6 +402,7 @@ export default function EditAreaPage() {
       </div>
     );
   }
+  */
 
   if (e1) {
     return <DashboardDetailNotFound />;

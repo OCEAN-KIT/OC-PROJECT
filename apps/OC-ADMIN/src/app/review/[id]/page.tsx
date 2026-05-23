@@ -8,14 +8,14 @@ import CommonSection from "@/components/review-detail/common-section";
 import ActivitySection from "@/components/review-detail/activity-section";
 import PhotoLightbox from "@/components/review-detail/photo-lightbox";
 
-import { useAuthGuard } from "@/hooks/useAuthGuard";
+// import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { csvExportByIds } from "@/api/csv";
 import { ClipLoader } from "react-spinners";
 import { extractImageUrls } from "@/utils/attachment";
 import { useSubmissionDetail } from "../../../hooks/useSubmissionDetail";
 
 export default function ReviewPage() {
-  useAuthGuard({ mode: "gotoLogin" });
+  // useAuthGuard({ mode: "gotoLogin" });
 
   const params = useParams<{ id: string }>();
   const diveId = Number(params.id);

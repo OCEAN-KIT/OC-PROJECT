@@ -21,7 +21,7 @@ import MediaUploadSection from "@/components/dive-create/common-section/MediaUpl
 import WorkTypeSection from "@/components/dive-create/WorkTypeSection";
 import CommonWrapper from "@/components/dive-create/common-section/CommonWrapper";
 import UnsavedChangesModal from "@/components/ui/UnsavedChangesModal";
-import { useAuthGuard } from "@/hooks/useAuthGuard";
+// import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 const DEBUG = true;
 
@@ -110,7 +110,7 @@ const buildDraftSnapshot = (
   });
 
 export default function DiveCreatePage() {
-  useAuthGuard({ mode: "gotoLogin" });
+  // useAuthGuard({ mode: "gotoLogin" });
   const router = useRouter();
 
   useEffect(() => {

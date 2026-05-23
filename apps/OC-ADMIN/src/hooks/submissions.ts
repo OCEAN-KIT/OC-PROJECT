@@ -1,5 +1,6 @@
 // src/queries/submissions.ts
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { QueryClient } from "@tanstack/react-query";
 import {
   fetchSubmissions,
   approveSubmission,
@@ -16,10 +17,37 @@ export const qk = {
   list: queryKeys.submissions.list,
 };
 
+function invalidateSubmissionQueries(
+  qc: QueryClient,
+  submissionIds: Array<number | string>,
+) {
+  const detailKeys = submissionIds.flatMap((submissionId) => {
+    if (typeof submissionId !== "string") {
+      return [queryKeys.submissionDetail(submissionId)];
+    }
+
+    const numericSubmissionId = Number(submissionId);
+
+    if (!Number.isFinite(numericSubmissionId)) {
+      return [queryKeys.submissionDetail(submissionId)];
+    }
+
+    return [
+      queryKeys.submissionDetail(submissionId),
+      queryKeys.submissionDetail(numericSubmissionId),
+    ];
+  });
+
+  return Promise.all([
+    qc.invalidateQueries({ queryKey: queryKeys.submissions.all }),
+    ...detailKeys.map((queryKey) => qc.invalidateQueries({ queryKey })),
+  ]);
+}
+
 export function useSubmissionsQuery(
   page: number,
   pageSize: number,
-  filters: ListFilters
+  filters: ListFilters,
 ) {
   return useQuery({
     queryKey: queryKeys.submissions.list(page, pageSize, filters),
@@ -32,7 +60,7 @@ export function useApproveMutation() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => approveSubmission(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.submissions.all }),
+    onSuccess: (_data, id) => invalidateSubmissionQueries(qc, [id]),
   });
 }
 
@@ -46,7 +74,8 @@ export function useRejectMutation() {
       id: string;
       reason: { templateCode?: string; message: string };
     }) => rejectSubmission(id, reason),
-    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.submissions.all }),
+    onSuccess: (_data, payload) =>
+      invalidateSubmissionQueries(qc, [payload.id]),
   });
 }
 
@@ -54,7 +83,7 @@ export function useBulkApproveMutation() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (ids: string[]) => bulkApprove(ids),
-    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.submissions.all }),
+    onSuccess: (_data, ids) => invalidateSubmissionQueries(qc, ids),
   });
 }
 
@@ -65,7 +94,7 @@ export function useBulkRejectMutation() {
       ids: string[];
       reason: { templateCode?: string; message: string };
     }) => bulkReject(payload.ids, payload.reason),
-    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.submissions.all }),
+    onSuccess: (_data, payload) => invalidateSubmissionQueries(qc, payload.ids),
   });
 }
 
@@ -73,7 +102,7 @@ export function useDeleteMutation() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteSubmission(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.submissions.all }),
+    onSuccess: (_data, id) => invalidateSubmissionQueries(qc, [id]),
   });
 }
 
@@ -81,6 +110,6 @@ export function useBulkDeleteMutation() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (ids: string[]) => bulkDelete(ids),
-    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.submissions.all }),
+    onSuccess: (_data, ids) => invalidateSubmissionQueries(qc, ids),
   });
 }

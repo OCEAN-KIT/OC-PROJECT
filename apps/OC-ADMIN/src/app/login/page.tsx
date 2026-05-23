@@ -1,7 +1,7 @@
 // app/login/page.tsx
 "use client";
 
-import { useAuthGuard } from "@/hooks/useAuthGuard";
+// import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { queryKeys } from "@/hooks/queryKeys";
 import { requestLogin } from "@ocean-kit/shared-auth/login";
 import { useQueryClient } from "@tanstack/react-query";
@@ -10,7 +10,7 @@ import { useState } from "react"; // ⬅️ useEffect 추가
 import { ClipLoader } from "react-spinners";
 
 export default function LoginPage() {
-  const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoHome" });
+  // const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoHome" });
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -18,7 +18,7 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [syncing, setSyncing] = useState(false); // myInfo 리패치 대기 상태
 
-  if (checking || isLoggedIn) return null;
+  // if (checking || isLoggedIn) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));

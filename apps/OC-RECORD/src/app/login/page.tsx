@@ -2,14 +2,14 @@
 "use client";
 
 import { logIn } from "@/api/auth/login";
-import { useAuthGuard } from "@/hooks/useAuthGuard";
+// import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { ClipLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import MainHeader from "@/components/mian-header";
 
 export default function LoginPage() {
-  const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoHome" });
+  // const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoHome" });
 
   const router = useRouter();
 
@@ -17,7 +17,7 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [sending, setSending] = useState(false);
 
-  if (checking || isLoggedIn) return null;
+  // if (checking || isLoggedIn) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });

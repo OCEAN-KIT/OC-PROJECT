@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useAuthGuard } from "@/hooks/useAuthGuard";
+// import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { ClipLoader } from "react-spinners";
@@ -13,7 +13,7 @@ import BasicInfoSection from "./components/BasicInfoSection";
 import usePostBasicInfo from "./hooks/usePostBasicInfo";
 
 export default function CreateAreaPage() {
-  const { checking } = useAuthGuard({ mode: "gotoLogin" });
+  // const { checking } = useAuthGuard({ mode: "gotoLogin" });
   const router = useRouter();
   const { mutate, isPending } = usePostBasicInfo();
 
@@ -51,6 +51,7 @@ export default function CreateAreaPage() {
     });
   };
 
+  /*
   if (checking) {
     return (
       <div className="flex h-[calc(100vh-64px)] items-center justify-center">
@@ -58,6 +59,7 @@ export default function CreateAreaPage() {
       </div>
     );
   }
+  */
 
   return (
     <div className="min-h-[calc(100vh-64px)] bg-gray-50">
