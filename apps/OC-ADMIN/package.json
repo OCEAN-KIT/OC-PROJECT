@@ -1,5 +1,5 @@
 {
-  "name": "oc-admin-migration",
+  "name": "@ocean-kit/oc-admin",
   "private": true,
   "type": "module",
   "imports": {

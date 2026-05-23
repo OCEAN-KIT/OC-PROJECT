@@ -6,7 +6,7 @@
     },
     "build": {
       "dependsOn": ["^typecheck"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "lint": {
       "dependsOn": ["^typecheck"],
