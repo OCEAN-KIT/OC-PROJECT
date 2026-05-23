@@ -1,2 +1,2 @@
 export { default } from './GrowthLogSection'
-export type { GrowthSpeciesSection } from './constants'
+export type { GrowthSpeciesSection } from '../../types/growthLogs'

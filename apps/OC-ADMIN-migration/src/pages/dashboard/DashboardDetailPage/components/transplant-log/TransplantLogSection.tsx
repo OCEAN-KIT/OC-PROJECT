@@ -39,7 +39,7 @@ export default function TransplantLogSection({
     const sp = speciesList.find((s) => s.id === form.speciesId)
     const m = transplantMethods.find((x) => x.value === form.method)
     if (!sp || !m || !form.recordDate || !form.attachmentStatus) return
-    if (transplantPayload.some((s) => s.speciesName === sp.name)) return
+    if (transplantPayload.some((s) => s.speciesId === sp.id)) return
 
     const entry: TransplantLogEntry = {
       ...form,

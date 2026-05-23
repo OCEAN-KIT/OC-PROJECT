@@ -5,7 +5,7 @@
  * 필터 상태를 직접 소유하지 않고,
  * value/onChange 계약으로 상태 변경 의도만 부모에 전달합니다.
  */
-import type { FilterState } from "./types";
+import type { FilterDate, FilterState } from "./types";
 import type { Dispatch, SetStateAction } from "react";
 
 type Props = {
@@ -17,6 +17,8 @@ type Props = {
 export default function FilterBar({ value, onChange, className }: Props) {
   const set = (patch: Partial<FilterState>) =>
     onChange((prev) => ({ ...prev, ...patch }));
+  const dateFromValue = toDateInputValue(value.dateFrom);
+  const dateToValue = toDateInputValue(value.dateTo);
 
   return (
     <div className={`flex flex-wrap items-center  gap-4 ${className ?? ""}`}>
@@ -39,16 +41,16 @@ export default function FilterBar({ value, onChange, className }: Props) {
         <span className="text-gray-500">등록 기간</span>
         <input
           type="date"
-          value={value.dateFrom ?? ""}
-          max={value.dateTo ?? undefined}
+          value={dateFromValue}
+          max={dateToValue || undefined}
           onChange={(e) => set({ dateFrom: e.target.value || null })}
           className="bg-transparent outline-none"
         />
         <span className="select-none text-gray-300">~</span>
         <input
           type="date"
-          value={value.dateTo ?? ""}
-          min={value.dateFrom ?? undefined}
+          value={dateToValue}
+          min={dateFromValue || undefined}
           onChange={(e) => set({ dateTo: e.target.value || null })}
           className="bg-transparent outline-none"
         />
@@ -63,4 +65,18 @@ export default function FilterBar({ value, onChange, className }: Props) {
       />
     </div>
   );
+}
+
+function toDateInputValue(value: FilterDate) {
+  if (!value) {
+    return "";
+  }
+
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime())
+      ? ""
+      : value.toISOString().slice(0, 10);
+  }
+
+  return value;
 }

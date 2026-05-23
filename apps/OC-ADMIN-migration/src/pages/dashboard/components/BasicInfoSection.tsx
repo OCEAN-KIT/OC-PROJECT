@@ -235,7 +235,7 @@ export default function BasicInfoSection({
               type="number"
               id="depth"
               name="depth"
-              value={basicPayload.depth || ''}
+              value={basicPayload.depth ?? ''}
               onChange={onBasicChange}
               placeholder="0"
               min="0"
@@ -255,7 +255,7 @@ export default function BasicInfoSection({
               type="number"
               id="areaSize"
               name="areaSize"
-              value={basicPayload.areaSize || ''}
+              value={basicPayload.areaSize ?? ''}
               onChange={onBasicChange}
               placeholder="0"
               min="0"
@@ -278,7 +278,7 @@ export default function BasicInfoSection({
               type="number"
               id="lat"
               name="lat"
-              value={basicPayload.lat || ''}
+              value={basicPayload.lat ?? ''}
               onChange={onBasicChange}
               placeholder="예: 36.0190"
               step="0.0001"
@@ -297,7 +297,7 @@ export default function BasicInfoSection({
               type="number"
               id="lon"
               name="lon"
-              value={basicPayload.lon || ''}
+              value={basicPayload.lon ?? ''}
               onChange={onBasicChange}
               placeholder="예: 129.3430"
               step="0.0001"

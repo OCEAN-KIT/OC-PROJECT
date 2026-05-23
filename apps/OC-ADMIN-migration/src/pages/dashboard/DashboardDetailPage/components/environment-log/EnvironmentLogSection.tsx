@@ -3,10 +3,10 @@
 import { useState } from 'react'
 import { Cloud, Plus, ChevronUp } from 'lucide-react'
 import { DashboardSection } from '#/pages/dashboard/components/DashboardSection'
-import type { EnvironmentLogEntry } from './constants'
+import type { EnvironmentLogEntry } from '../../types/environmentLogs'
 import EnvironmentLogList from './EnvironmentLogList'
 
-export type { EnvironmentLogEntry } from './constants'
+export type { EnvironmentLogEntry } from '../../types/environmentLogs'
 
 type Props = {
   areaId: number

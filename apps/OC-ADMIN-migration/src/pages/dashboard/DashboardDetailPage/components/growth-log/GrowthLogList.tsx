@@ -8,7 +8,7 @@ import type {
 } from '@ocean-kit/dashboard-domain/types/areaLogPayloads'
 import { useSpecies } from '#/pages/dashboard/hooks/useSpecies'
 import { statusOptions } from './constants'
-import type { GrowthSpeciesSection } from './constants'
+import type { GrowthSpeciesSection } from '../../types/growthLogs'
 import GrowthLogCard from './GrowthLogCard'
 
 type Props = {

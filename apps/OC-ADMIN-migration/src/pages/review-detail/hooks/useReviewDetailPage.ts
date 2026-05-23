@@ -25,7 +25,9 @@ export function useReviewDetailPage() {
     setLightboxIndex,
     isFetching: query.isFetching,
     isError:
-      !Number.isFinite(Number(submissionId)) || query.isError || !detail,
+      !Number.isFinite(Number(submissionId)) ||
+      query.isError ||
+      (query.isSuccess && !detail),
     onRetry: handleRetry,
   }
 }

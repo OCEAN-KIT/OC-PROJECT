@@ -51,32 +51,40 @@ function normalizeFilters(filters: ListFilters) {
     activityType, // 선택 시 넘길 값
     sortBy,
     sortDir,
-  } = filters as Record<string, unknown>;
+  } = filters;
 
-  const params: Record<string, unknown> = {};
+  const params: Partial<GetSubmissionListParams> = {};
 
   // keyword
-  if (typeof q === "string" && q.trim()) params.keyword = q.trim();
+  if (q.trim()) params.keyword = q.trim();
 
   // status: "all"이면 omit, 아니면 대문자로
-  if (typeof status === "string" && status && status !== "all") {
+  if (status !== "all") {
     params.status = status.toUpperCase(); // PENDING, APPROVED, ...
   }
 
   // activityType: 그대로 대문자 enum 사용 (선택된 경우에만)
-  if (typeof activityType === "string" && activityType) {
+  if (activityType) {
     params.activityType = activityType; // URCHIN_REMOVAL 등
   }
 
   // 날짜는 ISO(YYYY-MM-DD 또는 ISO8601)로 잘라서
-  if (dateFrom) params.startDate = String(dateFrom).slice(0, 10);
-  if (dateTo) params.endDate = String(dateTo).slice(0, 10);
+  if (dateFrom) params.startDate = formatFilterDate(dateFrom);
+  if (dateTo) params.endDate = formatFilterDate(dateTo);
 
   // 정렬 (기본값은 서버가 채움)
-  if (typeof sortBy === "string" && sortBy) params.sortBy = sortBy;
-  if (typeof sortDir === "string" && sortDir) params.sortDir = sortDir;
+  if (sortBy) params.sortBy = sortBy;
+  if (sortDir) params.sortDir = sortDir;
 
   return params;
+}
+
+function formatFilterDate(value: NonNullable<ListFilters["dateFrom"]>) {
+  if (value instanceof Date) {
+    return value.toISOString().slice(0, 10);
+  }
+
+  return value.slice(0, 10);
 }
 
 /** 서버 → 프론트 모델 매핑 (목록) */

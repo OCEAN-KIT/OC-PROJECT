@@ -11,7 +11,7 @@ import {
   useDeleteEnvironmentLog,
 } from '../../hooks/useEnvironmentLogMutations'
 import { conditionOptions, conditionBadge, EMPTY_FORM } from './constants'
-import type { EnvironmentLogEntry } from './constants'
+import type { EnvironmentLogEntry } from '../../types/environmentLogs'
 
 type Props = {
   areaId: number

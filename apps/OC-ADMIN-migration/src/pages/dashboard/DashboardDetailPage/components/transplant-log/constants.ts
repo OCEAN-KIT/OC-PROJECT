@@ -4,6 +4,11 @@ import type {
   TransplantMethod,
 } from '@ocean-kit/dashboard-domain/types/areaLogPayloads'
 
+export type {
+  SpeciesSection,
+  TransplantLogEntry,
+} from '../../types/transplantLogs'
+
 // ── 이식 방식 옵션 ──
 
 export const transplantMethods: {
@@ -41,20 +46,6 @@ export const attachmentOptions: {
     color: 'border-rose-500 bg-rose-50 text-rose-700',
   },
 ]
-
-// ── UI 전용 타입 ──
-
-export type TransplantLogEntry = TransplantLogPayload & {
-  id: number
-  methodLabel: string
-  unit: string
-}
-
-export type SpeciesSection = {
-  speciesId: number
-  speciesName: string
-  logs: TransplantLogEntry[]
-}
 
 // ── 폼 초기값 ──
 

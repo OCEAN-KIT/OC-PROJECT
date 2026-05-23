@@ -11,16 +11,6 @@ export const statusOptions: { value: GrowthStatus; label: string }[] = [
   { value: 'POOR', label: '미흡' },
 ]
 
-// ── UI 전용 타입 ──
-
-export type GrowthLogEntry = GrowthLogPayload & { id: number }
-
-export type GrowthSpeciesSection = {
-  speciesId: number
-  speciesName: string
-  logs: GrowthLogEntry[]
-}
-
 // ── 폼 초기값 ──
 
 export const EMPTY_FORM: GrowthLogPayload = {

@@ -97,6 +97,10 @@ function getSearchValue(value: unknown) {
     return getSearchValue(value[0])
   }
 
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return value.toISOString().slice(0, 10)
+  }
+
   if (typeof value === 'string' || typeof value === 'number') {
     return String(value)
   }

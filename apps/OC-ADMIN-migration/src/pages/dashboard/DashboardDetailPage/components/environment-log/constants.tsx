@@ -28,10 +28,6 @@ export const conditionBadge = (value: EnvironmentCondition) => {
   )
 }
 
-// ── UI 전용 타입 ──
-
-export type EnvironmentLogEntry = EnvironmentLogPayload & { id: number }
-
 // ── 폼 초기값 ──
 
 export const EMPTY_FORM: EnvironmentLogPayload = {

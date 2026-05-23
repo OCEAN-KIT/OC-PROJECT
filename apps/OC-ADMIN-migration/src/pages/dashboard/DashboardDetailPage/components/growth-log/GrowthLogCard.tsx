@@ -11,7 +11,7 @@ import {
   useDeleteGrowthLog,
 } from '../../hooks/useGrowthLogMutations'
 import { statusOptions, EMPTY_FORM } from './constants'
-import type { GrowthSpeciesSection } from './constants'
+import type { GrowthSpeciesSection } from '../../types/growthLogs'
 
 type Props = {
   areaId: number

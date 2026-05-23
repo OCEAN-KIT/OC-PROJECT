@@ -42,7 +42,7 @@ export function useRegisterForm() {
   )
 
   const isPasswordMatched =
-    !confirmPassword || values.password.trim() === confirmPassword.trim()
+    !confirmPassword || values.password === confirmPassword
 
   const canSubmit =
     isAllFilled && isPasswordMatched && !registerMutation.isPending
@@ -52,7 +52,7 @@ export function useRegisterForm() {
       return
     }
 
-    if (values.password.trim() !== confirmPassword.trim()) {
+    if (values.password !== confirmPassword) {
       setErrorMessage('비밀번호가 일치하지 않습니다.')
       return
     }

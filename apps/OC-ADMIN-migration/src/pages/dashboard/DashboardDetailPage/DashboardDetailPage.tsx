@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import { useNavigate } from '@tanstack/react-router'
+import { isAxiosError } from 'axios'
 import {
   ArrowLeft,
   Camera,
@@ -16,13 +17,13 @@ import type { BasicPayload } from '@ocean-kit/dashboard-domain/types/areaBasicIn
 import BasicInfoSection from '../components/BasicInfoSection'
 import { DashboardSection } from '../components/DashboardSection'
 import EnvironmentLogSection from './components/environment-log'
-import type { EnvironmentLogEntry } from './components/environment-log'
 import GrowthLogSection from './components/growth-log'
-import type { GrowthSpeciesSection } from './components/growth-log'
 import MediaLogSection from './components/MediaLogSection'
 import type { MediaLogEntry } from './components/MediaLogSection'
 import TransplantLogSection from './components/transplant-log'
-import type { SpeciesSection } from './components/transplant-log'
+import type { EnvironmentLogEntry } from './types/environmentLogs'
+import type { GrowthSpeciesSection } from './types/growthLogs'
+import type { SpeciesSection } from './types/transplantLogs'
 import useAreaDetail from './hooks/useAreaDetail'
 import useEnvironmentLogs from './hooks/useEnvironmentLogs'
 import useGrowthLogs from './hooks/useGrowthLogs'
@@ -32,6 +33,24 @@ import useUpdateBasicInfo from './hooks/useUpdateBasicInfo'
 
 type Props = {
   areaId: number
+}
+
+type HydratedPayloads = {
+  basic: boolean
+  transplant: boolean
+  growth: boolean
+  environment: boolean
+  media: boolean
+}
+
+function createHydratedPayloads(): HydratedPayloads {
+  return {
+    basic: false,
+    transplant: false,
+    growth: false,
+    environment: false,
+    media: false,
+  }
 }
 
 function SkeletonBar({ className = '' }: { className?: string }) {
@@ -142,6 +161,50 @@ function DashboardDetailNotFound({ onBack }: { onBack: () => void }) {
   )
 }
 
+function DashboardDetailError({
+  onBack,
+  onRetry,
+}: {
+  onBack: () => void
+  onRetry: () => void
+}) {
+  return (
+    <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-gray-50 p-4">
+      <div className="rounded-xl border border-rose-100 bg-white p-8 text-center shadow-sm">
+        <TriangleAlert className="mx-auto h-8 w-8 text-rose-500" />
+        <h1 className="mt-4 text-lg font-semibold text-gray-900">
+          작업영역 데이터를 불러오지 못했습니다.
+        </h1>
+        <p className="mt-2 text-sm text-gray-500">잠시 후 다시 시도해주세요.</p>
+        <div className="mt-5 flex justify-center gap-2">
+          <button
+            type="button"
+            onClick={onBack}
+            className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            목록으로 돌아가기
+          </button>
+          <button
+            type="button"
+            onClick={onRetry}
+            className="rounded-lg bg-[#2C67BC] px-4 py-2 text-sm font-medium text-white hover:bg-[#2C67BC]/90"
+          >
+            다시 시도
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function getErrorStatus(error: unknown) {
+  if (!isAxiosError(error)) {
+    return undefined
+  }
+
+  return error.response?.status
+}
+
 export default function DashboardDetailPage({ areaId }: Props) {
   const navigate = useNavigate()
   const isValidAreaId = Number.isFinite(areaId) && areaId > 0
@@ -150,6 +213,8 @@ export default function DashboardDetailPage({ areaId }: Props) {
     data: basicData,
     isLoading: isBasicLoading,
     isError: isBasicError,
+    error: basicError,
+    refetch: refetchBasic,
   } = useAreaDetail(areaId)
   const {
     data: transplantData,
@@ -188,6 +253,7 @@ export default function DashboardDetailPage({ areaId }: Props) {
     EnvironmentLogEntry[]
   >([])
   const [mediaPayload, setMediaPayload] = useState<MediaLogEntry[]>([])
+  const hydratedPayloadsRef = useRef<HydratedPayloads>(createHydratedPayloads())
 
   const goDashboard = () => {
     void navigate({ to: '/dashboard' })
@@ -204,27 +270,62 @@ export default function DashboardDetailPage({ areaId }: Props) {
   }
 
   useEffect(() => {
-    if (basicData) setBasicPayload(basicData)
+    hydratedPayloadsRef.current = createHydratedPayloads()
+    setBasicPayload(BASIC_PAYLOAD_INIT)
+    setTransplantPayload([])
+    setGrowthPayload([])
+    setEnvironmentPayload([])
+    setMediaPayload([])
+  }, [areaId])
+
+  useEffect(() => {
+    if (basicData && !hydratedPayloadsRef.current.basic) {
+      setBasicPayload(basicData)
+      hydratedPayloadsRef.current.basic = true
+    }
   }, [basicData])
 
   useEffect(() => {
-    if (transplantData) setTransplantPayload(transplantData)
+    if (transplantData && !hydratedPayloadsRef.current.transplant) {
+      setTransplantPayload(transplantData)
+      hydratedPayloadsRef.current.transplant = true
+    }
   }, [transplantData])
 
   useEffect(() => {
-    if (growthData) setGrowthPayload(growthData)
+    if (growthData && !hydratedPayloadsRef.current.growth) {
+      setGrowthPayload(growthData)
+      hydratedPayloadsRef.current.growth = true
+    }
   }, [growthData])
 
   useEffect(() => {
-    if (environmentData) setEnvironmentPayload(environmentData)
+    if (environmentData && !hydratedPayloadsRef.current.environment) {
+      setEnvironmentPayload(environmentData)
+      hydratedPayloadsRef.current.environment = true
+    }
   }, [environmentData])
 
   useEffect(() => {
-    if (mediaData) setMediaPayload(mediaData)
+    if (mediaData && !hydratedPayloadsRef.current.media) {
+      setMediaPayload(mediaData)
+      hydratedPayloadsRef.current.media = true
+    }
   }, [mediaData])
 
-  if (!isValidAreaId || isBasicError) {
+  if (!isValidAreaId || (isBasicError && getErrorStatus(basicError) === 404)) {
     return <DashboardDetailNotFound onBack={goDashboard} />
+  }
+
+  if (isBasicError) {
+    return (
+      <DashboardDetailError
+        onBack={goDashboard}
+        onRetry={() => {
+          void refetchBasic()
+        }}
+      />
+    )
   }
 
   return (

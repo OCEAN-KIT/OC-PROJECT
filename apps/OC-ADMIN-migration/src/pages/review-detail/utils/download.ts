@@ -5,7 +5,15 @@ export function extractFilename(header?: string | null) {
     /filename\*?=(?:UTF-8''|")?([^";\n]+)/i.exec(header) ??
     /filename=(.+)$/.exec(header)
 
-  return matched ? decodeURIComponent(matched[1].replace(/"/g, '')) : undefined
+  if (!matched) return undefined
+
+  const filename = matched[1].replace(/"/g, '')
+
+  try {
+    return decodeURIComponent(filename)
+  } catch {
+    return filename
+  }
 }
 
 export function saveBlobAsFile(blob: Blob, suggestedName = 'download.bin') {

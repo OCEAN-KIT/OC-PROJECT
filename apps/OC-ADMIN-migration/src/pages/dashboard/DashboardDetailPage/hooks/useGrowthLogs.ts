@@ -5,7 +5,7 @@ import {
 } from '@ocean-kit/dashboard-domain/api/areaGrowthLogs'
 import type { GrowthStatus } from '@ocean-kit/dashboard-domain/types/areaLogPayloads'
 import { queryKeys } from '../../queryKeys'
-import type { GrowthSpeciesSection } from '../components/growth-log'
+import type { GrowthSpeciesSection } from '../types/growthLogs'
 
 export default function useGrowthLogs(areaId: number) {
   const enabled = Number.isFinite(areaId) && areaId > 0

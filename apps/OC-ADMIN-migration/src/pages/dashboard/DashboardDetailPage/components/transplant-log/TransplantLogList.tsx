@@ -37,8 +37,8 @@ export default function TransplantLogList({
 }: Props) {
   const { data: speciesList = [] } = useSpecies()
 
-  const usedSpeciesNames = useMemo(
-    () => new Set(sections.map((s) => s.speciesName)),
+  const usedSpeciesIds = useMemo(
+    () => new Set(sections.map((s) => s.speciesId)),
     [sections],
   )
 
@@ -100,7 +100,7 @@ export default function TransplantLogList({
               >
                 <option value={0}>종 선택</option>
                 {speciesList
-                  .filter((s) => !usedSpeciesNames.has(s.name))
+                  .filter((s) => !usedSpeciesIds.has(s.id))
                   .map((s) => (
                     <option key={s.id} value={s.id}>
                       {s.name}
@@ -232,7 +232,7 @@ export default function TransplantLogList({
       {/* 종별 카드 */}
       {sections.map((sec) => (
         <TransplantLogCard
-          key={sec.speciesName}
+          key={sec.speciesId}
           areaId={areaId}
           section={sec}
         />

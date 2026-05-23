@@ -16,10 +16,22 @@ export function useRegisterMutation() {
 
   return useMutation({
     mutationFn: async (values: RegisterFormValues) => {
-      await requestSignUp(values.id, values.password)
-      await requestLogin(values.id, values.password)
+      const trimmedValues: RegisterFormValues = {
+        id: values.id.trim(),
+        password: values.password.trim(),
+        nickname: values.nickname.trim(),
+        email: values.email.trim(),
+        phone: values.phone.trim(),
+      }
 
-      return completeSignUp(values.nickname, values.email, values.phone)
+      await requestSignUp(trimmedValues.id, trimmedValues.password)
+      await requestLogin(trimmedValues.id, trimmedValues.password)
+
+      return completeSignUp(
+        trimmedValues.nickname,
+        trimmedValues.email,
+        trimmedValues.phone,
+      )
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.myInfo })

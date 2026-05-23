@@ -5,7 +5,7 @@ import {
   postMediaLog,
 } from '@ocean-kit/dashboard-domain/api/areaMediaLogs'
 import type { MediaCategory } from '@ocean-kit/dashboard-domain/types/areaLogPayloads'
-import { uploadImage } from '../api/uploadImage'
+import { deleteImage, uploadImage } from '../api/uploadImage'
 import { queryKeys } from '../../queryKeys'
 
 type PostMediaLogInput = {
@@ -30,12 +30,18 @@ export function usePostMediaLog(areaId: number) {
     mutationKey: ['areas', areaId, 'post-media-log'],
     mutationFn: async (input: PostMediaLogInput) => {
       const key = await uploadImage(input.file)
-      return postMediaLog(areaId, {
-        recordDate: input.recordDate,
-        mediaUrl: key,
-        caption: input.caption,
-        category: input.category,
-      })
+
+      try {
+        return await postMediaLog(areaId, {
+          recordDate: input.recordDate,
+          mediaUrl: key,
+          caption: input.caption,
+          category: input.category,
+        })
+      } catch (error) {
+        await deleteImage(key).catch(() => undefined)
+        throw error
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -52,12 +58,20 @@ export function usePatchMediaLog(areaId: number) {
     mutationKey: ['areas', areaId, 'patch-media-log'],
     mutationFn: async (input: PatchMediaLogInput) => {
       const key = input.file ? await uploadImage(input.file) : undefined
-      return patchMediaLog(areaId, input.logId, {
-        recordDate: input.recordDate,
-        ...(key && { mediaUrl: key }),
-        caption: input.caption,
-        category: input.category,
-      })
+
+      try {
+        return await patchMediaLog(areaId, input.logId, {
+          recordDate: input.recordDate,
+          ...(key && { mediaUrl: key }),
+          caption: input.caption,
+          category: input.category,
+        })
+      } catch (error) {
+        if (key) {
+          await deleteImage(key).catch(() => undefined)
+        }
+        throw error
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

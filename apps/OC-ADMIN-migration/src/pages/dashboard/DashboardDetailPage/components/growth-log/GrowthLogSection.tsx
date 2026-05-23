@@ -11,10 +11,13 @@ import { useRepresentativeSpecies } from '../../hooks/useGrowthLogs'
 import { useSpecies } from '#/pages/dashboard/hooks/useSpecies'
 import { DashboardSection } from '#/pages/dashboard/components/DashboardSection'
 import { EMPTY_FORM } from './constants'
-import type { GrowthLogEntry, GrowthSpeciesSection } from './constants'
+import type {
+  GrowthLogEntry,
+  GrowthSpeciesSection,
+} from '../../types/growthLogs'
 import GrowthLogList from './GrowthLogList'
 
-export type { GrowthSpeciesSection } from './constants'
+export type { GrowthSpeciesSection } from '../../types/growthLogs'
 
 type Props = {
   areaId: number
@@ -45,7 +48,7 @@ export default function GrowthLogSection({
   const handleAddSpeciesWithFirstLog = () => {
     const sp = speciesList.find((s) => s.id === form.speciesId)
     if (!sp || !form.recordDate || !form.status) return
-    if (growthPayload.some((s) => s.speciesName === sp.name)) return
+    if (growthPayload.some((s) => s.speciesId === sp.id)) return
 
     const entry: GrowthLogEntry = {
       ...form,

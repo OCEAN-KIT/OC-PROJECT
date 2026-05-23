@@ -5,7 +5,7 @@ import type {
   TransplantMethod,
 } from '@ocean-kit/dashboard-domain/types/areaLogPayloads'
 import { queryKeys } from '../../queryKeys'
-import type { SpeciesSection } from '../components/transplant-log'
+import type { SpeciesSection } from '../types/transplantLogs'
 
 export default function useTransplantLogs(areaId: number) {
   const enabled = Number.isFinite(areaId) && areaId > 0
