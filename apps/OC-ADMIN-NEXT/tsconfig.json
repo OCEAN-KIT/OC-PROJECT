@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "strict": true,
+    "noUnusedLocals": false, // 안 쓰는 변수 경고 X
+    "noUnusedParameters": false, // 안 쓰는 파라미터 경고 X
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/components/PortOneDemoButton.ㅓsx",
+    "src/lib/portone.js"
+  ],
+  "exclude": ["node_modules"]
+}

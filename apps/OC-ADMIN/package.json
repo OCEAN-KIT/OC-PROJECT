@@ -1,40 +1,61 @@
 {
   "name": "@ocean-kit/oc-admin",
-  "version": "0.1.0",
   "private": true,
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "scripts": {
-    "dev": "next dev --experimental-https",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "dev": "vite dev --port 3001",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "lint": "eslint",
+    "format": "prettier --write . && eslint --fix",
+    "check": "prettier --check ."
   },
   "dependencies": {
     "@ocean-kit/dashboard-domain": "workspace:*",
     "@ocean-kit/shared-auth": "workspace:*",
     "@ocean-kit/shared-axios": "workspace:*",
-    "@ocean-kit/shared-types": "workspace:*",
     "@ocean-kit/submission-domain": "workspace:*",
-    "@tanstack/react-query": "^5.90.1",
-    "@tanstack/react-query-devtools": "^5.90.1",
+    "@tailwindcss/vite": "^4.1.18",
+    "@tanstack/react-devtools": "0.10.2",
+    "@tanstack/react-query": "5.100.10",
+    "@tanstack/react-query-devtools": "5.100.10",
+    "@tanstack/react-router": "1.169.1",
+    "@tanstack/react-router-devtools": "1.166.13",
+    "@tanstack/react-router-ssr-query": "1.166.12",
+    "@tanstack/react-start": "1.167.62",
+    "@tanstack/router-plugin": "^1.132.0",
     "axios": "^1.12.2",
-    "lucide-react": "^0.548.0",
-    "next": "15.5.9",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "react-icons": "^5.5.0",
+    "lucide-react": "^0.545.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "react-spinners": "^0.17.0",
-    "recharts": "^3.2.1",
-    "zod": "^4.1.11"
+    "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.5.6",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "@tailwindcss/typography": "^0.5.16",
+    "@tanstack/devtools-vite": "latest",
+    "@tanstack/eslint-config": "latest",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.0",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint": "^9.20.0",
+    "jsdom": "^28.1.0",
+    "prettier": "^3.8.1",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.0",
+    "vitest": "^4.1.5"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "lightningcss"
+    ]
   }
 }
