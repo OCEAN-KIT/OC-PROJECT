@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { ClipLoader } from 'react-spinners'
+import { LoadingSpinner } from '#/shared/components/LoadingSpinner'
 
 type AreaListSectionProps = {
   isLoading: boolean
@@ -15,7 +15,7 @@ export default function AreaListSection({
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <ClipLoader color="#2C67BC" size={40} />
+        <LoadingSpinner color="#2C67BC" size={40} />
       </div>
     )
   }

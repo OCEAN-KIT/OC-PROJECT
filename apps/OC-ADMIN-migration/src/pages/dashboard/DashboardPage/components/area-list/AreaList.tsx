@@ -1,4 +1,4 @@
-import AreaCard from './AreaCard'
+import AreaCard from './AreaCard/AreaCard'
 import type { AreaItem } from './constants'
 
 type Props = {

@@ -31,9 +31,7 @@ export function HeaderAccountMenu({
       aria-label="user menu"
       className="absolute right-0 z-50 mt-2 w-44 overflow-hidden rounded-xl border border-black/5 bg-white text-gray-900 shadow-lg"
     >
-      <div className="px-3 py-2 text-xs text-gray-500">
-        {accountMenuLabel}
-      </div>
+      <div className="px-3 py-2 text-xs text-gray-500">{accountMenuLabel}</div>
       <div className="h-px bg-gray-100" />
       <Link
         to="/dashboard"

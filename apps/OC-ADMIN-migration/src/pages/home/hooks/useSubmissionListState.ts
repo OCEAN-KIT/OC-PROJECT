@@ -10,8 +10,8 @@ import type { ListFilters } from '../api/submissions'
 import {
   getHomeFiltersFromSearch,
   getHomeSearchFromFilters,
-  type HomeSearch,
 } from '../homeSearch'
+import type { HomeSearch } from '../homeSearch'
 import { useSubmissionsQuery } from './submissions'
 
 const PAGE_SIZE = 10

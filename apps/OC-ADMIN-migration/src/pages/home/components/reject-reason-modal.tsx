@@ -6,7 +6,7 @@
  * 실제 반려 mutation은 onSubmit 콜백을 통해 상위 hook에 위임합니다.
  */
 import { useEffect, useRef, useState } from "react";
-import { ClipLoader } from "react-spinners";
+import { LoadingSpinner } from "#/shared/components/LoadingSpinner";
 
 type Props = {
   open: boolean;
@@ -100,7 +100,7 @@ export default function RejectModal({ open, ids, loading = false, onClose, onSub
             onClick={() => onSubmit({ ids, reason: { templateCode, message } })}
             className="h-9 px-3 rounded-md text-sm bg-rose-500 text-white shadow-sm hover:brightness-105 active:translate-y-[1px] disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center gap-2"
           >
-            {loading && <ClipLoader size={14} color="#fff" />}
+            {loading && <LoadingSpinner size={14} color="#fff" />}
             반려 사유 제출
           </button>
         </div>

@@ -9,14 +9,28 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as ReviewSubmissionIdRouteImport } from './routes/review.$submissionId'
 import { Route as DashboardSpeciesCreateRouteImport } from './routes/dashboard.speciesCreate'
 import { Route as DashboardCreateRouteImport } from './routes/dashboard.create'
+import { Route as DashboardAreaIdRouteImport } from './routes/dashboard.$areaId'
 
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -37,6 +51,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const ReviewSubmissionIdRoute = ReviewSubmissionIdRouteImport.update({
   id: '/review/$submissionId',
   path: '/review/$submissionId',
@@ -52,24 +71,36 @@ const DashboardCreateRoute = DashboardCreateRouteImport.update({
   path: '/create',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardAreaIdRoute = DashboardAreaIdRouteImport.update({
+  id: '/$areaId',
+  path: '/$areaId',
+  getParentRoute: () => DashboardRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteWithChildren
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
+  '/register': typeof RegisterRoute
+  '/dashboard/$areaId': typeof DashboardAreaIdRoute
   '/dashboard/create': typeof DashboardCreateRoute
   '/dashboard/speciesCreate': typeof DashboardSpeciesCreateRoute
   '/review/$submissionId': typeof ReviewSubmissionIdRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRouteWithChildren
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
+  '/register': typeof RegisterRoute
+  '/dashboard/$areaId': typeof DashboardAreaIdRoute
   '/dashboard/create': typeof DashboardCreateRoute
   '/dashboard/speciesCreate': typeof DashboardSpeciesCreateRoute
   '/review/$submissionId': typeof ReviewSubmissionIdRoute
+  '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,9 +108,13 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteWithChildren
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
+  '/register': typeof RegisterRoute
+  '/dashboard/$areaId': typeof DashboardAreaIdRoute
   '/dashboard/create': typeof DashboardCreateRoute
   '/dashboard/speciesCreate': typeof DashboardSpeciesCreateRoute
   '/review/$submissionId': typeof ReviewSubmissionIdRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -88,27 +123,38 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/home'
     | '/login'
+    | '/profile'
+    | '/register'
+    | '/dashboard/$areaId'
     | '/dashboard/create'
     | '/dashboard/speciesCreate'
     | '/review/$submissionId'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/dashboard'
     | '/home'
     | '/login'
+    | '/profile'
+    | '/register'
+    | '/dashboard/$areaId'
     | '/dashboard/create'
     | '/dashboard/speciesCreate'
     | '/review/$submissionId'
+    | '/dashboard'
   id:
     | '__root__'
     | '/'
     | '/dashboard'
     | '/home'
     | '/login'
+    | '/profile'
+    | '/register'
+    | '/dashboard/$areaId'
     | '/dashboard/create'
     | '/dashboard/speciesCreate'
     | '/review/$submissionId'
+    | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -116,11 +162,27 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRouteWithChildren
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
+  ProfileRoute: typeof ProfileRoute
+  RegisterRoute: typeof RegisterRoute
   ReviewSubmissionIdRoute: typeof ReviewSubmissionIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -149,6 +211,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/review/$submissionId': {
       id: '/review/$submissionId'
       path: '/review/$submissionId'
@@ -170,17 +239,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardCreateRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/$areaId': {
+      id: '/dashboard/$areaId'
+      path: '/$areaId'
+      fullPath: '/dashboard/$areaId'
+      preLoaderRoute: typeof DashboardAreaIdRouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
 
 interface DashboardRouteChildren {
+  DashboardAreaIdRoute: typeof DashboardAreaIdRoute
   DashboardCreateRoute: typeof DashboardCreateRoute
   DashboardSpeciesCreateRoute: typeof DashboardSpeciesCreateRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardAreaIdRoute: DashboardAreaIdRoute,
   DashboardCreateRoute: DashboardCreateRoute,
   DashboardSpeciesCreateRoute: DashboardSpeciesCreateRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
 }
 
 const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
@@ -192,6 +272,8 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRouteWithChildren,
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
+  ProfileRoute: ProfileRoute,
+  RegisterRoute: RegisterRoute,
   ReviewSubmissionIdRoute: ReviewSubmissionIdRoute,
 }
 export const routeTree = rootRouteImport

@@ -1,4 +1,4 @@
-import { ClipLoader } from 'react-spinners'
+import { LoadingSpinner } from '#/shared/components/LoadingSpinner'
 
 type ReviewDetailStateProps = {
   type: 'loading' | 'error'
@@ -9,7 +9,7 @@ export function ReviewDetailState({ type, onRetry }: ReviewDetailStateProps) {
   if (type === 'loading') {
     return (
       <ReviewDetailStateFrame>
-        <ClipLoader color="#3263F1" />
+        <LoadingSpinner color="#3263F1" />
       </ReviewDetailStateFrame>
     )
   }

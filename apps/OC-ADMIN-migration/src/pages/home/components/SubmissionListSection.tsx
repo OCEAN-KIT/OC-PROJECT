@@ -3,7 +3,7 @@
  * 로딩/에러 상태를 먼저 처리하고, 준비되면 children을 렌더링합니다.
  * ReviewList의 item/selection/action props를 몰라도 되도록 children 슬롯으로 분리했습니다.
  */
-import { ClipLoader } from 'react-spinners'
+import { LoadingSpinner } from '#/shared/components/LoadingSpinner'
 
 type SubmissionListSectionProps = {
   isFetching: boolean
@@ -23,7 +23,7 @@ export function SubmissionListSection({
   if (isFetching) {
     return (
       <div className="flex h-screen -mt-50 items-center justify-center">
-        <ClipLoader color="#3263F1" />
+        <LoadingSpinner color="#3263F1" />
       </div>
     )
   }

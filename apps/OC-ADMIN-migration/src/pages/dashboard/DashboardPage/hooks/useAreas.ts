@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { deleteArea, getAreas } from '@ocean-kit/dashboard-domain/api/areas'
 import type { AreaFilters } from '../types'
-import { queryKeys } from './queryKeys'
+import { queryKeys } from '../../queryKeys'
 
 export function useGetAreas(page: number, filters: AreaFilters) {
   return useQuery({
