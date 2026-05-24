@@ -4,11 +4,13 @@
  * HomePage controller가 목록 조회의 세부 상태를 직접 들고 있지 않게 합니다.
  */
 import { useNavigate, useSearch } from '@tanstack/react-router'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import type { SetStateAction } from 'react'
 import type { ListFilters } from '../api/submissions'
 import {
   getHomeFiltersFromSearch,
+  getHomeRouteSearch,
+  getHomeSearchFromRouteSearch,
   getHomeSearchFromFilters,
 } from '../homeSearch'
 import type { HomeSearch } from '../homeSearch'
@@ -17,7 +19,11 @@ import { useSubmissionsQuery } from './submissions'
 const PAGE_SIZE = 10
 
 export function useSubmissionListState() {
-  const search = useSearch({ from: '/home' })
+  const routeSearch = useSearch({ from: '/home' })
+  const search = useMemo(
+    () => getHomeSearchFromRouteSearch(routeSearch),
+    [routeSearch],
+  )
   const navigate = useNavigate()
   const page = search.page
   const filters = getHomeFiltersFromSearch(search)
@@ -35,7 +41,7 @@ export function useSubmissionListState() {
     if (page > totalPages) {
       void navigate({
         to: '/home',
-        search: { ...search, page: totalPages },
+        search: getHomeRouteSearch({ ...search, page: totalPages }),
         replace: true,
       })
     }
@@ -45,7 +51,7 @@ export function useSubmissionListState() {
     (nextSearch: HomeSearch) => {
       void navigate({
         to: '/home',
-        search: nextSearch,
+        search: getHomeRouteSearch(nextSearch),
         replace: true,
       })
     },

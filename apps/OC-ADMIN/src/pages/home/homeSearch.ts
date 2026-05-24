@@ -17,6 +17,14 @@ export type HomeSearch = {
   dateTo: string | null
 }
 
+export type HomeRouteSearch = {
+  page?: number
+  status?: Status
+  q?: string
+  dateFrom?: string
+  dateTo?: string
+}
+
 export const DEFAULT_HOME_SEARCH: HomeSearch = {
   page: 1,
   status: 'all',
@@ -25,7 +33,21 @@ export const DEFAULT_HOME_SEARCH: HomeSearch = {
   dateTo: null,
 }
 
-export function validateHomeSearch(search: Record<string, unknown>): HomeSearch {
+export function validateHomeSearch(
+  search: Record<string, unknown>,
+): HomeRouteSearch {
+  return getHomeRouteSearch({
+    page: parsePage(search.page),
+    status: parseStatus(search.status),
+    q: parseText(search.q),
+    dateFrom: parseDate(search.dateFrom),
+    dateTo: parseDate(search.dateTo),
+  })
+}
+
+export function getHomeSearchFromRouteSearch(
+  search: HomeRouteSearch,
+): HomeSearch {
   return {
     page: parsePage(search.page),
     status: parseStatus(search.status),
@@ -33,6 +55,37 @@ export function validateHomeSearch(search: Record<string, unknown>): HomeSearch 
     dateFrom: parseDate(search.dateFrom),
     dateTo: parseDate(search.dateTo),
   }
+}
+
+export function getHomeRouteSearch(search: HomeSearch): HomeRouteSearch {
+  const page = parsePage(search.page)
+  const status = parseStatus(search.status)
+  const q = parseText(search.q)
+  const dateFrom = parseDate(search.dateFrom)
+  const dateTo = parseDate(search.dateTo)
+  const routeSearch: HomeRouteSearch = {}
+
+  if (page !== DEFAULT_HOME_SEARCH.page) {
+    routeSearch.page = page
+  }
+
+  if (status !== DEFAULT_HOME_SEARCH.status) {
+    routeSearch.status = status
+  }
+
+  if (q !== DEFAULT_HOME_SEARCH.q) {
+    routeSearch.q = q
+  }
+
+  if (dateFrom !== DEFAULT_HOME_SEARCH.dateFrom) {
+    routeSearch.dateFrom = dateFrom
+  }
+
+  if (dateTo !== DEFAULT_HOME_SEARCH.dateTo) {
+    routeSearch.dateTo = dateTo
+  }
+
+  return routeSearch
 }
 
 export function getHomeFiltersFromSearch(search: HomeSearch): ListFilters {

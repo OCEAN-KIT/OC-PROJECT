@@ -1,7 +1,6 @@
 import { useNavigate } from '@tanstack/react-router'
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useState } from 'react'
-import { DEFAULT_HOME_SEARCH } from '#/pages/home/homeSearch'
 import type { RejectSubmitPayload } from '#/pages/home/hooks/useRejectSubmissionModal'
 import {
   useApproveMutation,
@@ -32,7 +31,7 @@ export function useReviewDetailActions({
   }, [queryClient, submissionId])
 
   const handleBack = useCallback(() => {
-    void navigate({ to: '/home', search: DEFAULT_HOME_SEARCH })
+    void navigate({ to: '/home' })
   }, [navigate])
 
   const handleExport = useCallback(() => {

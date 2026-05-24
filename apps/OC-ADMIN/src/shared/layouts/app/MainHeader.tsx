@@ -4,7 +4,6 @@
  * 각각 전용 hook과 HeaderAccountDropdown에 위임합니다.
  */
 import { Link } from '@tanstack/react-router'
-import { DEFAULT_HOME_SEARCH } from '#/pages/home/homeSearch'
 import { HeaderAccountDropdown } from './components/HeaderAccountDropdown'
 import { useHeaderAccountMenu } from './hooks/useHeaderAccountMenu'
 import { useMainHeaderActions } from './hooks/useMainHeaderActions'
@@ -22,7 +21,6 @@ export function MainHeader() {
       <div className="mx-auto flex h-16 max-w-[1500px] items-center justify-between px-4">
         <Link
           to="/home"
-          search={DEFAULT_HOME_SEARCH}
           className="text-3xl font-extrabold tracking-tight"
         >
           OceanCampus

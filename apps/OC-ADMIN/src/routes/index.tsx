@@ -4,10 +4,9 @@
  * 첫 진입 경로를 명확하게 고정합니다.
  */
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { DEFAULT_HOME_SEARCH } from '#/pages/home/homeSearch'
 
 export const Route = createFileRoute('/')({
   beforeLoad: () => {
-    throw redirect({ to: '/home', search: DEFAULT_HOME_SEARCH })
+    throw redirect({ to: '/home' })
   },
 })

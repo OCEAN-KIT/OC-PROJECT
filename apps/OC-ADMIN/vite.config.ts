@@ -1,7 +1,9 @@
 import { defineConfig, loadEnv } from 'vite'
+import type { PluginOption } from 'vite'
 import { devtools } from '@tanstack/devtools-vite'
 
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
@@ -12,6 +14,7 @@ const config = defineConfig(({ mode }) => {
     process.cwd(),
     '',
   )
+  const shouldAnalyze = env.ANALYZE === 'true' || env.ANALYZE === '1'
 
   return {
     define: {
@@ -23,8 +26,32 @@ const config = defineConfig(({ mode }) => {
       ),
     },
     resolve: { tsconfigPaths: true },
-    plugins: [devtools(), tailwindcss(), tanstackStart(), viteReact()],
+    build: {
+      sourcemap: shouldAnalyze,
+    },
+    plugins: [
+      devtools(),
+      tailwindcss(),
+      tanstackStart(),
+      viteReact(),
+      shouldAnalyze && createClientBundleVisualizer(),
+    ].filter(Boolean),
   }
 })
 
 export default config
+
+function createClientBundleVisualizer(): PluginOption {
+  return Object.assign(
+    visualizer({
+      filename: 'dist/client/bundle-stats.html',
+      title: 'OC-ADMIN Client Bundle',
+      template: 'treemap',
+      gzipSize: true,
+      brotliSize: true,
+    }),
+    {
+      applyToEnvironment: (environment) => environment.name === 'client',
+    } satisfies Pick<NonNullable<PluginOption>, 'applyToEnvironment'>,
+  )
+}
