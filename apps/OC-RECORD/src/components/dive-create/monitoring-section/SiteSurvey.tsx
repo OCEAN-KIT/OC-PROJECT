@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { MapPin, Compass, Mountain } from "lucide-react";
 import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
-import CheonjiinKeyboard from "@/components/keyboard/CheonjiinKeyboard";
+import CheonjiinKeyboard from "react-cji-keyboard";
 
 import type {
   OcRecordForm,
@@ -181,7 +181,6 @@ export default function SiteSurvey({ monitoring, setMonitoring }: Props) {
             >
               <CheonjiinKeyboard
                 onChange={(val: string) => setValue(activeField, val)}
-                initialValue={monitoring[activeField]}
               />
             </div>
           </div>

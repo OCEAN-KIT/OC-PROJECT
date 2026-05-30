@@ -5,7 +5,7 @@ import { Ruler } from "lucide-react";
 
 import SelectCard from "@/components/ui/SelectCard";
 import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
-import CheonjiinKeyboard from "@/components/keyboard/CheonjiinKeyboard";
+import CheonjiinKeyboard from "react-cji-keyboard";
 
 type Props = {
   scale: OcRecordForm["transplant"]["scale"];
@@ -68,7 +68,7 @@ export default function TransplantScale({
               onMouseDown={(e) => e.stopPropagation()}
               onTouchStart={(e) => e.stopPropagation()}
             >
-              <CheonjiinKeyboard onChange={setValue} initialValue={value} />
+              <CheonjiinKeyboard onChange={setValue} />
             </div>
           </div>
         </>

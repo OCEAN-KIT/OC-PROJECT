@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { Ruler } from "lucide-react";
 import SelectCard from "@/components/ui/SelectCard";
-import CheonjiinKeyboard from "@/components/keyboard/CheonjiinKeyboard";
+import CheonjiinKeyboard from "react-cji-keyboard";
 
 import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
 
@@ -114,7 +114,6 @@ export default function PreciseMeasurement({
             >
               <CheonjiinKeyboard
                 onChange={(val: string) => setValue(activeField, val)}
-                initialValue={monitoring[activeField]}
               />
             </div>
           </div>

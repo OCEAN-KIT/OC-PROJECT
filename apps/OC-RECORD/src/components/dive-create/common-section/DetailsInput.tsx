@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { ClipboardList } from "lucide-react";
 import { inputCls } from "../styles";
-import CheonjiinKeyboard from "@/components/keyboard/CheonjiinKeyboard";
+import CheonjiinKeyboard from "react-cji-keyboard";
 
 type Props = {
   value: string;
@@ -72,7 +72,7 @@ export default function DetailsInput({
               onMouseDown={(e) => e.stopPropagation()}
               onTouchStart={(e) => e.stopPropagation()}
             >
-              <CheonjiinKeyboard onChange={setValue} initialValue={value} />
+              <CheonjiinKeyboard onChange={setValue} />
             </div>
           </div>
         </>

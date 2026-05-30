@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { Activity } from "lucide-react";
 import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
-import CheonjiinKeyboard from "@/components/keyboard/CheonjiinKeyboard";
+import CheonjiinKeyboard from "react-cji-keyboard";
 
 import type { OcRecordForm, AlgaeCondition } from "@ocean-kit/submission-domain/types/form";
 
@@ -82,10 +82,7 @@ export default function AlgaeStatus({ monitoring, setMonitoring }: Props) {
               onMouseDown={(e) => e.stopPropagation()}
               onTouchStart={(e) => e.stopPropagation()}
             >
-              <CheonjiinKeyboard
-                onChange={setValue}
-                initialValue={monitoring.seaweedIdNumber}
-              />
+              <CheonjiinKeyboard onChange={setValue} />
             </div>
           </div>
         </>
