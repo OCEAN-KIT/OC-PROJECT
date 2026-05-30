@@ -77,11 +77,11 @@ export function getHomeRouteSearch(search: HomeSearch): HomeRouteSearch {
     routeSearch.q = q
   }
 
-  if (dateFrom !== DEFAULT_HOME_SEARCH.dateFrom) {
+  if (dateFrom !== null) {
     routeSearch.dateFrom = dateFrom
   }
 
-  if (dateTo !== DEFAULT_HOME_SEARCH.dateTo) {
+  if (dateTo !== null) {
     routeSearch.dateTo = dateTo
   }
 

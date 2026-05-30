@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     "@ocean-kit/shared-types",
     "@ocean-kit/submission-domain",
   ],
+  output: "standalone",
 };
 
 export default nextConfig;
