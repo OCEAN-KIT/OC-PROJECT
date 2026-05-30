@@ -6,7 +6,7 @@ ENV CI=true
 
 RUN corepack enable
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json tsconfig.base.json ./
 COPY apps/OC-ADMIN/package.json apps/OC-ADMIN/package.json
 COPY apps/OC-DASHBOARD/package.json apps/OC-DASHBOARD/package.json
 COPY apps/OC-RECORD/package.json apps/OC-RECORD/package.json
