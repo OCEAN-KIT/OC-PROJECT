@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-globals */
 
-const SW_VERSION = "oc-record-v3";
+const SW_VERSION = "oc-record-v4";
 const PAGE_CACHE = `${SW_VERSION}-pages`;
 const ASSET_CACHE = `${SW_VERSION}-assets`;
 const RUNTIME_CACHE = `${SW_VERSION}-runtime`;
@@ -161,7 +161,7 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   const isSameOrigin = url.origin === self.location.origin;
   const isNavigation = request.mode === "navigate";
-  const isApi = isSameOrigin && url.pathname.startsWith(withBase("/api/"));
+  const isApi = isSameOrigin && url.pathname.startsWith("/api/");
   const isStaticAsset = STATIC_ASSET_PATTERN.test(url.pathname);
 
   if (isNavigation) {
