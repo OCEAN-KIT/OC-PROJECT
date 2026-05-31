@@ -24,7 +24,7 @@ createRoot(rootElement).render(
         plugins={[
           {
             name: 'Tanstack Router',
-            render: <TanStackRouterDevtoolsPanel />,
+            render: <TanStackRouterDevtoolsPanel router={router} />,
           },
         ]}
       />
