@@ -4,22 +4,24 @@ const SW_VERSION = "oc-record-v3";
 const PAGE_CACHE = `${SW_VERSION}-pages`;
 const ASSET_CACHE = `${SW_VERSION}-assets`;
 const RUNTIME_CACHE = `${SW_VERSION}-runtime`;
+const APP_BASE = new URL(self.registration.scope).pathname.replace(/\/$/, "");
+const withBase = (path) => `${APP_BASE}${path}`;
 
 const PRECACHE_PAGES = [
-  "/",
-  "/login",
-  "/home",
-  "/dive-create",
-  "/dive-drafts",
-  "/submit-management",
-  "/profile",
+  withBase("/"),
+  withBase("/login"),
+  withBase("/home"),
+  withBase("/dive-create"),
+  withBase("/dive-drafts"),
+  withBase("/submit-management"),
+  withBase("/profile"),
 ];
 
 const PRECACHE_ASSETS = [
-  "/manifest.webmanifest",
-  "/icons/Ocean-Campus-Logo192.png",
-  "/icons/Ocean-Campus-Logo512.png",
-  "/images/ocn.svg",
+  withBase("/manifest.webmanifest"),
+  withBase("/icons/Ocean-Campus-Logo192.png"),
+  withBase("/icons/Ocean-Campus-Logo512.png"),
+  withBase("/images/ocn.svg"),
 ];
 
 const STATIC_ASSET_PATTERN =
@@ -43,7 +45,7 @@ const OFFLINE_HTML = `<!doctype html>
     <div class="card">
       <h1>오프라인 상태입니다</h1>
       <p>네트워크 연결이 복구되면 최신 데이터를 불러옵니다. 저장된 화면은 오프라인에서도 열 수 있습니다.</p>
-      <a href="/home">홈으로 이동</a>
+      <a href="${withBase("/home")}">홈으로 이동</a>
     </div>
   </body>
 </html>`;
@@ -117,9 +119,9 @@ async function networkFirstPage(request) {
     }
 
     const fallback =
-      (await cache.match("/home")) ||
-      (await cache.match("/login")) ||
-      (await cache.match("/"));
+      (await cache.match(withBase("/home"))) ||
+      (await cache.match(withBase("/login"))) ||
+      (await cache.match(withBase("/")));
 
     if (fallback) {
       return fallback;
@@ -159,7 +161,7 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   const isSameOrigin = url.origin === self.location.origin;
   const isNavigation = request.mode === "navigate";
-  const isApi = isSameOrigin && url.pathname.startsWith("/api/");
+  const isApi = isSameOrigin && url.pathname.startsWith(withBase("/api/"));
   const isStaticAsset = STATIC_ASSET_PATTERN.test(url.pathname);
 
   if (isNavigation) {

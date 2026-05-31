@@ -6,9 +6,11 @@ export default function SWRegister() {
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
 
+    const baseUrl = import.meta.env.BASE_URL;
+
     navigator.serviceWorker
-      .register("/sw.js", {
-        scope: "/",
+      .register(`${baseUrl}sw.js`, {
+        scope: baseUrl,
         updateViaCache: "none",
       })
       .catch((error) => {

@@ -1,34 +1,34 @@
 {
-  "id": "/?source=pwa",
+  "id": "./?source=pwa",
   "name": "OC-RECORD",
   "short_name": "OC-RECORD",
   "description": "해양 활동 제출 애플리케이션",
-  "start_url": "/?source=pwa",
-  "scope": "/",
+  "start_url": "./?source=pwa",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#1677ff",
   "icons": [
     {
-      "src": "/icons/Ocean-Campus-Logo192.png",
+      "src": "icons/Ocean-Campus-Logo192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/Ocean-Campus-Logo192.png",
+      "src": "icons/Ocean-Campus-Logo192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/icons/Ocean-Campus-Logo512.png",
+      "src": "icons/Ocean-Campus-Logo512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icons/Ocean-Campus-Logo512.png",
+      "src": "icons/Ocean-Campus-Logo512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -36,13 +36,13 @@
   ],
   "screenshots": [
     {
-      "src": "/images/ss540.png",
+      "src": "images/ss540.png",
       "sizes": "540x960",
       "type": "image/png",
       "form_factor": "narrow"
     },
     {
-      "src": "/images/ss1280.png",
+      "src": "images/ss1280.png",
       "sizes": "1280x800",
       "type": "image/png",
       "form_factor": "wide"

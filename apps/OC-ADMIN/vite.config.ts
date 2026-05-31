@@ -28,6 +28,7 @@ const config = defineConfig(({ mode }) => {
   }
 
   return {
+    base: '/admin/',
     define: {
       'process.env.NEXT_PUBLIC_API_BASE_URL': JSON.stringify(apiBaseUrl),
       'process.env.NEXT_PUBLIC_S3_PUBLIC_BASE': JSON.stringify(s3PublicBase),

@@ -3,6 +3,7 @@ import { routeTree } from './routeTree.gen'
 
 export const router = createTanStackRouter({
   routeTree,
+  basepath: '/record',
   scrollRestoration: true,
   defaultPreload: 'intent',
   defaultPreloadStaleTime: 0,
