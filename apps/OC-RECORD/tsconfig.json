@@ -1,18 +1,22 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "jsx": "react-jsx",
+    "types": ["vite/client"],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "#/*": ["./src/*"],
+      "next/navigation": ["./src/shared/next-compat/navigation.ts"],
+      "next/link": ["./src/shared/next-compat/link.tsx"]
     }
   },
   "include": [
-    "next-env.d.ts",
+    "vite.config.ts",
     "src/**/*.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
-    ".next/types/**/*.ts",
     "**/*.js",
     "**/*.jsx"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist", ".next"]
 }

@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-globals */
 
-const SW_VERSION = "oc-record-v2";
+const SW_VERSION = "oc-record-v3";
 const PAGE_CACHE = `${SW_VERSION}-pages`;
 const ASSET_CACHE = `${SW_VERSION}-assets`;
 const RUNTIME_CACHE = `${SW_VERSION}-runtime`;
@@ -23,7 +23,7 @@ const PRECACHE_ASSETS = [
 ];
 
 const STATIC_ASSET_PATTERN =
-  /\/(_next\/static|_next\/image)\/|\.(?:js|css|png|jpg|jpeg|gif|svg|webp|ico|woff2?|ttf)$/i;
+  /\/assets\/|\.(?:js|css|png|jpg|jpeg|gif|svg|webp|ico|woff2?|ttf)$/i;
 
 const OFFLINE_HTML = `<!doctype html>
 <html lang="ko">
@@ -160,7 +160,6 @@ self.addEventListener("fetch", (event) => {
   const isSameOrigin = url.origin === self.location.origin;
   const isNavigation = request.mode === "navigate";
   const isApi = isSameOrigin && url.pathname.startsWith("/api/");
-  const isRscRequest = request.headers.get("RSC") === "1" || url.searchParams.has("_rsc");
   const isStaticAsset = STATIC_ASSET_PATTERN.test(url.pathname);
 
   if (isNavigation) {
@@ -176,11 +175,6 @@ self.addEventListener("fetch", (event) => {
 
   if (isStaticAsset) {
     event.respondWith(staleWhileRevalidate(request, ASSET_CACHE));
-    return;
-  }
-
-  if (isSameOrigin && isRscRequest) {
-    event.respondWith(networkFirstRuntime(request));
     return;
   }
 
