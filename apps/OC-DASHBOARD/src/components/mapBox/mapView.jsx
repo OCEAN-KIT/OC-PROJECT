@@ -209,7 +209,7 @@ export default function MapView() {
         <div className="oc-panel rounded-2xl px-3 py-2">
           <div className="flex items-center gap-2">
             <Image
-              src="/oceanCampusLogo.png"
+              src="/dashboard/oceanCampusLogo.png"
               alt="Ocean Campus"
               width={80}
               height={80}

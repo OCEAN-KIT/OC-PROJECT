@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  basePath: "/dashboard",
   transpilePackages: [
     "@ocean-kit/dashboard-domain",
     "@ocean-kit/shared-axios",

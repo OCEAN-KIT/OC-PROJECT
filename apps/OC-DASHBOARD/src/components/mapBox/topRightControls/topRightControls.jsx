@@ -107,7 +107,7 @@ export default function TopRightControls({
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <Image
-                  src="/oceanCampusLogo.png"
+                  src="/dashboard/oceanCampusLogo.png"
                   alt="Ocean Campus"
                   width={20}
                   height={20}

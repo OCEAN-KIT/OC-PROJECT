@@ -1,5 +1,9 @@
-import { redirect } from "next/navigation";
+import MapView from "@/components/mapBox/mapView";
 
 export default function Home() {
-  return redirect("/dashBoard");
+  return (
+    <div>
+      <MapView />
+    </div>
+  );
 }

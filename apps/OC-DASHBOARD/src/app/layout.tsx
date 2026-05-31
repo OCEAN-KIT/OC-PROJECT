@@ -23,8 +23,10 @@ const outfit = Outfit({
 
 export default function RootLayout({
   children,
+  modal,
 }: {
   children: React.ReactNode;
+  modal: React.ReactNode;
 }) {
   return (
     <html lang="ko">
@@ -45,7 +47,10 @@ export default function RootLayout({
       <body
         className={`${workSans.variable} ${outfit.variable} min-h-screen bg-[var(--ds-bg)] text-[var(--ds-text)] font-sans`}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          {modal}
+        </Providers>
       </body>
     </html>
   );
