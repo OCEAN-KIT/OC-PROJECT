@@ -2,8 +2,11 @@
  * 카메라를 지정 위치로 자연스럽게 이동시키는 함수
  * @param {object} map - mapboxgl.Map 인스턴스
  * @param {object} newLocation - 이동할 위치 객체 (예: region 또는 area)
- * @param {Array<number>} newLocation.center - [lng, lat]
+ * @param {Array<number>} [newLocation.center] - [lng, lat]
+ * @param {number} [newLocation.lon] - 경도
+ * @param {number} [newLocation.lat] - 위도
  * @param {number} [newLocation.zoom] - 선택적 커스텀 줌 레벨
+ * @param {string | number} [newLocation.id] - 지역/작업영역 식별자
  */
 export default function changeCameraView(map, newLocation) {
   const center =

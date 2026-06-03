@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
-import changeCameraView from "@/utils/map/changeCameraView";
 import { createRoot } from "react-dom/client";
 import RegionPopup from "./regionPopup";
 import { STAGE_META } from "@/constants/stageMeta";
@@ -22,18 +21,18 @@ function cleanupMarkerEntry(entry) {
 
 export default function RegionMarkers({
   mapRef,
+  isMapLoaded,
   currentLocation,
   areas,
   workingArea,
-  setWorkingArea,
-  setActiveStage,
+  onSelectArea,
 }) {
   const router = useRouter();
   const markerEntriesRef = useRef(new Map());
   const selectedMarkerIdRef = useRef(null);
 
   useEffect(() => {
-    if (!mapRef.current) return;
+    if (!isMapLoaded || !mapRef.current) return;
 
     const map = mapRef.current;
     const markerEntries = new Map();
@@ -77,9 +76,7 @@ export default function RegionMarkers({
 
         const el = marker.getElement();
         const onClick = () => {
-          setWorkingArea(a);
-          setActiveStage?.(a.level);
-          changeCameraView(map, a);
+          onSelectArea(a);
         };
 
         el.addEventListener("click", onClick);
@@ -106,7 +103,7 @@ export default function RegionMarkers({
         markerEntriesRef.current = new Map();
       }
     };
-  }, [mapRef, currentLocation, areas, setWorkingArea, setActiveStage, router]);
+  }, [mapRef, isMapLoaded, currentLocation, areas, onSelectArea, router]);
 
   useEffect(() => {
     const markerEntries = markerEntriesRef.current;

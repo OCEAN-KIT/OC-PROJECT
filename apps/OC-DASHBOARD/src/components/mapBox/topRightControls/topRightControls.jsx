@@ -2,7 +2,6 @@
 
 import { useMemo, useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import changeCameraView from "@/utils/map/changeCameraView";
 import ControlsHeader from "./controlsHeader";
 import RegionSelector from "./regionSelector";
 import AreaGroupsList from "./areaGroupList";
@@ -11,18 +10,17 @@ import Image from "next/image";
 import StageFilter from "./stageFilter";
 import SearchBox from "./searchBox";
 import BottomSheet, { SNAP_PEEK, SNAP_HALF } from "@/components/ui/BottomSheet";
-import { Activity, Filter, MapPinned, Search } from "lucide-react";
+import { Search } from "lucide-react";
 
 export default function TopRightControls({
   currentLocation,
-  setCurrentLocation,
   areas,
-  isLoading,
   workingArea,
-  setWorkingArea,
-  mapRef,
   activeStage,
   setActiveStage,
+  onSelectRegion,
+  onSelectArea,
+  resetView,
 }) {
   const [open, setOpen] = useState(true);
   const [query, setQuery] = useState("");
@@ -40,33 +38,12 @@ export default function TopRightControls({
     });
   }, [areas, router]);
 
-  const resetView = () => {
-    if (!mapRef?.current) return;
-    changeCameraView(mapRef.current, {
-      center: [129.38, 36.5],
-      zoom: 6.5,
-      id: "overview",
-    });
-  };
-
   const handleRegion = (region) => {
-    if (currentLocation?.id === region.id) {
-      setCurrentLocation(null);
-      setWorkingArea(null);
-      setActiveStage(null);
-      resetView();
-      return;
-    }
-    setCurrentLocation(region);
-    setWorkingArea(null);
-    setActiveStage(null);
-    if (mapRef?.current) changeCameraView(mapRef.current, region);
+    onSelectRegion(region);
   };
 
   const handleArea = (area) => {
-    setWorkingArea(area);
-    setActiveStage(area.level);
-    if (mapRef?.current && area) changeCameraView(mapRef.current, area);
+    onSelectArea(area);
   };
 
   const grouped = useMemo(() => {
@@ -89,11 +66,6 @@ export default function TopRightControls({
     })).filter((g) => g.items.length > 0);
   }, [areas, activeStage, query]);
 
-  const filteredCount = useMemo(
-    () => grouped.reduce((sum, group) => sum + group.items.length, 0),
-    [grouped],
-  );
-
   return (
     <>
       {/* ═══════════ 데스크탑: 기존 우상단 패널 ═══════════ */}
@@ -104,58 +76,18 @@ export default function TopRightControls({
       >
         <div className="oc-panel overflow-hidden rounded-2xl">
           <div className="px-4 pt-4 pb-3">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <Image
-                  src="/dashboard/oceanCampusLogo.png"
-                  alt="Ocean Campus"
-                  width={20}
-                  height={20}
-                  className="h-5 w-5 object-contain"
-                  priority
-                />
-                <div>
-                  <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-indigo-100/72">
-                    OC Dashboard
-                  </p>
-                </div>
-              </div>
-              <span
-                className="oc-kpi-glow rounded-full border border-orange-200/40 bg-orange-400/22 px-2.5 py-1
-                           text-[10px] font-semibold uppercase tracking-[0.14em] text-orange-100"
-              >
-                Live
-              </span>
-            </div>
-
-            <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
-              <div className="rounded-lg border border-white/18 bg-white/10 px-2 py-2">
-                <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.1em] text-indigo-100/70">
-                  <MapPinned size={12} />
-                  Region
-                </div>
-                <p className="mt-1 text-sm font-semibold text-slate-50">
-                  {currentLocation?.label ?? "전체"}
-                </p>
-              </div>
-              <div className="rounded-lg border border-white/18 bg-white/10 px-2 py-2">
-                <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.1em] text-indigo-100/70">
-                  <Filter size={12} />
-                  Filtered
-                </div>
-                <p className="mt-1 text-sm font-semibold text-slate-50">
-                  {filteredCount}
-                </p>
-              </div>
-              <div className="rounded-lg border border-white/18 bg-white/10 px-2 py-2">
-                <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.1em] text-indigo-100/70">
-                  <Activity size={12} />
-                  Total
-                </div>
-                <p className="mt-1 text-sm font-semibold text-slate-50">
-                  {areas.length}
-                </p>
-              </div>
+            <div className="flex items-center gap-2">
+              <Image
+                src="/dashboard/oceanCampusLogo.png"
+                alt="Ocean Campus"
+                width={20}
+                height={20}
+                className="h-5 w-5 object-contain"
+                priority
+              />
+              <p className="text-sm font-semibold tracking-tight text-slate-50">
+                해역별 복원 현황
+              </p>
             </div>
           </div>
 
@@ -166,11 +98,6 @@ export default function TopRightControls({
           {open && (
             <>
               <div className="px-4 pt-2">
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-indigo-100/72">
-                    Search & Region
-                  </span>
-                </div>
                 <div className="flex items-center gap-3">
                   <RegionSelector
                     activeId={currentLocation?.id}
@@ -196,7 +123,6 @@ export default function TopRightControls({
                 grouped={grouped}
                 onSelectArea={handleArea}
                 activeRegion={!!currentLocation}
-                isLoading={isLoading}
                 workingArea={workingArea}
               />
             </>
@@ -257,7 +183,6 @@ export default function TopRightControls({
                     grouped={grouped}
                     onSelectArea={handleArea}
                     activeRegion={!!currentLocation}
-                    isLoading={isLoading}
                     workingArea={workingArea}
                   />
                 </div>

@@ -9,7 +9,6 @@ export default function AreaGroupsList({
   onSelectArea,
   activeRegion,
   workingArea,
-  isLoading,
 }) {
   const [expanded, setExpanded] = useState(() =>
     Object.fromEntries(grouped.map((g) => [g.stage, true])),
@@ -20,19 +19,6 @@ export default function AreaGroupsList({
   }, [grouped, activeRegion]);
 
   const toggle = (stage) => setExpanded((s) => ({ ...s, [stage]: !s[stage] }));
-
-  if (isLoading) {
-    return (
-      <div className="px-3 py-6">
-        <div className="space-y-2">
-          <div className="h-9 animate-pulse rounded-lg bg-indigo-200/15" />
-          <div className="h-9 animate-pulse rounded-lg bg-indigo-200/15" />
-          <div className="h-9 animate-pulse rounded-lg bg-indigo-200/15" />
-        </div>
-        <p className="mt-3 text-center text-sm text-indigo-100/70">불러오는 중...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="max-h-[56vh] overflow-auto px-2 py-2">

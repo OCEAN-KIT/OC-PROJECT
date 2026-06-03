@@ -1,5 +1,7 @@
+import type { RestorationRegion } from "@ocean-kit/dashboard-domain/types/areas";
+
 export type Region = {
-  id: string;
+  id: RestorationRegion;
   label: string;
   color: string;
   center: [number, number];
@@ -12,4 +14,4 @@ export const REGIONS: Region[] = [
 
 export const COORDS = Object.fromEntries(
   REGIONS.map((r) => [r.id, r.center]),
-) as Record<string, [number, number]>;
+) as Record<RestorationRegion, [number, number]>;
