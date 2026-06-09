@@ -10,12 +10,14 @@ import MobileSubmissionList from "@/components/submission/submission-list";
 import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { HiOutlineRefresh } from "react-icons/hi";
+import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 
 type SubmissionsPage = Awaited<ReturnType<typeof fetchSubmissions>>;
 
 export default function MobileSubmissionsPage() {
   const router = useRouter();
   const [page, setPage] = useState(0);
+  const isOnline = useOnlineStatus();
 
   const { data, isFetching, refetch } = useQuery<SubmissionsPage>({
     queryKey: queryKeys.submissions.page(page),
@@ -23,6 +25,9 @@ export default function MobileSubmissionsPage() {
     placeholderData: (prev) => prev,
     staleTime: 30_000,
     gcTime: 5 * 60_000,
+    enabled: isOnline,
+    retry: false,
+    refetchOnMount: "always",
   });
 
   const items: Submission[] = data?.items ?? [];
@@ -49,7 +54,7 @@ export default function MobileSubmissionsPage() {
           onClick={() => refetch()} // ✅ React Query 데이터만 새로 가져오기
           className="rounded-xl p-1.5 hover:bg-gray-100 active:scale-[0.98] transition disabled:opacity-60"
           aria-label="새로고침"
-          disabled={isFetching} // 원하면 로딩 중엔 비활성화
+          disabled={isFetching || !isOnline} // 원하면 로딩 중엔 비활성화
         >
           <HiOutlineRefresh
             className={
@@ -59,12 +64,18 @@ export default function MobileSubmissionsPage() {
         </button>
       </div>
 
-      <MobileSubmissionList
-        items={items}
-        loading={isFetching}
-        onPressItem={(id) => router.push(`/review/${id}`)}
-        onLoadMore={meta?.hasNext ? () => setPage((p) => p + 1) : undefined}
-      />
+      {isOnline ? (
+        <MobileSubmissionList
+          items={items}
+          loading={isFetching}
+          onPressItem={(id) => router.push(`/review/${id}`)}
+          onLoadMore={meta?.hasNext ? () => setPage((p) => p + 1) : undefined}
+        />
+      ) : (
+        <div className="rounded-2xl bg-white p-6 text-center text-gray-500 ring-1 ring-black/5">
+          제출 목록 조회는 네트워크 연결 상태에서만 가능합니다.
+        </div>
+      )}
     </div>
   );
 }

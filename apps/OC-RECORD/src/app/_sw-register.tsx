@@ -4,6 +4,7 @@ import { useEffect } from "react";
 
 export default function SWRegister() {
   useEffect(() => {
+    if (import.meta.env.DEV) return;
     if (!("serviceWorker" in navigator)) return;
 
     const baseUrl = import.meta.env.BASE_URL;

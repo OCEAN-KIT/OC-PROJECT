@@ -21,6 +21,7 @@ import MediaUploadSection from "@/components/dive-create/common-section/MediaUpl
 import WorkTypeSection from "@/components/dive-create/WorkTypeSection";
 import CommonWrapper from "@/components/dive-create/common-section/CommonWrapper";
 import UnsavedChangesModal from "@/components/ui/UnsavedChangesModal";
+import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 // import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 const DEBUG = true;
@@ -436,8 +437,15 @@ export default function DiveCreatePage() {
 
   // ========= 제출 =========
   const { mutate: submitMutation, isPending: loading } = useCreateSubmission();
+  const isOnline = useOnlineStatus();
+  const isSubmitDisabled = loading || !isOnline;
 
   const handleSubmit = () => {
+    if (!isOnline) {
+      alert("네트워크 연결 상태에서만 제출할 수 있습니다.");
+      return;
+    }
+
     const error = validateSubmission(form, details);
     if (error) {
       setValidationError(error);
@@ -545,7 +553,7 @@ export default function DiveCreatePage() {
           <button
             type="button"
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={isSubmitDisabled}
             className="h-12 rounded-xl bg-[#2F80ED] text-white font-semibold hover:brightness-105 active:translate-y-px disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? <ClipLoader size={20} color="#ffffff" /> : "제출하기"}

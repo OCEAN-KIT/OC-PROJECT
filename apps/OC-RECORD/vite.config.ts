@@ -2,6 +2,7 @@ import { defineConfig, loadEnv } from 'vite'
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
+import { VitePWA } from 'vite-plugin-pwa'
 import { fileURLToPath } from 'node:url'
 
 const appRoot = fileURLToPath(new URL('.', import.meta.url))
@@ -45,6 +46,23 @@ const config = defineConfig(({ mode }) => {
       }),
       tailwindcss(),
       viteReact(),
+      VitePWA({
+        base: '/record/',
+        scope: '/record/',
+        filename: 'sw.js',
+        injectRegister: false,
+        manifest: false,
+        registerType: 'autoUpdate',
+        workbox: {
+          cleanupOutdatedCaches: true,
+          clientsClaim: true,
+          inlineWorkboxRuntime: true,
+          skipWaiting: true,
+          globPatterns: ['**/*.{js,css,html,png,svg,ico,webmanifest}'],
+          navigateFallback: '/record/index.html',
+          navigateFallbackDenylist: [/^\/api\//],
+        },
+      }),
     ],
   }
 })
