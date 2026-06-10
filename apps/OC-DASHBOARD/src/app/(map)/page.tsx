@@ -4,7 +4,7 @@ import MapViewErrorBoundary from "@/components/mapBox/mapViewErrorBoundary";
 import MapViewLoading from "@/components/mapBox/mapViewLoading";
 import { getCachedAreasByRegion } from "@/server/getCachedAreas";
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 async function MapViewData() {
   const initialAreasByRegion = await getCachedAreasByRegion();
