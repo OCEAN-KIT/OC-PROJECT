@@ -10,9 +10,8 @@ import tailwindcss from '@tailwindcss/vite'
 
 const config = defineConfig(({ mode }) => {
   const env: Partial<Record<string, string>> = loadEnv(mode, process.cwd(), '')
-  const apiBaseUrl =
-    env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000'
-  const s3PublicBase = env.NEXT_PUBLIC_S3_PUBLIC_BASE || ''
+  const apiBaseUrl = requireEnv(env, 'API_BASE_URL')
+  const s3PublicBase = requireEnv(env, 'S3_PUBLIC_BASE')
   const shouldAnalyze = env.ANALYZE === 'true' || env.ANALYZE === '1'
   const plugins: PluginOption[] = [
     tanstackRouter({
@@ -30,8 +29,8 @@ const config = defineConfig(({ mode }) => {
   return {
     base: '/admin/',
     define: {
-      'process.env.NEXT_PUBLIC_API_BASE_URL': JSON.stringify(apiBaseUrl),
-      'process.env.NEXT_PUBLIC_S3_PUBLIC_BASE': JSON.stringify(s3PublicBase),
+      'process.env.API_BASE_URL': JSON.stringify(apiBaseUrl),
+      'process.env.S3_PUBLIC_BASE': JSON.stringify(s3PublicBase),
     },
     resolve: { tsconfigPaths: true },
     build: {
@@ -42,6 +41,16 @@ const config = defineConfig(({ mode }) => {
 })
 
 export default config
+
+function requireEnv(env: Partial<Record<string, string>>, name: string) {
+  const value = env[name]
+
+  if (!value) {
+    throw new Error(`Missing required env: ${name}`)
+  }
+
+  return value
+}
 
 function createClientBundleVisualizer(): PluginOption {
   return visualizer({

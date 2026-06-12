@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const s3PublicImagePattern = (() => {
-  const publicBase = process.env.NEXT_PUBLIC_S3_PUBLIC_BASE;
+  const publicBase = process.env.S3_PUBLIC_BASE;
   if (!publicBase) return null;
 
   try {
@@ -26,6 +26,11 @@ const remotePatterns: NonNullable<NextConfig["images"]>["remotePatterns"] = [
 
 const nextConfig: NextConfig = {
   basePath: "/dashboard",
+  env: {
+    API_BASE_URL: process.env.API_BASE_URL ?? "",
+    S3_PUBLIC_BASE: process.env.S3_PUBLIC_BASE ?? "",
+    MAPBOX_TOKEN: process.env.MAPBOX_TOKEN ?? "",
+  },
   transpilePackages: [
     "@ocean-kit/dashboard-domain",
     "@ocean-kit/shared-axios",

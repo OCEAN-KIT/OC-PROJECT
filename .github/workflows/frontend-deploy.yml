@@ -34,9 +34,9 @@ jobs:
       EC2_HOST: ${{ secrets.EC2_HOST }}
       EC2_USER: ${{ secrets.EC2_USER }}
       EC2_SECURITY_GROUP_ID: ${{ secrets.EC2_SECURITY_GROUP_ID }}
-      NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
-      NEXT_PUBLIC_S3_PUBLIC_BASE: ${{ secrets.NEXT_PUBLIC_S3_PUBLIC_BASE }}
-      NEXT_PUBLIC_MAPBOX_TOKEN: ${{ secrets.NEXT_PUBLIC_MAPBOX_TOKEN }}
+      API_BASE_URL: ${{ secrets.API_BASE_URL }}
+      S3_PUBLIC_BASE: ${{ secrets.S3_PUBLIC_BASE }}
+      MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
       DASHBOARD_REMOTE_ROOT: /opt/oceancampus/dashboard
       DASHBOARD_REMOTE_APP_DIR: /opt/oceancampus/dashboard/apps/OC-DASHBOARD
       NEXT_TELEMETRY_DISABLED: "1"
@@ -69,9 +69,9 @@ jobs:
             EC2_USER
             EC2_SECURITY_GROUP_ID
             EC2_SSH_KEY
-            NEXT_PUBLIC_API_BASE_URL
-            NEXT_PUBLIC_S3_PUBLIC_BASE
-            NEXT_PUBLIC_MAPBOX_TOKEN
+            API_BASE_URL
+            S3_PUBLIC_BASE
+            MAPBOX_TOKEN
           )
 
           missing=()
@@ -96,15 +96,15 @@ jobs:
           EC2_USER: ${{ secrets.EC2_USER }}
           EC2_SECURITY_GROUP_ID: ${{ secrets.EC2_SECURITY_GROUP_ID }}
           EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
-          NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
-          NEXT_PUBLIC_S3_PUBLIC_BASE: ${{ secrets.NEXT_PUBLIC_S3_PUBLIC_BASE }}
-          NEXT_PUBLIC_MAPBOX_TOKEN: ${{ secrets.NEXT_PUBLIC_MAPBOX_TOKEN }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          S3_PUBLIC_BASE: ${{ secrets.S3_PUBLIC_BASE }}
+          MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Build frontend apps
-        run: pnpm turbo build --filter=@ocean-kit/oc-admin --filter=@ocean-kit/oc-record --filter=@ocean-kit/oc-dashboard
+        run: pnpm build
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -205,9 +205,9 @@ jobs:
             echo "NODE_ENV=production"
             echo "PORT=3000"
             echo "HOSTNAME=127.0.0.1"
-            echo "NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}"
-            echo "NEXT_PUBLIC_S3_PUBLIC_BASE=${NEXT_PUBLIC_S3_PUBLIC_BASE}"
-            echo "NEXT_PUBLIC_MAPBOX_TOKEN=${NEXT_PUBLIC_MAPBOX_TOKEN}"
+            echo "API_BASE_URL=${API_BASE_URL}"
+            echo "S3_PUBLIC_BASE=${S3_PUBLIC_BASE}"
+            echo "MAPBOX_TOKEN=${MAPBOX_TOKEN}"
           } > dashboard.env
 
           scp -i ~/.ssh/oceancampus-frontend-cd dashboard.env \
