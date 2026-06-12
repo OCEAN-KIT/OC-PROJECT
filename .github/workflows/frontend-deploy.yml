@@ -70,7 +70,6 @@ jobs:
             EC2_HOST
             EC2_USER
             EC2_SECURITY_GROUP_ID
-            EC2_SSH_KEY
             API_BASE_URL
             S3_PUBLIC_BASE
             MAPBOX_TOKEN
@@ -97,7 +96,6 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
           EC2_SECURITY_GROUP_ID: ${{ secrets.EC2_SECURITY_GROUP_ID }}
-          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
           API_BASE_URL: ${{ secrets.API_BASE_URL }}
           S3_PUBLIC_BASE: ${{ secrets.S3_PUBLIC_BASE }}
           MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
@@ -174,11 +172,47 @@ jobs:
           fi
 
       - name: Prepare SSH
+        id: prepare_ssh
         shell: bash
         run: |
           mkdir -p ~/.ssh
-          printf '%s\n' "${EC2_SSH_KEY}" > ~/.ssh/oceancampus-frontend-cd
-          chmod 600 ~/.ssh/oceancampus-frontend-cd
+          ssh_key_path="${HOME}/.ssh/oceancampus-frontend-cd"
+          rm -f "${ssh_key_path}" "${ssh_key_path}.pub"
+          ssh-keygen -t ed25519 -N '' -f "${ssh_key_path}" -q
+          chmod 600 "${ssh_key_path}"
+
+          instance_info="$(
+            aws ec2 describe-instances \
+              --filters "Name=dns-name,Values=${EC2_HOST}" "Name=instance-state-name,Values=running" \
+              --query 'Reservations[].Instances[].[InstanceId,Placement.AvailabilityZone]' \
+              --output text | awk 'NF { print; exit }'
+          )"
+
+          if [ -z "${instance_info}" ]; then
+            instance_info="$(
+              aws ec2 describe-instances \
+                --filters "Name=ip-address,Values=${EC2_HOST}" "Name=instance-state-name,Values=running" \
+                --query 'Reservations[].Instances[].[InstanceId,Placement.AvailabilityZone]' \
+                --output text | awk 'NF { print; exit }'
+            )"
+          fi
+
+          read -r instance_id availability_zone <<< "${instance_info}"
+
+          if [ -z "${instance_id}" ] || [ -z "${availability_zone}" ]; then
+            echo "::error::Unable to resolve running EC2 instance from EC2_HOST."
+            exit 1
+          fi
+
+          echo "instance_id=${instance_id}" >> "${GITHUB_OUTPUT}"
+          echo "availability_zone=${availability_zone}" >> "${GITHUB_OUTPUT}"
+
+          aws ec2-instance-connect send-ssh-public-key \
+            --instance-id "${instance_id}" \
+            --availability-zone "${availability_zone}" \
+            --instance-os-user "${EC2_USER}" \
+            --ssh-public-key "file://${ssh_key_path}.pub" \
+            >/dev/null
 
           for attempt in {1..10}; do
             if ssh-keyscan -T 10 -H "${EC2_HOST}" >> ~/.ssh/known_hosts; then
@@ -191,25 +225,40 @@ jobs:
 
           echo "::error::Unable to scan SSH host key for ${EC2_HOST}."
           exit 1
-        env:
-          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
 
       - name: Deploy dashboard to EC2
         shell: bash
         run: |
-          ssh -i ~/.ssh/oceancampus-frontend-cd "${EC2_USER}@${EC2_HOST}" \
+          ssh_key_path="${HOME}/.ssh/oceancampus-frontend-cd"
+          ssh_public_key_path="${ssh_key_path}.pub"
+          ssh_options="-i ${ssh_key_path} -o BatchMode=yes"
+
+          refresh_ssh_public_key() {
+            aws ec2-instance-connect send-ssh-public-key \
+              --instance-id "${{ steps.prepare_ssh.outputs.instance_id }}" \
+              --availability-zone "${{ steps.prepare_ssh.outputs.availability_zone }}" \
+              --instance-os-user "${EC2_USER}" \
+              --ssh-public-key "file://${ssh_public_key_path}" \
+              >/dev/null
+          }
+
+          refresh_ssh_public_key
+          ssh ${ssh_options} "${EC2_USER}@${EC2_HOST}" \
             "mkdir -p '${DASHBOARD_REMOTE_APP_DIR}/.next/static' '${DASHBOARD_REMOTE_APP_DIR}/public'"
 
-          rsync -az --delete -e "ssh -i ~/.ssh/oceancampus-frontend-cd" \
+          refresh_ssh_public_key
+          rsync -az --delete -e "ssh ${ssh_options}" \
             apps/OC-DASHBOARD/.next/standalone/ \
             "${EC2_USER}@${EC2_HOST}:${DASHBOARD_REMOTE_ROOT}/"
 
-          rsync -az --delete -e "ssh -i ~/.ssh/oceancampus-frontend-cd" \
+          refresh_ssh_public_key
+          rsync -az --delete -e "ssh ${ssh_options}" \
             apps/OC-DASHBOARD/.next/static/ \
             "${EC2_USER}@${EC2_HOST}:${DASHBOARD_REMOTE_APP_DIR}/.next/static/"
 
           if [ -d apps/OC-DASHBOARD/public ]; then
-            rsync -az --delete -e "ssh -i ~/.ssh/oceancampus-frontend-cd" \
+            refresh_ssh_public_key
+            rsync -az --delete -e "ssh ${ssh_options}" \
               apps/OC-DASHBOARD/public/ \
               "${EC2_USER}@${EC2_HOST}:${DASHBOARD_REMOTE_APP_DIR}/public/"
           fi
@@ -223,10 +272,12 @@ jobs:
             echo "MAPBOX_TOKEN=${MAPBOX_TOKEN}"
           } > dashboard.env
 
-          scp -i ~/.ssh/oceancampus-frontend-cd dashboard.env \
+          refresh_ssh_public_key
+          scp ${ssh_options} dashboard.env \
             "${EC2_USER}@${EC2_HOST}:/tmp/oceancampus-dashboard.env"
 
-          ssh -i ~/.ssh/oceancampus-frontend-cd "${EC2_USER}@${EC2_HOST}" \
+          refresh_ssh_public_key
+          ssh ${ssh_options} "${EC2_USER}@${EC2_HOST}" \
             "mv /tmp/oceancampus-dashboard.env '${DASHBOARD_REMOTE_ROOT}/.env' && chmod 600 '${DASHBOARD_REMOTE_ROOT}/.env' && sudo systemctl restart oceancampus-dashboard && sudo systemctl is-active oceancampus-dashboard"
 
       - name: Revoke runner SSH access
