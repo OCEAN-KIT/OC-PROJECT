@@ -7,6 +7,9 @@ import { fileURLToPath } from 'node:url'
 
 const appRoot = fileURLToPath(new URL('.', import.meta.url))
 const sourceRoot = fileURLToPath(new URL('./src', import.meta.url))
+const sharedS3Upload = fileURLToPath(
+  new URL('../../packages/shared-s3/src/upload.ts', import.meta.url),
+)
 
 const config = defineConfig(({ mode }) => {
   const env: Partial<Record<string, string>> = loadEnv(mode, appRoot, '')
@@ -23,6 +26,10 @@ const config = defineConfig(({ mode }) => {
       alias: [
         { find: /^#\//, replacement: `${sourceRoot}/` },
         { find: /^@\//, replacement: `${sourceRoot}/` },
+        {
+          find: '@ocean-kit/shared-s3/upload',
+          replacement: sharedS3Upload,
+        },
         {
           find: 'next/navigation',
           replacement: `${sourceRoot}/shared/next-compat/navigation.ts`,

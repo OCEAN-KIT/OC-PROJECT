@@ -10,7 +10,7 @@
     "dev:mock-api": "pnpm --filter @ocean-kit/oc-mock-api dev",
     "build": "turbo build --filter=@ocean-kit/oc-admin --filter=@ocean-kit/oc-dashboard --filter=@ocean-kit/oc-record",
     "lint": "turbo lint --filter=@ocean-kit/oc-admin --filter=@ocean-kit/oc-dashboard --filter=@ocean-kit/oc-record",
-    "typecheck": "turbo typecheck --filter=@ocean-kit/dashboard-domain --filter=@ocean-kit/shared-auth --filter=@ocean-kit/shared-axios --filter=@ocean-kit/shared-types --filter=@ocean-kit/submission-domain",
+    "typecheck": "turbo typecheck --filter=@ocean-kit/dashboard-domain --filter=@ocean-kit/shared-auth --filter=@ocean-kit/shared-axios --filter=@ocean-kit/shared-s3 --filter=@ocean-kit/shared-types --filter=@ocean-kit/submission-domain",
     "check": "turbo run lint build --filter=@ocean-kit/oc-admin --filter=@ocean-kit/oc-dashboard --filter=@ocean-kit/oc-record"
   },
   "devDependencies": {

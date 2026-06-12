@@ -1,0 +1,12 @@
+{
+  "name": "@ocean-kit/shared-s3",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "exports": {
+    "./upload": "./src/upload.ts"
+  }
+}

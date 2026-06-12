@@ -7,6 +7,11 @@ import { visualizer } from 'rollup-plugin-visualizer'
 
 import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
+import { fileURLToPath } from 'node:url'
+
+const sharedS3Upload = fileURLToPath(
+  new URL('../../packages/shared-s3/src/upload.ts', import.meta.url),
+)
 
 const config = defineConfig(({ mode }) => {
   const env: Partial<Record<string, string>> = loadEnv(mode, process.cwd(), '')
@@ -32,7 +37,15 @@ const config = defineConfig(({ mode }) => {
       'process.env.API_BASE_URL': JSON.stringify(apiBaseUrl),
       'process.env.S3_PUBLIC_BASE': JSON.stringify(s3PublicBase),
     },
-    resolve: { tsconfigPaths: true },
+    resolve: {
+      tsconfigPaths: true,
+      alias: [
+        {
+          find: '@ocean-kit/shared-s3/upload',
+          replacement: sharedS3Upload,
+        },
+      ],
+    },
     build: {
       sourcemap: shouldAnalyze,
     },

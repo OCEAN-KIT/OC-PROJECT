@@ -37,7 +37,10 @@ export default function TransplantLogCard({ areaId, section }: Props) {
     value: TransplantLogPayload[TKey],
   ) => setForm((prev) => ({ ...prev, [key]: value }))
 
-  const canSave = !!form.recordDate && !!form.method && !!form.attachmentStatus
+  const canSave =
+    form.recordDate.length > 0 &&
+    form.method !== '' &&
+    form.attachmentStatus !== ''
 
   const handleSaveLog = () => {
     if (!canSave || !isValidAreaId) return
