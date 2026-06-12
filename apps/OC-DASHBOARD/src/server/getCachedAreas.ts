@@ -6,13 +6,11 @@ import type {
   RestorationRegion,
 } from "@ocean-kit/dashboard-domain/types/areas";
 
-const REVALIDATE_SECONDS = 3600;
-
 function getApiBaseUrl() {
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const apiBaseUrl = process.env.API_BASE_URL;
 
   if (!apiBaseUrl) {
-    throw new Error("NEXT_PUBLIC_API_BASE_URL is required to fetch areas.");
+    throw new Error("API_BASE_URL is required to fetch areas.");
   }
 
   return apiBaseUrl;
@@ -25,9 +23,7 @@ export async function getCachedAreas(
   url.searchParams.set("region", region);
 
   const res = await fetch(url, {
-    next: {
-      revalidate: REVALIDATE_SECONDS,
-    },
+    cache: "no-store",
   });
 
   if (!res.ok) {

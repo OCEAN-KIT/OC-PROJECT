@@ -48,10 +48,10 @@ export default function TransplantLogList({
   )
 
   const canSave =
-    !!form.recordDate &&
-    !!form.speciesId &&
-    !!form.method &&
-    !!form.attachmentStatus
+    form.recordDate.length > 0 &&
+    form.speciesId > 0 &&
+    form.method !== '' &&
+    form.attachmentStatus !== ''
 
   return (
     <div className="p-6 space-y-4">

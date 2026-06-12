@@ -7,28 +7,29 @@ import { fileURLToPath } from 'node:url'
 
 const appRoot = fileURLToPath(new URL('.', import.meta.url))
 const sourceRoot = fileURLToPath(new URL('./src', import.meta.url))
+const sharedS3Upload = fileURLToPath(
+  new URL('../../packages/shared-s3/src/upload.ts', import.meta.url),
+)
 
 const config = defineConfig(({ mode }) => {
-  const env: Partial<Record<string, string>> = {
-    ...loadEnv(mode, sourceRoot, ''),
-    ...loadEnv(mode, appRoot, ''),
-    ...process.env,
-  }
+  const env: Partial<Record<string, string>> = loadEnv(mode, appRoot, '')
+  const apiBaseUrl = requireEnv(env, 'API_BASE_URL')
+  const s3PublicBase = requireEnv(env, 'S3_PUBLIC_BASE')
 
   return {
     base: '/record/',
     define: {
-      'process.env.NEXT_PUBLIC_API_BASE_URL': JSON.stringify(
-        env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:4000',
-      ),
-      'process.env.NEXT_PUBLIC_S3_PUBLIC_BASE': JSON.stringify(
-        env.NEXT_PUBLIC_S3_PUBLIC_BASE ?? '',
-      ),
+      'process.env.API_BASE_URL': JSON.stringify(apiBaseUrl),
+      'process.env.S3_PUBLIC_BASE': JSON.stringify(s3PublicBase),
     },
     resolve: {
       alias: [
         { find: /^#\//, replacement: `${sourceRoot}/` },
         { find: /^@\//, replacement: `${sourceRoot}/` },
+        {
+          find: '@ocean-kit/shared-s3/upload',
+          replacement: sharedS3Upload,
+        },
         {
           find: 'next/navigation',
           replacement: `${sourceRoot}/shared/next-compat/navigation.ts`,
@@ -68,3 +69,13 @@ const config = defineConfig(({ mode }) => {
 })
 
 export default config
+
+function requireEnv(env: Partial<Record<string, string>>, name: string) {
+  const value = env[name]
+
+  if (!value) {
+    throw new Error(`Missing required env: ${name}`)
+  }
+
+  return value
+}

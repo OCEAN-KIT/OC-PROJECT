@@ -47,7 +47,7 @@ export default function GrowthLogSection({
 
   const handleAddSpeciesWithFirstLog = () => {
     const sp = speciesList.find((s) => s.id === form.speciesId)
-    if (!sp || !form.recordDate || !form.status) return
+    if (!sp || form.recordDate.length === 0 || form.status === '') return
     if (growthPayload.some((s) => s.speciesId === sp.id)) return
 
     const entry: GrowthLogEntry = {

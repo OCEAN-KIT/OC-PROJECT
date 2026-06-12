@@ -39,11 +39,11 @@ export default function EnvironmentLogList({
   ) => setForm((prev) => ({ ...prev, [key]: value }))
 
   const canSave =
-    !!form.recordDate &&
-    !!form.visibility &&
-    !!form.current &&
-    !!form.surge &&
-    !!form.wave
+    form.recordDate.length > 0 &&
+    form.visibility !== '' &&
+    form.current !== '' &&
+    form.surge !== '' &&
+    form.wave !== ''
 
   const handleSave = () => {
     if (!canSave) return

@@ -41,7 +41,7 @@ export default function GrowthLogCard({
     value: GrowthLogPayload[TKey],
   ) => setForm((prev) => ({ ...prev, [key]: value }))
 
-  const canSave = !!form.recordDate && !!form.status
+  const canSave = form.recordDate.length > 0 && form.status !== ''
 
   const handleSaveLog = () => {
     if (!canSave) return

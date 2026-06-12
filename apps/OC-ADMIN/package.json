@@ -19,6 +19,7 @@
     "@ocean-kit/dashboard-domain": "workspace:*",
     "@ocean-kit/shared-auth": "workspace:*",
     "@ocean-kit/shared-axios": "workspace:*",
+    "@ocean-kit/shared-s3": "workspace:*",
     "@ocean-kit/submission-domain": "workspace:*",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-devtools": "0.10.2",
@@ -51,11 +52,5 @@
     "typescript": "^6.0.2",
     "vite": "^8.0.0",
     "vitest": "^4.1.5"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "lightningcss"
-    ]
   }
 }

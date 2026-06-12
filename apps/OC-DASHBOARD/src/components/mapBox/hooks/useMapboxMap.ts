@@ -14,13 +14,13 @@ export default function useMapboxMap() {
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
-    const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "";
+    const token = process.env.MAPBOX_TOKEN || "";
     const valid = token.startsWith("pk.") && token.length > 50;
 
     if (!valid) {
       setMapError(
         new Error(
-          "Invalid or missing NEXT_PUBLIC_MAPBOX_TOKEN. Restart the dev server after updating env values.",
+          "Invalid or missing MAPBOX_TOKEN. Restart the dev server after updating env values.",
         ),
       );
       return;

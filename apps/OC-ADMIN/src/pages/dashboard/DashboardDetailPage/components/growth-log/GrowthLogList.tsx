@@ -46,7 +46,8 @@ export default function GrowthLogList({
     [sections],
   )
 
-  const canSave = !!form.recordDate && !!form.speciesId && !!form.status
+  const canSave =
+    form.recordDate.length > 0 && form.speciesId > 0 && form.status !== ''
 
   return (
     <div className="p-6 space-y-4">

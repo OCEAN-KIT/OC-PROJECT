@@ -6,11 +6,12 @@
     "dev": "NODE_EXTRA_CA_CERTS=\"$(mkcert -CAROOT)/rootCA.pem\" next dev --experimental-https --experimental-https-key ./localhost+2-key.pem --experimental-https-cert ./localhost+2.pem -p 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "k6:detail": "k6 run k6/dashboard-detail.js"
   },
   "dependencies": {
-    "@ocean-kit/dashboard-domain": "workspace:*",
     "@mapbox/mapbox-gl-language": "^1.0.1",
+    "@ocean-kit/dashboard-domain": "workspace:*",
     "@tanstack/react-query": "^5.90.20",
     "axios": "^1.12.2",
     "echarts": "^5.6.0",
@@ -31,6 +32,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.6",
+    "eslint-import-resolver-typescript": "^4.4.5",
     "tailwindcss": "^4",
     "typescript": "^5",
     "zod": "^4.3.6"
