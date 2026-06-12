@@ -18,5 +18,11 @@
     "nx": "^22.7.3",
     "turbo": "^2.9.6",
     "typescript": "^5"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "lightningcss"
+    ]
   }
 }

@@ -1,0 +1,233 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/frontend-deploy.yml"
+      - "apps/OC-ADMIN/**"
+      - "apps/OC-RECORD/**"
+      - "apps/OC-DASHBOARD/**"
+      - "packages/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "turbo.json"
+      - "tsconfig.base.json"
+  workflow_dispatch:
+
+concurrency:
+  group: frontend-prod
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Build and deploy frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      FRONTEND_S3_BUCKET: ${{ secrets.FRONTEND_S3_BUCKET }}
+      CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+      EC2_HOST: ${{ secrets.EC2_HOST }}
+      EC2_USER: ${{ secrets.EC2_USER }}
+      EC2_SECURITY_GROUP_ID: ${{ secrets.EC2_SECURITY_GROUP_ID }}
+      NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
+      NEXT_PUBLIC_S3_PUBLIC_BASE: ${{ secrets.NEXT_PUBLIC_S3_PUBLIC_BASE }}
+      NEXT_PUBLIC_MAPBOX_TOKEN: ${{ secrets.NEXT_PUBLIC_MAPBOX_TOKEN }}
+      DASHBOARD_REMOTE_ROOT: /opt/oceancampus/dashboard
+      DASHBOARD_REMOTE_APP_DIR: /opt/oceancampus/dashboard/apps/OC-DASHBOARD
+      NEXT_TELEMETRY_DISABLED: "1"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Validate required secrets
+        shell: bash
+        run: |
+          required=(
+            AWS_ACCESS_KEY_ID
+            AWS_SECRET_ACCESS_KEY
+            AWS_REGION
+            FRONTEND_S3_BUCKET
+            CLOUDFRONT_DISTRIBUTION_ID
+            EC2_HOST
+            EC2_USER
+            EC2_SECURITY_GROUP_ID
+            EC2_SSH_KEY
+            NEXT_PUBLIC_API_BASE_URL
+            NEXT_PUBLIC_S3_PUBLIC_BASE
+            NEXT_PUBLIC_MAPBOX_TOKEN
+          )
+
+          missing=()
+          for name in "${required[@]}"; do
+            if [ -z "${!name}" ]; then
+              missing+=("$name")
+            fi
+          done
+
+          if [ "${#missing[@]}" -gt 0 ]; then
+            printf 'Missing required secrets/env values:\n'
+            printf ' - %s\n' "${missing[@]}"
+            exit 1
+          fi
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          FRONTEND_S3_BUCKET: ${{ secrets.FRONTEND_S3_BUCKET }}
+          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          EC2_SECURITY_GROUP_ID: ${{ secrets.EC2_SECURITY_GROUP_ID }}
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
+          NEXT_PUBLIC_S3_PUBLIC_BASE: ${{ secrets.NEXT_PUBLIC_S3_PUBLIC_BASE }}
+          NEXT_PUBLIC_MAPBOX_TOKEN: ${{ secrets.NEXT_PUBLIC_MAPBOX_TOKEN }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build frontend apps
+        run: pnpm turbo build --filter=@ocean-kit/oc-admin --filter=@ocean-kit/oc-record --filter=@ocean-kit/oc-dashboard
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy admin to S3
+        shell: bash
+        run: |
+          aws s3 sync apps/OC-ADMIN/dist "s3://${FRONTEND_S3_BUCKET}/admin" \
+            --delete \
+            --exclude "index.html" \
+            --cache-control "public,max-age=31536000,immutable"
+
+          aws s3 cp apps/OC-ADMIN/dist/index.html "s3://${FRONTEND_S3_BUCKET}/admin/index.html" \
+            --cache-control "no-cache,no-store,must-revalidate" \
+            --content-type "text/html; charset=utf-8"
+
+      - name: Deploy record to S3
+        shell: bash
+        run: |
+          aws s3 sync apps/OC-RECORD/dist "s3://${FRONTEND_S3_BUCKET}/record" \
+            --delete \
+            --exclude "index.html" \
+            --exclude "sw.js" \
+            --exclude "manifest.webmanifest" \
+            --cache-control "public,max-age=31536000,immutable"
+
+          aws s3 cp apps/OC-RECORD/dist/index.html "s3://${FRONTEND_S3_BUCKET}/record/index.html" \
+            --cache-control "no-cache,no-store,must-revalidate" \
+            --content-type "text/html; charset=utf-8"
+
+          if [ -f apps/OC-RECORD/dist/sw.js ]; then
+            aws s3 cp apps/OC-RECORD/dist/sw.js "s3://${FRONTEND_S3_BUCKET}/record/sw.js" \
+              --cache-control "no-cache,no-store,must-revalidate" \
+              --content-type "application/javascript"
+          fi
+
+          if [ -f apps/OC-RECORD/dist/manifest.webmanifest ]; then
+            aws s3 cp apps/OC-RECORD/dist/manifest.webmanifest "s3://${FRONTEND_S3_BUCKET}/record/manifest.webmanifest" \
+              --cache-control "no-cache,no-store,must-revalidate" \
+              --content-type "application/manifest+json"
+          fi
+
+      - name: Allow runner SSH access
+        id: ssh_access
+        shell: bash
+        run: |
+          runner_ip="$(curl -fsS https://checkip.amazonaws.com | tr -d '[:space:]')"
+          echo "runner_ip=${runner_ip}" >> "${GITHUB_OUTPUT}"
+
+          if ! output="$(aws ec2 authorize-security-group-ingress \
+            --group-id "${EC2_SECURITY_GROUP_ID}" \
+            --protocol tcp \
+            --port 22 \
+            --cidr "${runner_ip}/32" 2>&1)"; then
+            if grep -q "InvalidPermission.Duplicate" <<< "${output}"; then
+              echo "SSH ingress already exists for ${runner_ip}/32"
+            else
+              echo "${output}"
+              exit 1
+            fi
+          fi
+
+      - name: Prepare SSH
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${EC2_SSH_KEY}" > ~/.ssh/oceancampus-frontend-cd
+          chmod 600 ~/.ssh/oceancampus-frontend-cd
+          ssh-keyscan -H "${EC2_HOST}" >> ~/.ssh/known_hosts
+        env:
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: Deploy dashboard to EC2
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/oceancampus-frontend-cd "${EC2_USER}@${EC2_HOST}" \
+            "mkdir -p '${DASHBOARD_REMOTE_APP_DIR}/.next/static' '${DASHBOARD_REMOTE_APP_DIR}/public'"
+
+          rsync -az --delete -e "ssh -i ~/.ssh/oceancampus-frontend-cd" \
+            apps/OC-DASHBOARD/.next/standalone/ \
+            "${EC2_USER}@${EC2_HOST}:${DASHBOARD_REMOTE_ROOT}/"
+
+          rsync -az --delete -e "ssh -i ~/.ssh/oceancampus-frontend-cd" \
+            apps/OC-DASHBOARD/.next/static/ \
+            "${EC2_USER}@${EC2_HOST}:${DASHBOARD_REMOTE_APP_DIR}/.next/static/"
+
+          if [ -d apps/OC-DASHBOARD/public ]; then
+            rsync -az --delete -e "ssh -i ~/.ssh/oceancampus-frontend-cd" \
+              apps/OC-DASHBOARD/public/ \
+              "${EC2_USER}@${EC2_HOST}:${DASHBOARD_REMOTE_APP_DIR}/public/"
+          fi
+
+          {
+            echo "NODE_ENV=production"
+            echo "PORT=3000"
+            echo "HOSTNAME=127.0.0.1"
+            echo "NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}"
+            echo "NEXT_PUBLIC_S3_PUBLIC_BASE=${NEXT_PUBLIC_S3_PUBLIC_BASE}"
+            echo "NEXT_PUBLIC_MAPBOX_TOKEN=${NEXT_PUBLIC_MAPBOX_TOKEN}"
+          } > dashboard.env
+
+          scp -i ~/.ssh/oceancampus-frontend-cd dashboard.env \
+            "${EC2_USER}@${EC2_HOST}:/tmp/oceancampus-dashboard.env"
+
+          ssh -i ~/.ssh/oceancampus-frontend-cd "${EC2_USER}@${EC2_HOST}" \
+            "mv /tmp/oceancampus-dashboard.env '${DASHBOARD_REMOTE_ROOT}/.env' && chmod 600 '${DASHBOARD_REMOTE_ROOT}/.env' && sudo systemctl restart oceancampus-dashboard && sudo systemctl is-active oceancampus-dashboard"
+
+      - name: Revoke runner SSH access
+        if: always() && steps.ssh_access.outputs.runner_ip != ''
+        shell: bash
+        run: |
+          aws ec2 revoke-security-group-ingress \
+            --group-id "${EC2_SECURITY_GROUP_ID}" \
+            --protocol tcp \
+            --port 22 \
+            --cidr "${{ steps.ssh_access.outputs.runner_ip }}/32" || true
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id "${CLOUDFRONT_DISTRIBUTION_ID}" \
+            --paths "/admin*" "/record*" "/dashboard*"
