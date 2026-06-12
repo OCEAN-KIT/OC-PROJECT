@@ -1,18 +1,19 @@
 import type { NextConfig } from "next";
 
-const s3PublicImagePattern = (() => {
-  const publicBase = process.env.S3_PUBLIC_BASE;
-  if (!publicBase) return null;
+const apiBaseUrl = requireEnv("API_BASE_URL");
+const s3PublicBase = requireEnv("S3_PUBLIC_BASE");
+const mapboxToken = requireEnv("MAPBOX_TOKEN");
 
+const s3PublicImagePattern = (() => {
   try {
-    const url = new URL(publicBase);
+    const url = new URL(s3PublicBase);
     return {
       protocol: url.protocol.replace(":", "") as "http" | "https",
       hostname: url.hostname,
       port: url.port || undefined,
     };
   } catch {
-    return null;
+    throw new Error("S3_PUBLIC_BASE must be a valid URL.");
   }
 })();
 
@@ -27,9 +28,9 @@ const remotePatterns: NonNullable<NextConfig["images"]>["remotePatterns"] = [
 const nextConfig: NextConfig = {
   basePath: "/dashboard",
   env: {
-    API_BASE_URL: process.env.API_BASE_URL ?? "",
-    S3_PUBLIC_BASE: process.env.S3_PUBLIC_BASE ?? "",
-    MAPBOX_TOKEN: process.env.MAPBOX_TOKEN ?? "",
+    API_BASE_URL: apiBaseUrl,
+    S3_PUBLIC_BASE: s3PublicBase,
+    MAPBOX_TOKEN: mapboxToken,
   },
   transpilePackages: [
     "@ocean-kit/dashboard-domain",
@@ -44,3 +45,13 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+function requireEnv(name: string) {
+  const value = process.env[name];
+
+  if (!value) {
+    throw new Error(`Missing required env: ${name}`);
+  }
+
+  return value;
+}

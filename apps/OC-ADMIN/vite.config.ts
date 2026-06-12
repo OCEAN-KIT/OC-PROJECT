@@ -9,12 +9,13 @@ import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { fileURLToPath } from 'node:url'
 
+const appRoot = fileURLToPath(new URL('.', import.meta.url))
 const sharedS3Upload = fileURLToPath(
   new URL('../../packages/shared-s3/src/upload.ts', import.meta.url),
 )
 
 const config = defineConfig(({ mode }) => {
-  const env: Partial<Record<string, string>> = loadEnv(mode, process.cwd(), '')
+  const env: Partial<Record<string, string>> = loadEnv(mode, appRoot, '')
   const apiBaseUrl = requireEnv(env, 'API_BASE_URL')
   const s3PublicBase = requireEnv(env, 'S3_PUBLIC_BASE')
   const shouldAnalyze = env.ANALYZE === 'true' || env.ANALYZE === '1'
