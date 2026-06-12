@@ -35,24 +35,6 @@ type Props = {
   areaId: number
 }
 
-type HydratedPayloads = {
-  basic: boolean
-  transplant: boolean
-  growth: boolean
-  environment: boolean
-  media: boolean
-}
-
-function createHydratedPayloads(): HydratedPayloads {
-  return {
-    basic: false,
-    transplant: false,
-    growth: false,
-    environment: false,
-    media: false,
-  }
-}
-
 function SkeletonBar({ className = '' }: { className?: string }) {
   return <div className={`animate-pulse rounded-lg bg-gray-200 ${className}`} />
 }
@@ -253,7 +235,7 @@ export default function DashboardDetailPage({ areaId }: Props) {
     EnvironmentLogEntry[]
   >([])
   const [mediaPayload, setMediaPayload] = useState<MediaLogEntry[]>([])
-  const hydratedPayloadsRef = useRef<HydratedPayloads>(createHydratedPayloads())
+  const basicHydratedRef = useRef(false)
 
   const goDashboard = () => {
     void navigate({ to: '/dashboard' })
@@ -270,7 +252,7 @@ export default function DashboardDetailPage({ areaId }: Props) {
   }
 
   useEffect(() => {
-    hydratedPayloadsRef.current = createHydratedPayloads()
+    basicHydratedRef.current = false
     setBasicPayload(BASIC_PAYLOAD_INIT)
     setTransplantPayload([])
     setGrowthPayload([])
@@ -279,37 +261,33 @@ export default function DashboardDetailPage({ areaId }: Props) {
   }, [areaId])
 
   useEffect(() => {
-    if (basicData && !hydratedPayloadsRef.current.basic) {
+    if (basicData && !basicHydratedRef.current) {
       setBasicPayload(basicData)
-      hydratedPayloadsRef.current.basic = true
+      basicHydratedRef.current = true
     }
   }, [basicData])
 
   useEffect(() => {
-    if (transplantData && !hydratedPayloadsRef.current.transplant) {
+    if (transplantData) {
       setTransplantPayload(transplantData)
-      hydratedPayloadsRef.current.transplant = true
     }
   }, [transplantData])
 
   useEffect(() => {
-    if (growthData && !hydratedPayloadsRef.current.growth) {
+    if (growthData) {
       setGrowthPayload(growthData)
-      hydratedPayloadsRef.current.growth = true
     }
   }, [growthData])
 
   useEffect(() => {
-    if (environmentData && !hydratedPayloadsRef.current.environment) {
+    if (environmentData) {
       setEnvironmentPayload(environmentData)
-      hydratedPayloadsRef.current.environment = true
     }
   }, [environmentData])
 
   useEffect(() => {
-    if (mediaData && !hydratedPayloadsRef.current.media) {
+    if (mediaData) {
       setMediaPayload(mediaData)
-      hydratedPayloadsRef.current.media = true
     }
   }, [mediaData])
 

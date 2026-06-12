@@ -13,7 +13,43 @@ type Props = {
   area: AreaItem
 }
 
+function formatDateLabel(value: string | null) {
+  return value ? value.replaceAll('-', '.') : ''
+}
+
+function getMappedValue(
+  map: Partial<Record<string, string>>,
+  key: string,
+  fallback: string,
+) {
+  return map[key] ?? fallback
+}
+
 export default function AreaCardContent({ area }: Props) {
+  const startDate = formatDateLabel(area.startDate)
+  const endDate = formatDateLabel(area.endDate)
+  const attachmentStatusClass = getMappedValue(
+    statusColors,
+    area.attachmentStatus,
+    'bg-gray-100 text-gray-700',
+  )
+  const attachmentStatusLabel = getMappedValue(
+    statusLabels,
+    area.attachmentStatus,
+    area.attachmentStatus,
+  )
+  const regionLabel = getMappedValue(
+    regionLabels,
+    area.restorationRegion,
+    area.restorationRegion,
+  )
+  const levelLabel = getMappedValue(levelLabels, area.level, area.level)
+  const habitatLabel = getMappedValue(
+    habitatLabels,
+    area.habitat,
+    area.habitat,
+  )
+
   return (
     <Link
       to="/dashboard/$areaId"
@@ -32,44 +68,40 @@ export default function AreaCardContent({ area }: Props) {
 
           <span
             className={`shrink-0 px-2 py-0.5 rounded-full text-xs font-medium ${
-              statusColors[area.attachmentStatus]
+              attachmentStatusClass
             }`}
           >
-            {statusLabels[area.attachmentStatus]}
+            {attachmentStatusLabel}
           </span>
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-y-3 gap-x-4 text-sm sm:grid-cols-4 lg:grid-cols-7">
+      <div className="mt-4 grid grid-cols-3 gap-y-3 gap-x-4 text-sm sm:grid-cols-4 lg:grid-cols-9">
         <div>
           <p className="text-xs text-gray-400">지역</p>
           <p className="font-medium text-gray-900 flex items-center gap-1">
             <MapPin className="h-3.5 w-3.5 text-gray-400" />
-            {regionLabels[area.restorationRegion]}
+            {regionLabel}
           </p>
         </div>
 
-        <div>
+        <div className="col-span-2">
           <p className="text-xs text-gray-400">기간</p>
-          <p className="font-medium text-gray-900 flex items-center gap-1">
-            <Calendar className="h-3.5 w-3.5 text-gray-400" />
-            {area.startDate[0]}.{area.startDate[1]}.{area.startDate[2]}
-            {area.endDate
-              ? ` ~ ${area.endDate[0]}.${area.endDate[1]}.${area.endDate[2]}`
-              : ' ~'}
+          <p className="font-medium text-gray-900 flex items-center gap-1 whitespace-nowrap">
+            <Calendar className="h-3.5 w-3.5 shrink-0 text-gray-400" />
+            {startDate}
+            {endDate ? ` ~ ${endDate}` : ' ~'}
           </p>
         </div>
 
         <div>
           <p className="text-xs text-gray-400">단계</p>
-          <p className="font-medium text-gray-900">{levelLabels[area.level]}</p>
+          <p className="font-medium text-gray-900">{levelLabel}</p>
         </div>
 
         <div>
           <p className="text-xs text-gray-400">서식지</p>
-          <p className="font-medium text-gray-900">
-            {habitatLabels[area.habitat]}
-          </p>
+          <p className="font-medium text-gray-900">{habitatLabel}</p>
         </div>
 
         <div>
@@ -84,9 +116,9 @@ export default function AreaCardContent({ area }: Props) {
           </p>
         </div>
 
-        <div>
+        <div className="col-span-2">
           <p className="text-xs text-gray-400">좌표</p>
-          <p className="font-medium text-gray-900">
+          <p className="font-medium text-gray-900 whitespace-nowrap">
             {area.lat}, {area.lon}
           </p>
         </div>
