@@ -179,7 +179,18 @@ jobs:
           mkdir -p ~/.ssh
           printf '%s\n' "${EC2_SSH_KEY}" > ~/.ssh/oceancampus-frontend-cd
           chmod 600 ~/.ssh/oceancampus-frontend-cd
-          ssh-keyscan -H "${EC2_HOST}" >> ~/.ssh/known_hosts
+
+          for attempt in {1..10}; do
+            if ssh-keyscan -T 10 -H "${EC2_HOST}" >> ~/.ssh/known_hosts; then
+              exit 0
+            fi
+
+            echo "ssh-keyscan failed for ${EC2_HOST} (attempt ${attempt}/10). Retrying..."
+            sleep 5
+          done
+
+          echo "::error::Unable to scan SSH host key for ${EC2_HOST}."
+          exit 1
         env:
           EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
 
