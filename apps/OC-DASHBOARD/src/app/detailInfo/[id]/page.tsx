@@ -4,6 +4,10 @@ import DetailInfoLoading from "@/components/detail-info/detail-info-loading";
 
 export const revalidate = 600;
 
+export function generateStaticParams(): { id: string }[] {
+  return [];
+}
+
 export default async function DetailInfoPage({
   params,
 }: {
