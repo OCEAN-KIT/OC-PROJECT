@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import type { AreaDetail } from "@ocean-kit/dashboard-domain/types/areaDetail";
 import { STAGE_META, STAGE_ORDER, type StageName } from "@/constants/stageMeta";
