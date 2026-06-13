@@ -7,7 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "k6:detail": "k6 run k6/dashboard-detail.js"
+    "k6:detail": "k6 run k6/dashboard-detail.js",
+    "k6:detail:web": "K6_WEB_DASHBOARD=true K6_WEB_DASHBOARD_OPEN=true K6_WEB_DASHBOARD_EXPORT=k6/dashboard-detail-web-report.html k6 run k6/dashboard-detail.js",
+    "k6:detail:grafana": "k6 run --out influxdb=http://localhost:8086/k6 k6/dashboard-detail.js",
+    "k6:grafana:up": "docker compose -f k6/docker-compose.yml up -d",
+    "k6:grafana:down": "docker compose -f k6/docker-compose.yml down",
+    "k6:grafana:logs": "docker compose -f k6/docker-compose.yml logs -f"
   },
   "dependencies": {
     "@mapbox/mapbox-gl-language": "^1.0.1",
