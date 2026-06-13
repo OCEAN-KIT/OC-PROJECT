@@ -5,6 +5,7 @@ import EcologyTab from "./tabs/ecology-tab";
 import EnvironmentTab from "./tabs/environment-tab";
 import PhotosTab from "./tabs/photos-tab";
 import { getAreaDetail } from "@ocean-kit/dashboard-domain/api/areaDetail";
+import DebugCache from "./debug-cache";
 
 type Props = {
   areaId: number;
@@ -27,6 +28,7 @@ export default async function DetailInfo({ areaId }: Props) {
         <EcologyTab data={area} />
         <EnvironmentTab data={area} />
         <PhotosTab data={area} />
+        <DebugCache path={`/detailInfo/${areaId}`} />
       </div>
     </div>
   );
