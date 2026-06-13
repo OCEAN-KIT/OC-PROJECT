@@ -4,6 +4,9 @@
     "jsx": "react-jsx",
     "types": ["vite/client"],
     "paths": {
+      "@ocean-kit/shared-s3/upload": [
+        "../../packages/shared-s3/src/upload.ts"
+      ],
       "@/*": ["./src/*"],
       "#/*": ["./src/*"],
       "next/navigation": ["./src/shared/next-compat/navigation.ts"],

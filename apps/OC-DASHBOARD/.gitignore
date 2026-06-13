@@ -12,6 +12,9 @@
 
 # testing
 /coverage
+/k6/*-summary.html
+/k6/*-summary.json
+/k6/*-web-report.html
 
 # next.js
 /.next/

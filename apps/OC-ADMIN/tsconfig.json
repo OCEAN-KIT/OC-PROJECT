@@ -6,6 +6,7 @@
     "jsx": "react-jsx",
     "module": "ESNext",
     "paths": {
+      "@ocean-kit/shared-s3/upload": ["../../packages/shared-s3/src/upload.ts"],
       "#/*": ["./src/*"],
       "@/*": ["./src/*"]
     },

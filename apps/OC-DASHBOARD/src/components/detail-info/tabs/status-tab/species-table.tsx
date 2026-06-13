@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import type { AreaDetail } from "@ocean-kit/dashboard-domain/types/areaDetail";
 import { METHOD_META, getMethodMeta } from "@/constants/method";
