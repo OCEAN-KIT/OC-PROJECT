@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { notFound } from "next/navigation";
 import DetailInfo from "@/components/detail-info/detail-info";
 import DetailInfoLoading from "@/components/detail-info/detail-info-loading";
 
@@ -14,10 +15,15 @@ export default async function DetailInfoPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+
+  if (!/^\d+$/.test(id)) {
+    notFound();
+  }
+
   const areaId = Number(id);
 
-  if (!Number.isInteger(areaId)) {
-    throw new Error(`Invalid area id. id: ${id}`);
+  if (!Number.isSafeInteger(areaId)) {
+    notFound();
   }
 
   return (
