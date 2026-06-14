@@ -22,9 +22,7 @@ import WorkTypeSection from "@/components/dive-create/WorkTypeSection";
 import CommonWrapper from "@/components/dive-create/common-section/CommonWrapper";
 import UnsavedChangesModal from "@/components/ui/UnsavedChangesModal";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
-// import { useAuthGuard } from "@/hooks/useAuthGuard";
-
-const DEBUG = true;
+import { useIsLoggined } from "@/hooks/useIsLoggined";
 
 const createDefaultForm = (): OcRecordForm => ({
   basic: {
@@ -113,6 +111,7 @@ const buildDraftSnapshot = (
 export default function DiveCreatePage() {
   // useAuthGuard({ mode: "gotoLogin" });
   const router = useRouter();
+  const isLoggedIn = useIsLoggined();
 
   useEffect(() => {
     router.prefetch("/dive-drafts");
@@ -250,12 +249,9 @@ export default function DiveCreatePage() {
     const existing = fromParam ? getDraftById(fromParam) : null;
     const baseForm = createDefaultForm();
     if (!existing) {
-      if (DEBUG) console.log("[draft] new draft id =", id);
       setSavedSnapshot(buildDraftSnapshot(baseForm, "", []));
       return;
     }
-
-    if (DEBUG) console.log("[draft] load existing draft =", existing);
 
     const loadedDetails = existing.details ?? "";
     const loadedForm: OcRecordForm = {
@@ -335,7 +331,9 @@ export default function DiveCreatePage() {
     }
 
     setDetails(loadedDetails);
-    setSavedSnapshot(buildDraftSnapshot(loadedForm, loadedDetails, attachments));
+    setSavedSnapshot(
+      buildDraftSnapshot(loadedForm, loadedDetails, attachments),
+    );
     // attachments(File)은 localStorage 복원 불가 → 유지 안 함
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -403,11 +401,6 @@ export default function DiveCreatePage() {
 
     upsertDraft(finalDraft);
 
-    if (DEBUG) {
-      console.log("[draft] upserted:", finalDraft);
-      console.log("[draft] attachments (not persisted):", attachments.length);
-    }
-
     setSavedSnapshot(buildDraftSnapshot(form, details, attachments));
 
     if (!opts.silent) alert("임시 저장했습니다.");
@@ -438,11 +431,20 @@ export default function DiveCreatePage() {
   // ========= 제출 =========
   const { mutate: submitMutation, isPending: loading } = useCreateSubmission();
   const isOnline = useOnlineStatus();
-  const isSubmitDisabled = loading || !isOnline;
+  const isSubmitDisabled = loading || !isOnline || !isLoggedIn;
+  const submitDisabledMessages = [
+    !isOnline ? "오프라인 상태에선 제출 불가합니다." : null,
+    !isLoggedIn ? "로그인 후 제출해주세요." : null,
+  ].filter((message): message is string => Boolean(message));
 
   const handleSubmit = () => {
     if (!isOnline) {
-      alert("네트워크 연결 상태에서만 제출할 수 있습니다.");
+      alert("오프라인 상태에선 제출 불가합니다.");
+      return;
+    }
+
+    if (!isLoggedIn) {
+      alert("로그인 후 제출해주세요.");
       return;
     }
 
@@ -465,7 +467,6 @@ export default function DiveCreatePage() {
           router.push("/");
         },
         onError: (err) => {
-          console.error("[submit] error:", err);
           alert(err.message || "제출 중 오류가 발생했습니다.");
         },
       },
@@ -540,6 +541,16 @@ export default function DiveCreatePage() {
           <p className="text-[13px] text-red-500 text-center">
             {validationError}
           </p>
+        )}
+
+        {submitDisabledMessages.length > 0 && (
+          <div className="space-y-1 text-center">
+            {submitDisabledMessages.map((message) => (
+              <p key={message} className="text-[13px] text-red-500">
+                {message}
+              </p>
+            ))}
+          </div>
         )}
 
         <div className="mx-auto max-w-105 py-3 grid grid-cols-2 gap-3">

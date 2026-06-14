@@ -34,7 +34,6 @@ export default function ProfilePage() {
   }
 
   if (error) {
-    console.error("[ProfilePage] useMyInfo error:", error);
     return (
       <div className="p-6">
         <p className="text-red-600">내 정보를 불러오는 데 실패했어요.</p>
@@ -90,8 +89,7 @@ export default function ProfilePage() {
       await refetch();
 
       setIsEditing(false);
-    } catch (e) {
-      console.error("update error:", e);
+    } catch {
       setSaveErr("저장 중 오류가 발생했습니다.");
     } finally {
       setSaving(false);
