@@ -14,8 +14,7 @@ export function loadDrafts() {
     const raw = localStorage.getItem(STORAGE_KEY);
     const parsed = raw ? JSON.parse(raw) : [];
     return Array.isArray(parsed) ? parsed : [];
-  } catch (e) {
-    console.error("[diveDraftStorage] loadDrafts error", e);
+  } catch {
     return [];
   }
 }
@@ -25,8 +24,7 @@ export function saveDrafts(list) {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-  } catch (e) {
-    console.error("[diveDraftStorage] saveDrafts error", e);
+  } catch {
   }
 }
 

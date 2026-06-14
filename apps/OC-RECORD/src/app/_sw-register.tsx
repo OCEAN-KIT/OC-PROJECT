@@ -14,9 +14,7 @@ export default function SWRegister() {
         scope: baseUrl,
         updateViaCache: "none",
       })
-      .catch((error) => {
-        console.error("[sw] registration failed", error);
-      });
+      .catch(() => undefined);
   }, []);
   return null;
 }

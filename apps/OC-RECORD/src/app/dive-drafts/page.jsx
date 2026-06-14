@@ -20,8 +20,7 @@ function loadDraftsSafe() {
     const parsed = raw ? JSON.parse(raw) : [];
     if (!Array.isArray(parsed)) return [];
     return parsed;
-  } catch (e) {
-    console.error("[drafts] load error", e);
+  } catch {
     return [];
   }
 }
@@ -30,8 +29,7 @@ function saveDraftsSafe(list) {
   if (typeof window === "undefined") return;
   try {
     localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(list));
-  } catch (e) {
-    console.error("[drafts] save error", e);
+  } catch {
   }
 }
 

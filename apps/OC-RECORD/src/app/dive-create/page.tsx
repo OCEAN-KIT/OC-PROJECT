@@ -24,8 +24,6 @@ import UnsavedChangesModal from "@/components/ui/UnsavedChangesModal";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { useIsLoggined } from "@/hooks/useIsLoggined";
 
-const DEBUG = true;
-
 const createDefaultForm = (): OcRecordForm => ({
   basic: {
     siteName: "",
@@ -251,12 +249,9 @@ export default function DiveCreatePage() {
     const existing = fromParam ? getDraftById(fromParam) : null;
     const baseForm = createDefaultForm();
     if (!existing) {
-      if (DEBUG) console.log("[draft] new draft id =", id);
       setSavedSnapshot(buildDraftSnapshot(baseForm, "", []));
       return;
     }
-
-    if (DEBUG) console.log("[draft] load existing draft =", existing);
 
     const loadedDetails = existing.details ?? "";
     const loadedForm: OcRecordForm = {
@@ -406,11 +401,6 @@ export default function DiveCreatePage() {
 
     upsertDraft(finalDraft);
 
-    if (DEBUG) {
-      console.log("[draft] upserted:", finalDraft);
-      console.log("[draft] attachments (not persisted):", attachments.length);
-    }
-
     setSavedSnapshot(buildDraftSnapshot(form, details, attachments));
 
     if (!opts.silent) alert("임시 저장했습니다.");
@@ -477,7 +467,6 @@ export default function DiveCreatePage() {
           router.push("/");
         },
         onError: (err) => {
-          console.error("[submit] error:", err);
           alert(err.message || "제출 중 오류가 발생했습니다.");
         },
       },
