@@ -4,12 +4,14 @@
 import { logOut } from "@/api/auth/logout";
 import MainHeader from "@/components/mian-header";
 import MainButton from "@/components/ui/main-button";
+import { useIsLoggined } from "@/hooks/useIsLoggined";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 export default function HomePage() {
   const router = useRouter();
 
+  const isLoggined = useIsLoggined();
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const isLoggingOutRef = useRef(false);
@@ -79,15 +81,24 @@ export default function HomePage() {
           <p className="mt-4 text-center text-sm text-red-600">{errorMsg}</p>
         )}
 
-        <button
-          className="mt-8 mx-auto block text-[14px] font-medium text-gray-700 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
-          onClick={handleLogOut}
-          type="button"
-          disabled={loading}
-        >
-          {loading ? "로그아웃 중..." : "로그아웃"}
-          <span className="inline-block translate-y-1px">›</span>
-        </button>
+        {!isLoggined ? (
+          <button
+            onClick={() => router.replace("/login")}
+            className="mt-8 mx-auto block text-[14px] font-medium text-gray-700 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            로그인 페이지로 이동 ›
+          </button>
+        ) : (
+          <button
+            className="mt-8 mx-auto block text-[14px] font-medium text-gray-700 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+            onClick={handleLogOut}
+            type="button"
+            disabled={loading}
+          >
+            {loading ? "로그아웃 중..." : "로그아웃"}
+            <span className="inline-block translate-y-1px">›</span>
+          </button>
+        )}
       </div>
     </div>
   );
