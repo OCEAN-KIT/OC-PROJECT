@@ -3,7 +3,7 @@
   "name": "OC-RECORD",
   "short_name": "OC-RECORD",
   "description": "해양 활동 제출 애플리케이션",
-  "start_url": "/record/?source=pwa",
+  "start_url": "/record/home",
   "scope": "/record/",
   "display": "standalone",
   "background_color": "#ffffff",

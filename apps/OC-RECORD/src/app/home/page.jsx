@@ -4,13 +4,11 @@
 import { logOut } from "@/api/auth/logout";
 import MainHeader from "@/components/mian-header";
 import MainButton from "@/components/ui/main-button";
-// import { useAuthGuard } from "@/hooks/useAuthGuard";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 export default function HomePage() {
   const router = useRouter();
-  // const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoLogin" });
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
