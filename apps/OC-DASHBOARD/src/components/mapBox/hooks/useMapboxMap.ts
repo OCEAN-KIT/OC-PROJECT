@@ -15,12 +15,14 @@ export default function useMapboxMap() {
     if (!containerRef.current || mapRef.current) return;
 
     const token = process.env.MAPBOX_TOKEN || "";
-    const valid = token.startsWith("pk.") && token.length > 50;
+    const styleUrl = process.env.MAPBOX_STYLE_URL || "";
+    const validToken = token.startsWith("pk.") && token.length > 50;
+    const validStyleUrl = styleUrl.startsWith("mapbox://styles/");
 
-    if (!valid) {
+    if (!validToken || !validStyleUrl) {
       setMapError(
         new Error(
-          "Invalid or missing MAPBOX_TOKEN. Restart the dev server after updating env values.",
+          "Invalid or missing MAPBOX_TOKEN or MAPBOX_STYLE_URL. Restart the dev server after updating env values.",
         ),
       );
       return;
@@ -30,7 +32,7 @@ export default function useMapboxMap() {
 
     const map = new mapboxgl.Map({
       container: containerRef.current,
-      style: "mapbox://styles/aryu1217/cmhssx9l9006q01r64s59b80d",
+      style: styleUrl,
       projection: "globe",
       antialias: true,
       center: COORDS.POHANG,

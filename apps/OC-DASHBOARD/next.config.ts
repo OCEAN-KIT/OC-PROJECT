@@ -3,10 +3,7 @@ import type { NextConfig } from "next";
 const apiBaseUrl = requireEnv("API_BASE_URL");
 const s3PublicBase = requireEnv("S3_PUBLIC_BASE");
 const mapboxToken = requireEnv("MAPBOX_TOKEN");
-const serverActionAllowedOrigins = getServerActionAllowedOrigins(
-  apiBaseUrl,
-  s3PublicBase,
-);
+const mapboxStyleUrl = requireEnv("MAPBOX_STYLE_URL");
 
 const s3PublicImagePattern = (() => {
   try {
@@ -31,15 +28,11 @@ const remotePatterns: NonNullable<NextConfig["images"]>["remotePatterns"] = [
 
 const nextConfig: NextConfig = {
   basePath: "/dashboard",
-  experimental: {
-    serverActions: {
-      allowedOrigins: serverActionAllowedOrigins,
-    },
-  },
   env: {
     API_BASE_URL: apiBaseUrl,
     S3_PUBLIC_BASE: s3PublicBase,
     MAPBOX_TOKEN: mapboxToken,
+    MAPBOX_STYLE_URL: mapboxStyleUrl,
   },
   transpilePackages: [
     "@ocean-kit/dashboard-domain",
@@ -63,16 +56,4 @@ function requireEnv(name: string) {
   }
 
   return value;
-}
-
-function getServerActionAllowedOrigins(...urls: string[]) {
-  const origins = urls.flatMap((value) => {
-    try {
-      return new URL(value).host;
-    } catch {
-      return [];
-    }
-  });
-
-  return Array.from(new Set(origins));
 }

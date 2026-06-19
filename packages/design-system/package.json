@@ -1,0 +1,25 @@
+{
+  "name": "@ocean-kit/design-system",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "storybook": "storybook dev -p 6007 --no-open --disable-telemetry",
+    "build-storybook": "storybook build"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@storybook/addon-docs": "^10.4.5",
+    "@storybook/react-vite": "^10.4.5",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "storybook": "^10.4.5",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.10"
+  }
+}

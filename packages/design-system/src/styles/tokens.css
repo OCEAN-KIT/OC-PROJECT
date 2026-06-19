@@ -1,0 +1,128 @@
+/*
+ * 디자인 시스템 컴포넌트가 공통으로 참조하는 CSS 변수입니다.
+ * 실제 앱에서 반복되는 색상을 의미 단위 토큰으로 정리해 컴포넌트 스타일의 기준으로 사용합니다.
+ */
+
+:root {
+  /* Palette */
+  --oc-palette-white: #ffffff;
+  --oc-palette-black: #000000;
+
+  --oc-palette-blue-50: #eff6ff;
+  --oc-palette-blue-100: #dbeafe;
+  --oc-palette-blue-200: #bfdbfe;
+  --oc-palette-blue-500: #3b82f6;
+  --oc-palette-blue-600: #2c67bc;
+  --oc-palette-blue-700: #245299;
+  --oc-palette-blue-800: #34609e;
+
+  --oc-palette-sky-50: #f0f9ff;
+  --oc-palette-sky-100: #e0f2fe;
+  --oc-palette-sky-200: #bae6fd;
+  --oc-palette-sky-600: #0284c7;
+  --oc-palette-sky-700: #0369a1;
+
+  --oc-palette-gray-50: #f9fafb;
+  --oc-palette-gray-100: #f3f4f6;
+  --oc-palette-gray-200: #e5e7eb;
+  --oc-palette-gray-300: #d1d5db;
+  --oc-palette-gray-400: #9ca3af;
+  --oc-palette-gray-500: #6b7280;
+  --oc-palette-gray-600: #4b5563;
+  --oc-palette-gray-700: #374151;
+  --oc-palette-gray-800: #1f2937;
+  --oc-palette-gray-900: #111827;
+
+  --oc-palette-red-50: #fef2f2;
+  --oc-palette-red-100: #fee2e2;
+  --oc-palette-red-200: #fecaca;
+  --oc-palette-red-500: #ef4444;
+  --oc-palette-red-600: #dc2626;
+  --oc-palette-red-700: #b91c1c;
+
+  --oc-palette-rose-50: #fff1f2;
+  --oc-palette-rose-100: #ffe4e6;
+  --oc-palette-rose-200: #fecdd3;
+  --oc-palette-rose-400: #fb7185;
+  --oc-palette-rose-500: #f43f5e;
+  --oc-palette-rose-600: #e11d48;
+  --oc-palette-rose-700: #be123c;
+
+  --oc-palette-emerald-50: #ecfdf5;
+  --oc-palette-emerald-100: #d1fae5;
+  --oc-palette-emerald-200: #a7f3d0;
+  --oc-palette-emerald-400: #34d399;
+  --oc-palette-emerald-500: #10b981;
+  --oc-palette-emerald-600: #059669;
+  --oc-palette-emerald-700: #047857;
+
+  --oc-palette-amber-50: #fffbeb;
+  --oc-palette-amber-100: #fef3c7;
+  --oc-palette-amber-200: #fde68a;
+  --oc-palette-amber-500: #f59e0b;
+  --oc-palette-amber-700: #b45309;
+
+  /* Foreground */
+  --oc-color-fg-default: var(--oc-palette-gray-900);
+  --oc-color-fg-muted: var(--oc-palette-gray-700);
+  --oc-color-fg-subtle: var(--oc-palette-gray-500);
+  --oc-color-fg-disabled: var(--oc-palette-gray-400);
+  --oc-color-fg-inverse: var(--oc-palette-white);
+  --oc-color-fg-brand: var(--oc-palette-blue-600);
+  --oc-color-fg-accent: var(--oc-palette-sky-700);
+  --oc-color-fg-danger: var(--oc-palette-red-700);
+  --oc-color-fg-success: var(--oc-palette-emerald-700);
+  --oc-color-fg-warning: var(--oc-palette-amber-700);
+
+  /* Background */
+  --oc-color-bg-page: var(--oc-palette-gray-50);
+  --oc-color-bg-surface: var(--oc-palette-white);
+  --oc-color-bg-surface-muted: var(--oc-palette-gray-50);
+  --oc-color-bg-surface-hover: var(--oc-palette-gray-100);
+  --oc-color-bg-disabled: var(--oc-palette-gray-100);
+  --oc-color-bg-brand-solid: var(--oc-palette-blue-600);
+  --oc-color-bg-brand-solid-hover: var(--oc-palette-blue-700);
+  --oc-color-bg-brand-solid-pressed: var(--oc-palette-blue-700);
+  --oc-color-bg-brand-weak: color-mix(in srgb, var(--oc-palette-blue-600) 10%, transparent);
+  --oc-color-bg-accent-weak: var(--oc-palette-sky-50);
+  --oc-color-bg-danger-weak: var(--oc-palette-red-50);
+  --oc-color-bg-success-weak: var(--oc-palette-emerald-50);
+  --oc-color-bg-warning-weak: var(--oc-palette-amber-50);
+  --oc-color-bg-overlay: rgb(0 0 0 / 50%);
+
+  /* Border */
+  --oc-color-border-subtle: var(--oc-palette-gray-100);
+  --oc-color-border-default: var(--oc-palette-gray-200);
+  --oc-color-border-strong: var(--oc-palette-gray-300);
+  --oc-color-border-brand: color-mix(in srgb, var(--oc-palette-blue-600) 30%, transparent);
+  --oc-color-border-accent: var(--oc-palette-sky-200);
+  --oc-color-border-danger: var(--oc-palette-red-200);
+  --oc-color-border-success: var(--oc-palette-emerald-200);
+  --oc-color-border-warning: var(--oc-palette-amber-200);
+
+  /* Focus */
+  --oc-color-focus-ring: var(--oc-palette-blue-800);
+  --oc-color-focus-ring-muted: color-mix(in srgb, var(--oc-palette-blue-800) 20%, transparent);
+
+  /* Component aliases */
+  --oc-button-primary-bg: var(--oc-color-bg-brand-solid);
+  --oc-button-primary-bg-hover: var(--oc-color-bg-brand-solid-hover);
+  --oc-button-primary-bg-pressed: var(--oc-color-bg-brand-solid-pressed);
+  --oc-button-primary-fg: var(--oc-color-fg-inverse);
+  --oc-button-secondary-bg: var(--oc-color-bg-surface);
+  --oc-button-secondary-bg-hover: var(--oc-color-bg-surface-hover);
+  --oc-button-secondary-fg: var(--oc-color-fg-muted);
+  --oc-button-secondary-border: var(--oc-color-border-default);
+  --oc-button-danger-bg: var(--oc-palette-rose-500);
+  --oc-button-danger-bg-hover: var(--oc-palette-rose-600);
+  --oc-button-danger-fg: var(--oc-color-fg-inverse);
+
+  --oc-field-bg: var(--oc-color-bg-surface);
+  --oc-field-fg: var(--oc-color-fg-default);
+  --oc-field-placeholder: var(--oc-color-fg-disabled);
+  --oc-field-border: var(--oc-color-border-default);
+  --oc-field-border-focus: var(--oc-color-focus-ring);
+  --oc-field-ring-focus: var(--oc-color-focus-ring-muted);
+  --oc-field-border-error: var(--oc-color-border-danger);
+  --oc-field-ring-error: color-mix(in srgb, var(--oc-palette-red-500) 20%, transparent);
+}

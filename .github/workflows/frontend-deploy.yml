@@ -30,11 +30,13 @@ jobs:
     env:
       AWS_REGION: ${{ secrets.AWS_REGION }}
       FRONTEND_S3_BUCKET: ${{ secrets.FRONTEND_S3_BUCKET }}
-      CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-      EC2_INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
-      API_BASE_URL: ${{ secrets.API_BASE_URL }}
-      S3_PUBLIC_BASE: ${{ secrets.S3_PUBLIC_BASE }}
+      EC2_HOST: ${{ secrets.EC2_HOST }}
+      EC2_USER: ${{ secrets.EC2_USER }}
+      EC2_SECURITY_GROUP_ID: ${{ secrets.EC2_SECURITY_GROUP_ID }}
+      API_BASE_URL: https://api.oceancampus.kr
+      S3_PUBLIC_BASE: https://api.oceancampus.kr
       MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
+      MAPBOX_STYLE_URL: ${{ secrets.MAPBOX_STYLE_URL }}
       DASHBOARD_REMOTE_ROOT: /opt/oceancampus/dashboard
       DASHBOARD_REMOTE_APP_DIR: /opt/oceancampus/dashboard/apps/OC-DASHBOARD
       NEXT_TELEMETRY_DISABLED: "1"
@@ -64,11 +66,13 @@ jobs:
             AWS_SECRET_ACCESS_KEY
             AWS_REGION
             FRONTEND_S3_BUCKET
-            CLOUDFRONT_DISTRIBUTION_ID
-            EC2_INSTANCE_ID
+            EC2_HOST
+            EC2_USER
+            EC2_SECURITY_GROUP_ID
             API_BASE_URL
             S3_PUBLIC_BASE
             MAPBOX_TOKEN
+            MAPBOX_STYLE_URL
           )
 
           missing=()
@@ -88,17 +92,27 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
           FRONTEND_S3_BUCKET: ${{ secrets.FRONTEND_S3_BUCKET }}
-          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-          EC2_INSTANCE_ID: ${{ secrets.EC2_INSTANCE_ID }}
-          API_BASE_URL: ${{ secrets.API_BASE_URL }}
-          S3_PUBLIC_BASE: ${{ secrets.S3_PUBLIC_BASE }}
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          EC2_SECURITY_GROUP_ID: ${{ secrets.EC2_SECURITY_GROUP_ID }}
           MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
+          MAPBOX_STYLE_URL: ${{ secrets.MAPBOX_STYLE_URL }}
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Build frontend apps
         run: pnpm build
+
+      - name: Verify CloudFront domain is absent
+        shell: bash
+        run: |
+          if grep -R --binary-files=without-match -n "d24m5p5t9qbt5o.cloudfront.net" \
+            apps/OC-ADMIN/dist \
+            apps/OC-RECORD/dist; then
+            echo "::error::CloudFront domain remains in admin/record build output."
+            exit 1
+          fi
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
@@ -145,25 +159,116 @@ jobs:
               --content-type "application/manifest+json"
           fi
 
-      - name: Package dashboard deployment artifact
-        id: dashboard_artifact
+      - name: Allow runner SSH access
+        id: ssh_access
         shell: bash
         run: |
-          set -euo pipefail
+          runner_ip="$(curl -fsS https://checkip.amazonaws.com | tr -d '[:space:]')"
+          echo "runner_ip=${runner_ip}" >> "${GITHUB_OUTPUT}"
 
-          artifact_dir="${RUNNER_TEMP}/oc-dashboard-artifact"
-          artifact_name="oc-dashboard-${GITHUB_SHA}.tar.gz"
-          artifact_path="${RUNNER_TEMP}/${artifact_name}"
-          artifact_key="deployments/dashboard/${GITHUB_SHA}/${artifact_name}"
+          if ! output="$(aws ec2 authorize-security-group-ingress \
+            --group-id "${EC2_SECURITY_GROUP_ID}" \
+            --protocol tcp \
+            --port 22 \
+            --cidr "${runner_ip}/32" 2>&1)"; then
+            if grep -q "InvalidPermission.Duplicate" <<< "${output}"; then
+              echo "SSH ingress already exists for ${runner_ip}/32"
+            else
+              echo "${output}"
+              exit 1
+            fi
+          fi
 
-          rm -rf "${artifact_dir}"
-          mkdir -p "${artifact_dir}/standalone" "${artifact_dir}/static" "${artifact_dir}/public"
+      - name: Prepare SSH
+        id: prepare_ssh
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          ssh_key_path="${HOME}/.ssh/oceancampus-frontend-cd"
+          rm -f "${ssh_key_path}" "${ssh_key_path}.pub"
+          ssh-keygen -t ed25519 -N '' -f "${ssh_key_path}" -q
+          chmod 600 "${ssh_key_path}"
 
-          cp -R apps/OC-DASHBOARD/.next/standalone/. "${artifact_dir}/standalone/"
-          cp -R apps/OC-DASHBOARD/.next/static/. "${artifact_dir}/static/"
+          instance_info="$(
+            aws ec2 describe-instances \
+              --filters "Name=dns-name,Values=${EC2_HOST}" "Name=instance-state-name,Values=running" \
+              --query 'Reservations[].Instances[].[InstanceId,Placement.AvailabilityZone]' \
+              --output text | awk 'NF { print; exit }'
+          )"
+
+          if [ -z "${instance_info}" ]; then
+            instance_info="$(
+              aws ec2 describe-instances \
+                --filters "Name=ip-address,Values=${EC2_HOST}" "Name=instance-state-name,Values=running" \
+                --query 'Reservations[].Instances[].[InstanceId,Placement.AvailabilityZone]' \
+                --output text | awk 'NF { print; exit }'
+            )"
+          fi
+
+          read -r instance_id availability_zone <<< "${instance_info}"
+
+          if [ -z "${instance_id}" ] || [ -z "${availability_zone}" ]; then
+            echo "::error::Unable to resolve running EC2 instance from EC2_HOST."
+            exit 1
+          fi
+
+          echo "instance_id=${instance_id}" >> "${GITHUB_OUTPUT}"
+          echo "availability_zone=${availability_zone}" >> "${GITHUB_OUTPUT}"
+
+          aws ec2-instance-connect send-ssh-public-key \
+            --instance-id "${instance_id}" \
+            --availability-zone "${availability_zone}" \
+            --instance-os-user "${EC2_USER}" \
+            --ssh-public-key "file://${ssh_key_path}.pub" \
+            >/dev/null
+
+          for attempt in {1..10}; do
+            if ssh-keyscan -T 10 -H "${EC2_HOST}" >> ~/.ssh/known_hosts; then
+              exit 0
+            fi
+
+            echo "ssh-keyscan failed for ${EC2_HOST} (attempt ${attempt}/10). Retrying..."
+            sleep 5
+          done
+
+          echo "::error::Unable to scan SSH host key for ${EC2_HOST}."
+          exit 1
+
+      - name: Deploy dashboard to EC2
+        shell: bash
+        run: |
+          ssh_key_path="${HOME}/.ssh/oceancampus-frontend-cd"
+          ssh_public_key_path="${ssh_key_path}.pub"
+          ssh_options="-i ${ssh_key_path} -o BatchMode=yes"
+
+          refresh_ssh_public_key() {
+            aws ec2-instance-connect send-ssh-public-key \
+              --instance-id "${{ steps.prepare_ssh.outputs.instance_id }}" \
+              --availability-zone "${{ steps.prepare_ssh.outputs.availability_zone }}" \
+              --instance-os-user "${EC2_USER}" \
+              --ssh-public-key "file://${ssh_public_key_path}" \
+              >/dev/null
+          }
+
+          refresh_ssh_public_key
+          ssh ${ssh_options} "${EC2_USER}@${EC2_HOST}" \
+            "mkdir -p '${DASHBOARD_REMOTE_APP_DIR}/.next/static' '${DASHBOARD_REMOTE_APP_DIR}/public'"
+
+          refresh_ssh_public_key
+          rsync -az --delete -e "ssh ${ssh_options}" \
+            apps/OC-DASHBOARD/.next/standalone/ \
+            "${EC2_USER}@${EC2_HOST}:${DASHBOARD_REMOTE_ROOT}/"
+
+          refresh_ssh_public_key
+          rsync -az --delete -e "ssh ${ssh_options}" \
+            apps/OC-DASHBOARD/.next/static/ \
+            "${EC2_USER}@${EC2_HOST}:${DASHBOARD_REMOTE_APP_DIR}/.next/static/"
 
           if [ -d apps/OC-DASHBOARD/public ]; then
-            cp -R apps/OC-DASHBOARD/public/. "${artifact_dir}/public/"
+            refresh_ssh_public_key
+            rsync -az --delete -e "ssh ${ssh_options}" \
+              apps/OC-DASHBOARD/public/ \
+              "${EC2_USER}@${EC2_HOST}:${DASHBOARD_REMOTE_APP_DIR}/public/"
           fi
 
           {
@@ -173,121 +278,23 @@ jobs:
             echo "API_BASE_URL=${API_BASE_URL}"
             echo "S3_PUBLIC_BASE=${S3_PUBLIC_BASE}"
             echo "MAPBOX_TOKEN=${MAPBOX_TOKEN}"
-          } > "${artifact_dir}/dashboard.env"
+            echo "MAPBOX_STYLE_URL=${MAPBOX_STYLE_URL}"
+          } > dashboard.env
 
-          tar -czf "${artifact_path}" -C "${artifact_dir}" .
+          refresh_ssh_public_key
+          scp ${ssh_options} dashboard.env \
+            "${EC2_USER}@${EC2_HOST}:/tmp/oceancampus-dashboard.env"
 
-          echo "artifact_key=${artifact_key}" >> "${GITHUB_OUTPUT}"
+          refresh_ssh_public_key
+          ssh ${ssh_options} "${EC2_USER}@${EC2_HOST}" \
+            "mv /tmp/oceancampus-dashboard.env '${DASHBOARD_REMOTE_ROOT}/.env' && chmod 600 '${DASHBOARD_REMOTE_ROOT}/.env' && sudo systemctl restart oceancampus-dashboard && sudo systemctl is-active oceancampus-dashboard"
 
-          aws s3 cp "${artifact_path}" "s3://${FRONTEND_S3_BUCKET}/${artifact_key}" \
-            --sse AES256
-
-          artifact_url="$(aws s3 presign "s3://${FRONTEND_S3_BUCKET}/${artifact_key}" --expires-in 1800)"
-
-          echo "artifact_url=${artifact_url}" >> "${GITHUB_OUTPUT}"
-
-      - name: Deploy dashboard through SSM
+      - name: Revoke runner SSH access
+        if: always() && steps.ssh_access.outputs.runner_ip != ''
         shell: bash
         run: |
-          set -euo pipefail
-
-          artifact_url="${{ steps.dashboard_artifact.outputs.artifact_url }}"
-          printf -v artifact_url_quoted '%q' "${artifact_url}"
-
-          remote_command="$(
-            cat <<EOF
-          set -euo pipefail
-
-          artifact_url=${artifact_url_quoted}
-          remote_root='${DASHBOARD_REMOTE_ROOT}'
-          remote_app_dir='${DASHBOARD_REMOTE_APP_DIR}'
-          archive_path="/tmp/oc-dashboard-${GITHUB_SHA}.tar.gz"
-          release_dir="\$(mktemp -d /tmp/oc-dashboard-release.XXXXXX)"
-
-          cleanup() {
-            rm -rf "\${release_dir}" "\${archive_path}"
-          }
-          trap cleanup EXIT
-
-          curl -fsSL "\${artifact_url}" -o "\${archive_path}"
-          mkdir -p "\${remote_root}" "\${remote_app_dir}/.next/static" "\${remote_app_dir}/public"
-          tar -xzf "\${archive_path}" -C "\${release_dir}"
-
-          find "\${remote_root}" -mindepth 1 -maxdepth 1 ! -name '.env' -exec rm -rf {} +
-          cp -a "\${release_dir}/standalone/." "\${remote_root}/"
-
-          rm -rf "\${remote_app_dir}/.next/static"
-          mkdir -p "\${remote_app_dir}/.next/static"
-          cp -a "\${release_dir}/static/." "\${remote_app_dir}/.next/static/"
-
-          rm -rf "\${remote_app_dir}/public"
-          mkdir -p "\${remote_app_dir}/public"
-          cp -a "\${release_dir}/public/." "\${remote_app_dir}/public/"
-
-          install -m 600 "\${release_dir}/dashboard.env" "\${remote_root}/.env"
-
-          sudo systemctl restart oceancampus-dashboard
-          sudo systemctl is-active oceancampus-dashboard
-          EOF
-          )"
-
-          jq -n \
-            --arg command "${remote_command}" \
-            '{commands: [$command], executionTimeout: ["900"]}' \
-            > "${RUNNER_TEMP}/ssm-dashboard-deploy.json"
-
-          command_id="$(
-            aws ssm send-command \
-              --instance-ids "${EC2_INSTANCE_ID}" \
-              --document-name "AWS-RunShellScript" \
-              --comment "Deploy OC dashboard ${GITHUB_SHA}" \
-              --parameters "file://${RUNNER_TEMP}/ssm-dashboard-deploy.json" \
-              --query 'Command.CommandId' \
-              --output text
-          )"
-
-          set +e
-          aws ssm wait command-executed \
-            --command-id "${command_id}" \
-            --instance-id "${EC2_INSTANCE_ID}"
-          wait_status=$?
-          set -e
-
-          echo "SSM command stdout:"
-          aws ssm get-command-invocation \
-            --command-id "${command_id}" \
-            --instance-id "${EC2_INSTANCE_ID}" \
-            --query 'StandardOutputContent' \
-            --output text || true
-
-          echo "SSM command stderr:"
-          aws ssm get-command-invocation \
-            --command-id "${command_id}" \
-            --instance-id "${EC2_INSTANCE_ID}" \
-            --query 'StandardErrorContent' \
-            --output text || true
-
-          command_status="$(
-            aws ssm get-command-invocation \
-              --command-id "${command_id}" \
-              --instance-id "${EC2_INSTANCE_ID}" \
-              --query 'Status' \
-              --output text
-          )"
-
-          if [ "${wait_status}" -ne 0 ] || [ "${command_status}" != "Success" ]; then
-            echo "::error::SSM dashboard deploy failed with status ${command_status}."
-            exit 1
-          fi
-
-      - name: Delete dashboard deployment artifact
-        if: always() && steps.dashboard_artifact.outputs.artifact_key != ''
-        shell: bash
-        run: |
-          aws s3 rm "s3://${FRONTEND_S3_BUCKET}/${{ steps.dashboard_artifact.outputs.artifact_key }}" || true
-
-      - name: Invalidate CloudFront cache
-        run: |
-          aws cloudfront create-invalidation \
-            --distribution-id "${CLOUDFRONT_DISTRIBUTION_ID}" \
-            --paths "/admin*" "/record*" "/dashboard*"
+          aws ec2 revoke-security-group-ingress \
+            --group-id "${EC2_SECURITY_GROUP_ID}" \
+            --protocol tcp \
+            --port 22 \
+            --cidr "${{ steps.ssh_access.outputs.runner_ip }}/32" || true
