@@ -6,7 +6,7 @@
     },
     "build": {
       "dependsOn": ["^typecheck"],
-      "env": ["API_BASE_URL", "S3_PUBLIC_BASE", "MAPBOX_TOKEN"],
+      "env": ["API_BASE_URL", "S3_PUBLIC_BASE", "MAPBOX_TOKEN", "MAPBOX_STYLE_URL"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"]
     },
     "lint": {

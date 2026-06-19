@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const apiBaseUrl = requireEnv("API_BASE_URL");
 const s3PublicBase = requireEnv("S3_PUBLIC_BASE");
 const mapboxToken = requireEnv("MAPBOX_TOKEN");
+const mapboxStyleUrl = requireEnv("MAPBOX_STYLE_URL");
 
 const s3PublicImagePattern = (() => {
   try {
@@ -31,6 +32,7 @@ const nextConfig: NextConfig = {
     API_BASE_URL: apiBaseUrl,
     S3_PUBLIC_BASE: s3PublicBase,
     MAPBOX_TOKEN: mapboxToken,
+    MAPBOX_STYLE_URL: mapboxStyleUrl,
   },
   transpilePackages: [
     "@ocean-kit/dashboard-domain",

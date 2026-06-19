@@ -8,6 +8,8 @@ export default function AreaGroupsList({
   grouped,
   onSelectArea,
   activeRegion,
+  areaLoading,
+  areaLoadFailed,
   workingArea,
 }) {
   const [expanded, setExpanded] = useState(() =>
@@ -23,7 +25,20 @@ export default function AreaGroupsList({
   return (
     <div className="max-h-[56vh] overflow-auto px-2 py-2">
       {activeRegion ? (
-        grouped.length ? (
+        areaLoading ? (
+          <div className="px-3 py-8 text-center text-sm text-indigo-100/70">
+            작업영역 데이터를 불러오는 중입니다
+          </div>
+        ) : areaLoadFailed ? (
+          <div className="px-3 py-8 text-center">
+            <p className="text-sm font-semibold text-indigo-50">
+              작업영역 데이터를 불러오지 못했습니다
+            </p>
+            <p className="mt-1 text-xs leading-relaxed text-indigo-100/64">
+              잠시 후 다시 시도해주세요.
+            </p>
+          </div>
+        ) : grouped.length ? (
           grouped.map((group) => {
             const isOpen = !!expanded[group.stage];
             return (

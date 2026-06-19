@@ -5,20 +5,17 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import RegionMarkers from "./regionMarkers";
 import TopRightControls from "@/components/mapBox/topRightControls/topRightControls";
 import useAppHeightCssVar from "./hooks/useAppHeightCssVar";
+import useAreasByRegion from "./hooks/useAreasByRegion";
 import useMapboxMap from "./hooks/useMapboxMap";
 import useMapCamera from "./hooks/useMapCamera";
 import useMapSelection from "./hooks/useMapSelection";
 import useRegionMarkerLayer from "./hooks/useRegionMarkerLayer";
-import type { AreasByRegion } from "./types";
 
-type Props = {
-  initialAreasByRegion: AreasByRegion;
-};
-
-export default function MapView({ initialAreasByRegion }: Props) {
+export default function MapView() {
   useAppHeightCssVar();
 
   const { containerRef, mapRef, isMapLoaded, mapError } = useMapboxMap();
+  const { areasByRegion, failedRegions, pendingRegions } = useAreasByRegion();
   const {
     currentLocation,
     workingArea,
@@ -27,7 +24,7 @@ export default function MapView({ initialAreasByRegion }: Props) {
     setActiveStage,
     selectRegion,
     selectArea,
-  } = useMapSelection(initialAreasByRegion);
+  } = useMapSelection(areasByRegion);
   const { resetView } = useMapCamera({
     mapRef,
     currentLocation,
@@ -44,6 +41,14 @@ export default function MapView({ initialAreasByRegion }: Props) {
   if (mapError) {
     throw mapError;
   }
+
+  const selectedRegionId = currentLocation?.id;
+  const areaLoadFailed = selectedRegionId
+    ? failedRegions.includes(selectedRegionId)
+    : false;
+  const areaLoading = selectedRegionId
+    ? pendingRegions.includes(selectedRegionId)
+    : false;
 
   return (
     <div
@@ -103,6 +108,8 @@ export default function MapView({ initialAreasByRegion }: Props) {
         workingArea={workingArea}
         activeStage={activeStage}
         setActiveStage={setActiveStage}
+        areaLoading={areaLoading}
+        areaLoadFailed={areaLoadFailed}
         onSelectRegion={selectRegion}
         onSelectArea={selectArea}
         resetView={resetView}

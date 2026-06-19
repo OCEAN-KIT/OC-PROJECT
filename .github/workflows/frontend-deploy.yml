@@ -30,13 +30,13 @@ jobs:
     env:
       AWS_REGION: ${{ secrets.AWS_REGION }}
       FRONTEND_S3_BUCKET: ${{ secrets.FRONTEND_S3_BUCKET }}
-      CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
       EC2_HOST: ${{ secrets.EC2_HOST }}
       EC2_USER: ${{ secrets.EC2_USER }}
       EC2_SECURITY_GROUP_ID: ${{ secrets.EC2_SECURITY_GROUP_ID }}
-      API_BASE_URL: ${{ secrets.API_BASE_URL }}
-      S3_PUBLIC_BASE: ${{ secrets.S3_PUBLIC_BASE }}
+      API_BASE_URL: https://api.oceancampus.kr
+      S3_PUBLIC_BASE: https://api.oceancampus.kr
       MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
+      MAPBOX_STYLE_URL: ${{ secrets.MAPBOX_STYLE_URL }}
       DASHBOARD_REMOTE_ROOT: /opt/oceancampus/dashboard
       DASHBOARD_REMOTE_APP_DIR: /opt/oceancampus/dashboard/apps/OC-DASHBOARD
       NEXT_TELEMETRY_DISABLED: "1"
@@ -66,13 +66,13 @@ jobs:
             AWS_SECRET_ACCESS_KEY
             AWS_REGION
             FRONTEND_S3_BUCKET
-            CLOUDFRONT_DISTRIBUTION_ID
             EC2_HOST
             EC2_USER
             EC2_SECURITY_GROUP_ID
             API_BASE_URL
             S3_PUBLIC_BASE
             MAPBOX_TOKEN
+            MAPBOX_STYLE_URL
           )
 
           missing=()
@@ -92,19 +92,27 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
           FRONTEND_S3_BUCKET: ${{ secrets.FRONTEND_S3_BUCKET }}
-          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
           EC2_SECURITY_GROUP_ID: ${{ secrets.EC2_SECURITY_GROUP_ID }}
-          API_BASE_URL: ${{ secrets.API_BASE_URL }}
-          S3_PUBLIC_BASE: ${{ secrets.S3_PUBLIC_BASE }}
           MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
+          MAPBOX_STYLE_URL: ${{ secrets.MAPBOX_STYLE_URL }}
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Build frontend apps
         run: pnpm build
+
+      - name: Verify CloudFront domain is absent
+        shell: bash
+        run: |
+          if grep -R --binary-files=without-match -n "d24m5p5t9qbt5o.cloudfront.net" \
+            apps/OC-ADMIN/dist \
+            apps/OC-RECORD/dist; then
+            echo "::error::CloudFront domain remains in admin/record build output."
+            exit 1
+          fi
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
@@ -270,6 +278,7 @@ jobs:
             echo "API_BASE_URL=${API_BASE_URL}"
             echo "S3_PUBLIC_BASE=${S3_PUBLIC_BASE}"
             echo "MAPBOX_TOKEN=${MAPBOX_TOKEN}"
+            echo "MAPBOX_STYLE_URL=${MAPBOX_STYLE_URL}"
           } > dashboard.env
 
           refresh_ssh_public_key
@@ -289,9 +298,3 @@ jobs:
             --protocol tcp \
             --port 22 \
             --cidr "${{ steps.ssh_access.outputs.runner_ip }}/32" || true
-
-      - name: Invalidate CloudFront cache
-        run: |
-          aws cloudfront create-invalidation \
-            --distribution-id "${CLOUDFRONT_DISTRIBUTION_ID}" \
-            --paths "/admin*" "/record*" "/dashboard*"

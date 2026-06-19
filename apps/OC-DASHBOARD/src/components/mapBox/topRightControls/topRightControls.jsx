@@ -18,6 +18,8 @@ export default function TopRightControls({
   workingArea,
   activeStage,
   setActiveStage,
+  areaLoading,
+  areaLoadFailed,
   onSelectRegion,
   onSelectArea,
   resetView,
@@ -123,6 +125,8 @@ export default function TopRightControls({
                 grouped={grouped}
                 onSelectArea={handleArea}
                 activeRegion={!!currentLocation}
+                areaLoading={areaLoading}
+                areaLoadFailed={areaLoadFailed}
                 workingArea={workingArea}
               />
             </>
@@ -183,6 +187,8 @@ export default function TopRightControls({
                     grouped={grouped}
                     onSelectArea={handleArea}
                     activeRegion={!!currentLocation}
+                    areaLoading={areaLoading}
+                    areaLoadFailed={areaLoadFailed}
                     workingArea={workingArea}
                   />
                 </div>
