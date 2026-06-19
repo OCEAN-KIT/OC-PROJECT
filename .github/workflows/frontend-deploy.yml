@@ -266,24 +266,34 @@ jobs:
 
           refresh_ssh_public_key
           ssh ${ssh_options} "${EC2_USER}@${EC2_HOST}" \
-            "mkdir -p '${DASHBOARD_REMOTE_APP_DIR}/.next/static' '${DASHBOARD_REMOTE_APP_DIR}/public'"
+            "sudo mkdir -p '${DASHBOARD_REMOTE_APP_DIR}/.next/static' '${DASHBOARD_REMOTE_APP_DIR}/public'"
 
           refresh_ssh_public_key
-          rsync -az --delete -e "ssh ${ssh_options}" \
+          rsync -az --delete --exclude='.env' --no-owner --no-group \
+            --rsync-path="sudo rsync" \
+            -e "ssh ${ssh_options}" \
             apps/OC-DASHBOARD/.next/standalone/ \
             "${EC2_USER}@${EC2_HOST}:${DASHBOARD_REMOTE_ROOT}/"
 
           refresh_ssh_public_key
-          rsync -az --delete -e "ssh ${ssh_options}" \
+          rsync -az --delete --no-owner --no-group \
+            --rsync-path="sudo rsync" \
+            -e "ssh ${ssh_options}" \
             apps/OC-DASHBOARD/.next/static/ \
             "${EC2_USER}@${EC2_HOST}:${DASHBOARD_REMOTE_APP_DIR}/.next/static/"
 
           if [ -d apps/OC-DASHBOARD/public ]; then
             refresh_ssh_public_key
-            rsync -az --delete -e "ssh ${ssh_options}" \
+            rsync -az --delete --no-owner --no-group \
+              --rsync-path="sudo rsync" \
+              -e "ssh ${ssh_options}" \
               apps/OC-DASHBOARD/public/ \
               "${EC2_USER}@${EC2_HOST}:${DASHBOARD_REMOTE_APP_DIR}/public/"
           fi
+
+          refresh_ssh_public_key
+          ssh ${ssh_options} "${EC2_USER}@${EC2_HOST}" \
+            "sudo chown -R '${EC2_USER}:${EC2_USER}' '${DASHBOARD_REMOTE_ROOT}'"
 
           {
             echo "NODE_ENV=production"
@@ -301,7 +311,7 @@ jobs:
 
           refresh_ssh_public_key
           ssh ${ssh_options} "${EC2_USER}@${EC2_HOST}" \
-            "mv /tmp/oceancampus-dashboard.env '${DASHBOARD_REMOTE_ROOT}/.env' && chmod 600 '${DASHBOARD_REMOTE_ROOT}/.env' && sudo systemctl restart oceancampus-dashboard && sudo systemctl is-active oceancampus-dashboard"
+            "sudo install -m 600 -o root -g root /tmp/oceancampus-dashboard.env '${DASHBOARD_REMOTE_ROOT}/.env' && rm -f /tmp/oceancampus-dashboard.env && sudo systemctl restart oceancampus-dashboard && sudo systemctl is-active oceancampus-dashboard"
 
       - name: Smoke test production endpoints
         shell: bash
