@@ -1,9 +1,9 @@
 # OC-PROJECT
 
-오션캠퍼스 서비스의 프론트엔드 모노레포입니다.
-<a>https://dashboard.oceancampus.kr/dashboard</a>
-<a>https://dashboard.oceancampus.kr</a>
-<a>https://record.oceancampus.kr</a>
+오션캠퍼스 서비스의 프론트엔드 모노레포입니다.</br>
+<a>https://dashboard.oceancampus.kr/dashboard</a></br>
+<a>https://dashboard.oceancampus.kr</a></br>
+<a>https://record.oceancampus.kr</a></br>
 
 관리자 콘솔, 현장 기록 앱, 공개 대시보드를 하나의 pnpm workspace에서 관리하고, API 호출/도메인 타입/공통 요청 로직은 `packages`로 분리해 앱들이 같은 계약을 바라보도록 구성되어 있습니다.
 
