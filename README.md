@@ -119,22 +119,6 @@ pnpm typecheck
 - GitHub Actions에서 EC2로 배포하고 `oceancampus-dashboard` systemd 서비스를 재시작합니다.
 - 실행 경로는 `/opt/oceancampus/dashboard` 기준입니다.
 
-### 환경변수
-
-운영 빌드 기준 주요 값:
-
-```txt
-API_BASE_URL=https://api.oceancampus.kr
-S3_PUBLIC_BASE=https://api.oceancampus.kr
-```
-
-CloudFront는 운영 도메인 기준에서 제거되었습니다.
-빌드 산출물에 기존 CloudFront 도메인이 남아있으면 배포 workflow가 실패하도록 검사합니다.
-
-```txt
-d24m5p5t9qbt5o.cloudfront.net
-```
-
 ## 개발 시 주의사항
 
 - `OC-ADMIN-NEXT`는 레거시 코드이므로 새 기능을 추가하지 않습니다.
