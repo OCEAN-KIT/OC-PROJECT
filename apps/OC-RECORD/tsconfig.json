@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "types": ["vite/client"],
+    "types": ["vite/client", "vite-plugin-pwa/react"],
     "paths": {
       "@ocean-kit/shared-s3/upload": [
         "../../packages/shared-s3/src/upload.ts"

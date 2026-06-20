@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Outfit, Work_Sans } from "next/font/google";
 import "./globals.css";
+import GoogleAnalytics from "./google-analytics";
 import Providers from "./providers";
 
 export const metadata: Metadata = {
@@ -21,6 +21,8 @@ const outfit = Outfit({
   variable: "--font-outfit",
 });
 
+const gaMeasurementId = process.env.NEXT_PUBLIC_DASHBOARD_GA_MEASUREMENT_ID;
+
 export default function RootLayout({
   children,
   modal,
@@ -31,18 +33,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-B1BYG2G8EC"
-          strategy="afterInteractive"
-        />
-        <Script id="gtag-init" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-B1BYG2G8EC');
-          `}
-        </Script>
+        <GoogleAnalytics measurementId={gaMeasurementId} />
       </head>
       <body
         className={`${workSans.variable} ${outfit.variable} min-h-screen bg-[var(--ds-bg)] text-[var(--ds-text)] font-sans`}

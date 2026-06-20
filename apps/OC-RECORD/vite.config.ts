@@ -53,12 +53,10 @@ const config = defineConfig(({ mode }) => {
         filename: 'sw.js',
         injectRegister: false,
         manifest: false,
-        registerType: 'autoUpdate',
+        registerType: 'prompt',
         workbox: {
           cleanupOutdatedCaches: true,
-          clientsClaim: true,
           inlineWorkboxRuntime: true,
-          skipWaiting: true,
           globPatterns: ['**/*.{js,css,html,png,svg,ico,webmanifest}'],
           navigateFallback: '/record/index.html',
           navigateFallbackDenylist: [/^\/api\//],

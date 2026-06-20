@@ -37,6 +37,9 @@ jobs:
       S3_PUBLIC_BASE: https://api.oceancampus.kr
       MAPBOX_TOKEN: ${{ secrets.MAPBOX_TOKEN }}
       MAPBOX_STYLE_URL: ${{ secrets.MAPBOX_STYLE_URL }}
+      VITE_ADMIN_GA_MEASUREMENT_ID: ${{ secrets.ADMIN_GA_MEASUREMENT_ID }}
+      VITE_RECORD_GA_MEASUREMENT_ID: ${{ secrets.RECORD_GA_MEASUREMENT_ID }}
+      NEXT_PUBLIC_DASHBOARD_GA_MEASUREMENT_ID: ${{ secrets.DASHBOARD_GA_MEASUREMENT_ID }}
       DASHBOARD_REMOTE_ROOT: /opt/oceancampus/dashboard
       DASHBOARD_REMOTE_APP_DIR: /opt/oceancampus/dashboard/apps/OC-DASHBOARD
       NEXT_TELEMETRY_DISABLED: "1"
@@ -307,6 +310,7 @@ jobs:
             echo "S3_PUBLIC_BASE=${S3_PUBLIC_BASE}"
             echo "MAPBOX_TOKEN=${MAPBOX_TOKEN}"
             echo "MAPBOX_STYLE_URL=${MAPBOX_STYLE_URL}"
+            echo "NEXT_PUBLIC_DASHBOARD_GA_MEASUREMENT_ID=${NEXT_PUBLIC_DASHBOARD_GA_MEASUREMENT_ID}"
           } > dashboard.env
 
           refresh_ssh_public_key
@@ -326,6 +330,19 @@ jobs:
           curl -fsS https://api.oceancampus.kr/actuator/health | grep -q '"status":"UP"'
           curl -fsSI https://record.oceancampus.kr/record/manifest.webmanifest \
             | grep -iq 'content-type: application/manifest+json'
+
+          warn_record_no_cache() {
+            local url="$1"
+
+            if ! curl -fsSI "${url}" | tr -d '\r' | grep -iq '^cache-control: .*no-cache'; then
+              echo "::warning::Missing no-cache Cache-Control header: ${url}"
+            fi
+          }
+
+          warn_record_no_cache https://record.oceancampus.kr/record/
+          warn_record_no_cache https://record.oceancampus.kr/record/index.html
+          warn_record_no_cache https://record.oceancampus.kr/record/manifest.webmanifest
+          warn_record_no_cache https://record.oceancampus.kr/record/sw.js
 
           record_entry_asset="$(
             grep -oE "/record/assets/[^\"'<>[:space:]]+\.js" \
