@@ -7,15 +7,11 @@ import { useMyInfo } from '#/shared/auth/useMyInfo'
 import { ProfileEditForm } from './components/ProfileEditForm'
 import { ProfileView } from './components/ProfileView'
 import { useProfileEditor } from './hooks/useProfileEditor'
-// import { useAuthGuard } from './hooks/useAuthGuard'
 
 export function ProfilePage() {
   const { data, isLoading, error, refetch } = useMyInfo()
-  // const { checking, isLoggedIn } = useAuthGuard({ mode: "gotoLogin" });
   const profile = data?.data
   const editor = useProfileEditor(profile)
-
-  // if (checking || !isLoggedIn) return null;
 
   if (isLoading) {
     return (

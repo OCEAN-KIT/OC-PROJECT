@@ -6,8 +6,17 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { HomePage } from '@/pages/home/HomePage'
 import { validateHomeSearch } from '@/pages/home/homeSearch'
+import { AuthGuard } from '#/shared/auth/AuthGuard'
 
 export const Route = createFileRoute('/home')({
   validateSearch: validateHomeSearch,
-  component: HomePage,
+  component: HomeRoute,
 })
+
+function HomeRoute() {
+  return (
+    <AuthGuard mode="gotoLogin">
+      <HomePage />
+    </AuthGuard>
+  )
+}

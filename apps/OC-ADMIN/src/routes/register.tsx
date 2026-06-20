@@ -3,8 +3,17 @@
  * 회원가입 폼 상태와 서버 요청은 pages/register 내부에서 관리합니다.
  */
 import { RegisterPage } from '#/pages/register/RegisterPage'
+import { AuthGuard } from '#/shared/auth/AuthGuard'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/register')({
-  component: RegisterPage,
+  component: RegisterRoute,
 })
+
+function RegisterRoute() {
+  return (
+    <AuthGuard mode="gotoHome">
+      <RegisterPage />
+    </AuthGuard>
+  )
+}

@@ -13,10 +13,8 @@ import { SubmissionListSection } from './components/SubmissionListSection'
 import { SubmissionToolbar } from './components/SubmissionToolbar'
 import { useHomePage } from './hooks/useHomePage'
 import { ConfirmDialog } from '#/shared/components/ConfirmDialog'
-// import { useAuthGuard } from './hooks/useAuthGuard'
 
 export function HomePage() {
-  // useAuthGuard({ mode: "gotoLogin" });
   const home = useHomePage()
 
   return (

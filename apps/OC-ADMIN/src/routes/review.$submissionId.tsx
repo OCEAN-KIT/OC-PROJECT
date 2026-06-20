@@ -4,7 +4,16 @@
  */
 import { createFileRoute } from '@tanstack/react-router'
 import { ReviewDetailPage } from '#/pages/review-detail/ReviewDetailPage'
+import { AuthGuard } from '#/shared/auth/AuthGuard'
 
 export const Route = createFileRoute('/review/$submissionId')({
-  component: ReviewDetailPage,
+  component: ReviewDetailRoute,
 })
+
+function ReviewDetailRoute() {
+  return (
+    <AuthGuard mode="gotoLogin">
+      <ReviewDetailPage />
+    </AuthGuard>
+  )
+}
