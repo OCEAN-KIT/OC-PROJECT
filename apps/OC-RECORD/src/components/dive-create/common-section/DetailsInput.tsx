@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { ClipboardList } from "lucide-react";
 import { inputCls } from "../styles";
-import CheonjiinKeyboard from "react-cji-keyboard";
+import CheonjiinKeyboardSheet from "../CheonjiinKeyboardSheet";
 
 type Props = {
   value: string;
@@ -59,23 +59,11 @@ export default function DetailsInput({
       </section>
 
       {open && (
-        <>
-          <div
-            className="fixed inset-0 z-40"
-            onMouseDown={closeKeyboard}
-            onTouchStart={closeKeyboard}
-          />
-
-          <div className="fixed left-0 right-0 bottom-0 z-50">
-            <div
-              className="mx-auto max-w-105 bg-white"
-              onMouseDown={(e) => e.stopPropagation()}
-              onTouchStart={(e) => e.stopPropagation()}
-            >
-              <CheonjiinKeyboard onChange={setValue} />
-            </div>
-          </div>
-        </>
+        <CheonjiinKeyboardSheet
+          baseValue={value}
+          onChange={setValue}
+          onClose={closeKeyboard}
+        />
       )}
     </>
   );

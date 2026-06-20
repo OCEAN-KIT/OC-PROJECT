@@ -75,5 +75,7 @@ export function useHomePage() {
       onClose: rejectModal.close,
       onSubmit: reviewActions.handleRejectSubmit,
     },
+
+    deleteConfirmProps: reviewActions.deleteConfirmProps,
   }
 }

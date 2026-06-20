@@ -12,6 +12,7 @@ import RejectModal from './components/reject-reason-modal'
 import { SubmissionListSection } from './components/SubmissionListSection'
 import { SubmissionToolbar } from './components/SubmissionToolbar'
 import { useHomePage } from './hooks/useHomePage'
+import { ConfirmDialog } from '#/shared/components/ConfirmDialog'
 // import { useAuthGuard } from './hooks/useAuthGuard'
 
 export function HomePage() {
@@ -28,6 +29,7 @@ export function HomePage() {
 
       <HomePagination {...home.paginationProps} />
       <RejectModal {...home.rejectModalProps} />
+      <ConfirmDialog {...home.deleteConfirmProps} />
     </HomePageLayout>
   )
 }

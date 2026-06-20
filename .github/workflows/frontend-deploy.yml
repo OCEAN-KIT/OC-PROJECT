@@ -246,7 +246,11 @@ jobs:
 
           refresh_ssh_public_key
           ssh ${ssh_options} "${EC2_USER}@${EC2_HOST}" \
-            "sudo /opt/oceancampus/scripts/deploy-static-from-s3.sh"
+            "set -e
+            sudo /opt/oceancampus/scripts/deploy-static-from-s3.sh
+            sudo aws s3 cp 's3://${FRONTEND_S3_BUCKET}/record/sw.js' '/var/www/oceancampus/record/current/record/sw.js' --region '${AWS_REGION}'
+            sudo chown ec2-user:nginx '/var/www/oceancampus/record/current/record/sw.js'
+            sudo chmod 644 '/var/www/oceancampus/record/current/record/sw.js'"
 
       - name: Deploy dashboard to EC2
         shell: bash
@@ -322,6 +326,29 @@ jobs:
           curl -fsS https://api.oceancampus.kr/actuator/health | grep -q '"status":"UP"'
           curl -fsSI https://record.oceancampus.kr/record/manifest.webmanifest \
             | grep -iq 'content-type: application/manifest+json'
+
+          record_entry_asset="$(
+            grep -oE "/record/assets/[^\"'<>[:space:]]+\.js" \
+              apps/OC-RECORD/dist/index.html \
+              | head -n 1
+          )"
+
+          if [ -z "${record_entry_asset}" ]; then
+            echo "::error::Unable to find OC-RECORD entry asset in dist/index.html."
+            exit 1
+          fi
+
+          curl -fsS https://record.oceancampus.kr/record/sw.js -o record-sw.js
+
+          if ! grep -Fq "${record_entry_asset#/record/}" record-sw.js; then
+            echo "::error::OC-RECORD service worker does not reference the current build asset: ${record_entry_asset}"
+            exit 1
+          fi
+
+          if grep -Fq "d24m5p5t9qbt5o.cloudfront.net" record-sw.js; then
+            echo "::error::CloudFront domain remains in deployed OC-RECORD service worker."
+            exit 1
+          fi
 
       - name: Revoke runner SSH access
         if: always() && steps.ssh_access.outputs.runner_ip != ''

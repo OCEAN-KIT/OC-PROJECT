@@ -5,6 +5,7 @@ import DetailInfoModal from "@/components/detail-info/detail-info-modal";
 
 export default function Page({ params }) {
   const { id } = React.use(params);
+  const areaId = Number(id);
 
-  return <DetailInfoModal areaId={id} />;
+  return <DetailInfoModal areaId={areaId} />;
 }

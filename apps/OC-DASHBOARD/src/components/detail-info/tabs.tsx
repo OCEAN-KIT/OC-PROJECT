@@ -3,7 +3,8 @@ export const TABS = [
   { key: "status", label: "현황" },
   { key: "ecology", label: "생태 반응" },
   { key: "environment", label: "환경" },
-  { key: "photos", label: "사진" },
+  { key: "before-after", label: "복원 전/후" },
+  { key: "timeline", label: "타임라인" },
 ] as const;
 
 export type TabKey = (typeof TABS)[number]["key"];
@@ -16,21 +17,23 @@ type Props = {
 export default function TabsBar({ active, onChange }: Props) {
   return (
     <div className="relative">
-      <div className="flex items-center gap-2 px-5 pt-4 max-md:pt-3 max-md:px-4 max-md:overflow-x-auto max-md:whitespace-nowrap scrollbar-hide">
+      <div className="flex items-center gap-6 border-b border-white/10 px-5 pt-4 max-md:gap-5 max-md:overflow-x-auto max-md:whitespace-nowrap max-md:px-4 max-md:pt-3 scrollbar-hide">
         {TABS.map((t) => {
           const on = active === t.key;
           return (
             <button
               key={t.key}
+              type="button"
               onClick={() => onChange(t.key)}
               className={[
-                "h-8 px-3 rounded-xl text-sm border transition shrink-0",
-                on
-                  ? "border-indigo-200/70 bg-indigo-500/32 text-indigo-50"
-                  : "border-white/18 bg-white/10 text-indigo-100/75 hover:border-indigo-300/60 hover:bg-indigo-500/18 hover:text-indigo-50",
+                "relative shrink-0 whitespace-nowrap pb-3 text-sm font-medium transition",
+                on ? "text-indigo-50" : "text-indigo-100/55 hover:text-indigo-50",
               ].join(" ")}
             >
               {t.label}
+              {on && (
+                <span className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-indigo-200/90" />
+              )}
             </button>
           );
         })}

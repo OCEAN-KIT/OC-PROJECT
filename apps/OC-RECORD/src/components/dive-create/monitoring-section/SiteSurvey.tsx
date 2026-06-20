@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { MapPin, Compass, Mountain } from "lucide-react";
 import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
-import CheonjiinKeyboard from "react-cji-keyboard";
+import CheonjiinKeyboardSheet from "../CheonjiinKeyboardSheet";
 
 import type {
   OcRecordForm,
@@ -166,25 +166,12 @@ export default function SiteSurvey({ monitoring, setMonitoring }: Props) {
 
       {/* 키보드 */}
       {activeField && (
-        <>
-          <div
-            className="fixed inset-0 z-40"
-            onMouseDown={closeKeyboard}
-            onTouchStart={closeKeyboard}
-          />
-
-          <div className="fixed left-0 right-0 bottom-0 z-50">
-            <div
-              className="mx-auto max-w-105 bg-white"
-              onMouseDown={(e) => e.stopPropagation()}
-              onTouchStart={(e) => e.stopPropagation()}
-            >
-              <CheonjiinKeyboard
-                onChange={(val: string) => setValue(activeField, val)}
-              />
-            </div>
-          </div>
-        </>
+        <CheonjiinKeyboardSheet
+          key={activeField}
+          baseValue={monitoring[activeField]}
+          onChange={(value) => setValue(activeField, value)}
+          onClose={closeKeyboard}
+        />
       )}
     </>
   );

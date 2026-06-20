@@ -5,7 +5,7 @@ import { Scale } from "lucide-react";
 
 import SelectCard from "@/components/ui/SelectCard";
 import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
-import CheonjiinKeyboard from "react-cji-keyboard";
+import CheonjiinKeyboardSheet from "../CheonjiinKeyboardSheet";
 
 type Props = {
   collectionAmount: OcRecordForm["cleanup"]["collectionAmount"];
@@ -54,23 +54,11 @@ export default function CleanupCollectedAmount({
       </SelectCard>
 
       {open && (
-        <>
-          <div
-            className="fixed inset-0 z-40"
-            onMouseDown={closeKeyboard}
-            onTouchStart={closeKeyboard}
-          />
-
-          <div className="fixed left-0 right-0 bottom-0 z-50">
-            <div
-              className="mx-auto max-w-105  bg-white"
-              onMouseDown={(e) => e.stopPropagation()}
-              onTouchStart={(e) => e.stopPropagation()}
-            >
-              <CheonjiinKeyboard onChange={setValue} />
-            </div>
-          </div>
-        </>
+        <CheonjiinKeyboardSheet
+          baseValue={value}
+          onChange={setValue}
+          onClose={closeKeyboard}
+        />
       )}
     </>
   );

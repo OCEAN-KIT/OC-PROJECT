@@ -3,7 +3,7 @@
  * mutation 호출, 성공 후 선택 초기화, 반려 모달 닫기 같은 후처리를 이 hook에 모아
  * HomePage controller와 UI 컴포넌트가 서버 동작 세부사항을 알지 않게 합니다.
  */
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import type { RejectSubmitPayload } from './useRejectSubmissionModal'
 import {
   useApproveMutation,
@@ -32,7 +32,8 @@ export function useSubmissionReviewActions({
     useBulkApproveMutation()
   const { mutate: bulkReject, isPending: isBulkRejectPending } =
     useBulkRejectMutation()
-  const { mutate: deleteOne } = useDeleteMutation()
+  const { mutate: deleteOne, isPending: isDeletePending } = useDeleteMutation()
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
 
   const handleSuccessfulReject = useCallback(() => {
     closeRejectModal()
@@ -48,10 +49,45 @@ export function useSubmissionReviewActions({
 
   const handleDeleteOne = useCallback(
     (id: string) => {
-      deleteOne(id)
+      setDeleteTargetId(id)
     },
-    [deleteOne],
+    [],
   )
+
+  const handleCloseDeleteConfirm = useCallback(() => {
+    if (isDeletePending) {
+      return
+    }
+
+    setDeleteTargetId(null)
+  }, [isDeletePending])
+
+  const handleConfirmDelete = useCallback(() => {
+    if (!deleteTargetId) {
+      return
+    }
+
+    deleteOne(deleteTargetId, {
+      onSuccess: clearSelection,
+      onSettled: () => setDeleteTargetId(null),
+    })
+  }, [clearSelection, deleteOne, deleteTargetId])
+
+  const deleteConfirmDescription = deleteTargetId
+    ? `활동 ID ${deleteTargetId}을(를) 삭제합니다. 삭제한 활동은 되돌릴 수 없습니다.`
+    : '삭제할 활동을 선택해 주세요.'
+
+  const deleteConfirmProps = {
+    open: deleteTargetId !== null,
+    title: '활동을 삭제하시겠습니까?',
+    description: deleteConfirmDescription,
+    confirmLabel: '삭제',
+    cancelLabel: '취소',
+    loading: isDeletePending,
+    variant: 'danger' as const,
+    onConfirm: handleConfirmDelete,
+    onClose: handleCloseDeleteConfirm,
+  }
 
   const handleRejectOne = useCallback(
     (id: string) => {
@@ -100,6 +136,7 @@ export function useSubmissionReviewActions({
     handleBulkApprove,
     handleOpenBulkReject,
     handleRejectSubmit,
+    deleteConfirmProps,
     isBulkActionPending: isBulkApprovePending || isBulkRejectPending,
     isRejectSubmitting: isRejectPending || isBulkRejectPending,
   }

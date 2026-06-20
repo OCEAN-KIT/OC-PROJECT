@@ -19,6 +19,24 @@ function cleanupMarkerEntry(entry) {
   }
 }
 
+function getMarkerLngLat(area) {
+  const lon = Number(area?.lon);
+  const lat = Number(area?.lat);
+
+  if (
+    !Number.isFinite(lon) ||
+    !Number.isFinite(lat) ||
+    lat < -90 ||
+    lat > 90 ||
+    lon < -180 ||
+    lon > 180
+  ) {
+    return null;
+  }
+
+  return [lon, lat];
+}
+
 export default function RegionMarkers({
   mapRef,
   isMapLoaded,
@@ -42,51 +60,75 @@ export default function RegionMarkers({
 
     if (currentLocation && areas.length) {
       areas.forEach((a) => {
-        // React로 팝업 DOM 렌더
-        const popupNode = document.createElement("div");
-        const popupRoot = createRoot(popupNode);
-        popupRoot.render(
-          <RegionPopup
-            region={a}
-            onOpen={() => {
-              router.push(`/detailInfo/${a.id}`);
-            }}
-          />,
-        );
+        const lngLat = getMarkerLngLat(a);
 
-        const popup = new mapboxgl.Popup({
-          anchor: "left",
-          closeButton: false,
-          closeOnClick: true,
-          offset: [30, 0, 30, 0],
-          className: "region-popup no-tip",
-        }).setDOMContent(popupNode);
+        if (!lngLat) {
+          console.warn("[Mapbox] skip area marker: invalid lng/lat", {
+            id: a?.id,
+            name: a?.name,
+            lon: a?.lon,
+            lat: a?.lat,
+          });
+          return;
+        }
 
-        const markerEl = createMarkerElement({
-          color: getMarkerColor(a),
-          label: a?.name ?? "상세 보기",
-        });
+        try {
+          // React로 팝업 DOM 렌더
+          const popupNode = document.createElement("div");
+          const popupRoot = createRoot(popupNode);
+          popupRoot.render(
+            <RegionPopup
+              region={a}
+              onOpen={() => {
+                router.push(`/detailInfo/${a.id}`);
+              }}
+            />,
+          );
 
-        const marker = new mapboxgl.Marker({
-          element: markerEl,
-        })
-          .setLngLat([a.lon, a.lat])
-          .setPopup(popup)
-          .addTo(map);
+          const popup = new mapboxgl.Popup({
+            anchor: "left",
+            closeButton: false,
+            closeOnClick: true,
+            offset: [30, 0, 30, 0],
+            className: "region-popup no-tip",
+          }).setDOMContent(popupNode);
 
-        const el = marker.getElement();
-        const onClick = () => {
-          onSelectArea(a);
-        };
+          const markerEl = createMarkerElement({
+            color: getMarkerColor(a),
+            label: a?.name ?? "상세 보기",
+          });
+          markerEl.dataset.areaId = String(a?.id ?? "");
+          markerEl.dataset.areaName = a?.name ?? "";
 
-        el.addEventListener("click", onClick);
-        markerEntries.set(a.id, {
-          el,
-          marker,
-          onClick,
-          popup,
-          popupRoot,
-        });
+          const marker = new mapboxgl.Marker({
+            element: markerEl,
+          })
+            .setLngLat(lngLat)
+            .setPopup(popup)
+            .addTo(map);
+
+          const el = marker.getElement();
+          const onClick = () => {
+            onSelectArea(a);
+          };
+
+          el.addEventListener("click", onClick);
+          markerEntries.set(a.id, {
+            el,
+            marker,
+            onClick,
+            popup,
+            popupRoot,
+          });
+        } catch (error) {
+          console.error("[Mapbox] failed to create area marker", {
+            id: a?.id,
+            name: a?.name,
+            lon: a?.lon,
+            lat: a?.lat,
+            error,
+          });
+        }
       });
     }
 

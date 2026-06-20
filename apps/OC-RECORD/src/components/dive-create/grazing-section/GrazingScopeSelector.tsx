@@ -6,7 +6,7 @@ import OptionGrid from "@/components/ui/OptionGrid";
 import { MapPin } from "lucide-react";
 
 import type { OcRecordForm, GrazingScope } from "@ocean-kit/submission-domain/types/form";
-import CheonjiinKeyboard from "react-cji-keyboard";
+import CheonjiinKeyboardSheet from "../CheonjiinKeyboardSheet";
 
 const SCOPES: GrazingScope[] = ["국소", "구역", "광범위"];
 
@@ -67,23 +67,11 @@ export default function GrazingScopeSelector({
       </SelectCard>
 
       {open && (
-        <>
-          <div
-            className="fixed inset-0 z-40"
-            onMouseDown={closeKeyboard}
-            onTouchStart={closeKeyboard}
-          />
-
-          <div className="fixed left-0 right-0 bottom-0 z-50">
-            <div
-              className="mx-auto max-w-105  bg-white"
-              onMouseDown={(e) => e.stopPropagation()}
-              onTouchStart={(e) => e.stopPropagation()}
-            >
-              <CheonjiinKeyboard onChange={setValue} />
-            </div>
-          </div>
-        </>
+        <CheonjiinKeyboardSheet
+          baseValue={value}
+          onChange={setValue}
+          onClose={closeKeyboard}
+        />
       )}
     </>
   );

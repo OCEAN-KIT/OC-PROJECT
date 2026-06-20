@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import type { AreaDetail } from "@ocean-kit/dashboard-domain/types/areaDetail";
 import BeforeAfterCard from "./before-after-card";
+import PhotoLightbox from "./photo-lightbox";
 import TimelineView from "./timeline-view";
+import type { PhotoPreview } from "./types";
 
 type Props = {
   data: AreaDetail;
@@ -19,38 +21,50 @@ type SubTabKey = (typeof SUB_TABS)[number]["key"];
 export default function PhotosTab({ data }: Props) {
   const { photos } = data;
   const [subTab, setSubTab] = useState<SubTabKey>("before-after");
+  const [preview, setPreview] = useState<PhotoPreview | null>(null);
+  const closePreview = useCallback(() => setPreview(null), []);
 
   return (
     <section className="space-y-4">
-      {/* 서브탭 */}
-      <div className="flex items-center gap-1.5">
-        {SUB_TABS.map((t) => {
-          const on = subTab === t.key;
+      <div className="flex items-center gap-3">
+        {SUB_TABS.map((tab, index) => {
+          const active = subTab === tab.key;
           return (
-            <button
-              key={t.key}
-              onClick={() => setSubTab(t.key)}
-              className={[
-                "h-7 px-3 rounded-lg text-[12px] transition",
-                on
-                  ? "border border-indigo-200/65 bg-indigo-500/30 text-indigo-50"
-                  : "border border-white/10 bg-white/10 text-indigo-100/60 hover:border-indigo-300/50 hover:bg-indigo-500/18 hover:text-indigo-50",
-              ].join(" ")}
-            >
-              {t.label}
-            </button>
+            <div key={tab.key} className="flex items-center gap-3">
+              {index > 0 && <span className="h-3 w-px bg-white/12" />}
+              <button
+                type="button"
+                onClick={() => setSubTab(tab.key)}
+                className={[
+                  "relative pb-1 text-[12px] font-semibold transition",
+                  active
+                    ? "text-indigo-50"
+                    : "text-indigo-100/45 hover:text-indigo-50/85",
+                ].join(" ")}
+              >
+                {tab.label}
+                {active && (
+                  <span className="absolute inset-x-0 -bottom-px h-px bg-indigo-200/80" />
+                )}
+              </button>
+            </div>
           );
         })}
       </div>
 
-      {/* 콘텐츠 */}
       {subTab === "before-after" && (
         <BeforeAfterCard
           beforeUrl={photos.beforeUrl}
           afterUrl={photos.afterUrl}
+          onOpenPhoto={setPreview}
         />
       )}
-      {subTab === "timeline" && <TimelineView items={photos.timeline} />}
+
+      {subTab === "timeline" && (
+        <TimelineView items={photos.timeline} onOpenPhoto={setPreview} />
+      )}
+
+      <PhotoLightbox photo={preview} onClose={closePreview} />
     </section>
   );
 }

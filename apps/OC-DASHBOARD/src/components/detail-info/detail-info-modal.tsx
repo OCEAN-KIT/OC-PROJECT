@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "./header";
 import TabsBar, { type TabKey } from "./tabs";
@@ -8,7 +8,10 @@ import OverviewTab from "./tabs/overview-tab";
 import StatusTab from "./tabs/status-tab";
 import EcologyTab from "./tabs/ecology-tab";
 import EnvironmentTab from "./tabs/environment-tab";
-import PhotosTab from "./tabs/photos-tab";
+import BeforeAfterCard from "./tabs/photos-tab/before-after-card";
+import PhotoLightbox from "./tabs/photos-tab/photo-lightbox";
+import TimelineView from "./tabs/photos-tab/timeline-view";
+import type { PhotoPreview } from "./tabs/photos-tab/types";
 import { useAreaDetails } from "@/hooks/useAreas";
 
 type Props = {
@@ -18,6 +21,8 @@ type Props = {
 export default function DetailInfoModal({ areaId }: Props) {
   const router = useRouter();
   const [tab, setTab] = useState<TabKey>("overview");
+  const [preview, setPreview] = useState<PhotoPreview | null>(null);
+  const closePreview = useCallback(() => setPreview(null), []);
 
   const { data: area, isLoading, isError } = useAreaDetails(areaId);
 
@@ -81,7 +86,6 @@ export default function DetailInfoModal({ areaId }: Props) {
         <div className="max-md:flex max-md:flex-col max-md:h-full">
           <Header overview={area.overview} onClose={() => router.back()} />
 
-          <div className="h-px w-full oc-soft-divider" />
           <TabsBar active={tab} onChange={setTab} />
 
           <div className="p-5 space-y-2 max-md:px-4 max-md:pb-6 max-md:flex-1 max-md:overflow-y-auto">
@@ -89,10 +93,24 @@ export default function DetailInfoModal({ areaId }: Props) {
             {tab === "status" && <StatusTab data={area} />}
             {tab === "ecology" && <EcologyTab data={area} />}
             {tab === "environment" && <EnvironmentTab data={area} />}
-            {tab === "photos" && <PhotosTab data={area} />}
+            {tab === "before-after" && (
+              <BeforeAfterCard
+                beforeUrl={area.photos.beforeUrl}
+                afterUrl={area.photos.afterUrl}
+                onOpenPhoto={setPreview}
+              />
+            )}
+            {tab === "timeline" && (
+              <TimelineView
+                items={area.photos.timeline}
+                onOpenPhoto={setPreview}
+              />
+            )}
           </div>
         </div>
       </div>
+
+      <PhotoLightbox photo={preview} onClose={closePreview} />
 
       <style jsx global>{`
         @keyframes popIn {
