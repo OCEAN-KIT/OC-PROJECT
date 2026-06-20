@@ -12,64 +12,33 @@ import BeforeAfterCard from "./tabs/photos-tab/before-after-card";
 import PhotoLightbox from "./tabs/photos-tab/photo-lightbox";
 import TimelineView from "./tabs/photos-tab/timeline-view";
 import type { PhotoPreview } from "./tabs/photos-tab/types";
-import { useAreaDetails } from "@/hooks/useAreas";
+import type { AreaDetail } from "@ocean-kit/dashboard-domain/types/areaDetail";
+// import { revalidateFullRouteCache } from "@/server/revalidateFullRouteCache";
 
 type Props = {
   areaId: number;
+  area: AreaDetail;
 };
 
-export default function DetailInfoModal({ areaId }: Props) {
+export default function DetailInfoModal({ area }: Props) {
   const router = useRouter();
   const [tab, setTab] = useState<TabKey>("overview");
   const [preview, setPreview] = useState<PhotoPreview | null>(null);
+  // const [isRefreshPending, startRefreshTransition] = useTransition();
   const closePreview = useCallback(() => setPreview(null), []);
 
-  const { data: area, isLoading, isError } = useAreaDetails(areaId);
+  // const handleRefresh = useCallback(() => {
+  //   startRefreshTransition(async () => {
+  //     await revalidateFullRouteCache(`/detailInfo/${area.id}`);
+  //     router.refresh();
+  //   });
+  // }, [area.id, router]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && router.back();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [router]);
-
-  if (isLoading) {
-    return (
-      <div
-        aria-modal
-        role="dialog"
-        className="fixed inset-0 z-100 flex items-center justify-center px-4"
-      >
-        <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
-        <div className="relative z-10 rounded-xl border border-white/20 bg-slate-900/70 px-4 py-3 text-sm text-slate-100 oc-glass-subtle">
-          로딩 중...
-        </div>
-      </div>
-    );
-  }
-
-  if (isError || !area) {
-    return (
-      <div
-        aria-modal
-        role="dialog"
-        className="fixed inset-0 z-100 flex items-center justify-center px-4"
-      >
-        <div
-          className="absolute inset-0 bg-black/30 backdrop-blur-sm"
-          onClick={() => router.back()}
-        />
-        <div className="relative z-10 max-w-[92vw] rounded-2xl p-6 text-slate-100 oc-detail-shell">
-          <div className="text-sm">데이터가 없습니다. (ID: {areaId})</div>
-          <button
-            className="mt-4 rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm hover:bg-indigo-500/20"
-            onClick={() => router.back()}
-          >
-            닫기
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div
@@ -84,7 +53,13 @@ export default function DetailInfoModal({ areaId }: Props) {
 
       <div className="relative z-10 w-[820px] max-w-[92vw] rounded-2xl text-white animate-popIn oc-detail-shell max-md:w-full max-md:h-full max-md:max-w-none max-md:rounded-none max-md:border-0 max-md:shadow-none">
         <div className="max-md:flex max-md:flex-col max-md:h-full">
-          <Header overview={area.overview} onClose={() => router.back()} />
+          <Header
+            overview={area.overview}
+            // 데이터 정합성 확인 전까지 수동 revalidate 버튼 비활성화.
+            // isRefreshing={isRefreshPending}
+            // onRefresh={handleRefresh}
+            onClose={() => router.back()}
+          />
 
           <TabsBar active={tab} onChange={setTab} />
 

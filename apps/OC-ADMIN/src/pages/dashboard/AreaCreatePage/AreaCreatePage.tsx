@@ -20,7 +20,7 @@ export default function AreaCreatePage() {
     const { name, value, type } = event.target
     setBasicPayload((currentPayload) => ({
       ...currentPayload,
-      [name]: type === 'number' ? Number(value) : value,
+      [name]: type === 'number' ? (value === '' ? 0 : Number(value)) : value,
     }))
   }
 

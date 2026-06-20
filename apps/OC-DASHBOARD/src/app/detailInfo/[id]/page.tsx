@@ -3,11 +3,12 @@ import { notFound } from "next/navigation";
 import DetailInfo from "@/components/detail-info/detail-info";
 import DetailInfoLoading from "@/components/detail-info/detail-info-loading";
 
-export const revalidate = 600;
+// export const revalidate = 600;
+export const dynamic = "force-dynamic";
 
-export function generateStaticParams(): { id: string }[] {
-  return [];
-}
+// export function generateStaticParams(): { id: string }[] {
+//   return [];
+// }
 
 export default async function DetailInfoPage({
   params,

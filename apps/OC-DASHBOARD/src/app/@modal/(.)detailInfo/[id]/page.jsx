@@ -1,11 +1,29 @@
-"use client";
+import { notFound } from "next/navigation";
+import DetailInfoModalRoute from "@/components/detail-info/detail-info-modal-route";
 
-import * as React from "react";
-import DetailInfoModal from "@/components/detail-info/detail-info-modal";
+export const revalidate = 600;
 
-export default function Page({ params }) {
-  const { id } = React.use(params);
+export function generateStaticParams() {
+  return [];
+}
+
+function parseAreaId(id) {
+  if (!/^\d+$/.test(id)) {
+    notFound();
+  }
+
   const areaId = Number(id);
 
-  return <DetailInfoModal areaId={areaId} />;
+  if (!Number.isSafeInteger(areaId)) {
+    notFound();
+  }
+
+  return areaId;
+}
+
+export default async function Page({ params }) {
+  const { id } = await params;
+  const areaId = parseAreaId(id);
+
+  return <DetailInfoModalRoute areaId={areaId} />;
 }

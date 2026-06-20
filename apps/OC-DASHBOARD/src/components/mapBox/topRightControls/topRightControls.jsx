@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import { getAreaDetail } from "@ocean-kit/dashboard-domain/api/areaDetail";
+import { useMemo, useRef, useState } from "react";
 import ControlsHeader from "./controlsHeader";
 import RegionSelector from "./regionSelector";
 import AreaGroupsList from "./areaGroupList";
@@ -29,22 +27,6 @@ export default function TopRightControls({
   const [query, setQuery] = useState("");
   const [mobileSnap, setMobileSnap] = useState(SNAP_PEEK);
   const searchRef = useRef(null);
-  const queryClient = useQueryClient();
-
-  useEffect(() => {
-    if (!areas?.length) return;
-
-    areas.forEach((area) => {
-      const areaId = Number(area?.id);
-      if (!Number.isSafeInteger(areaId)) return;
-
-      void queryClient.prefetchQuery({
-        queryKey: ["areaDetail", areaId],
-        queryFn: () => getAreaDetail(areaId),
-        staleTime: 5 * 60 * 1000,
-      });
-    });
-  }, [areas, queryClient]);
 
   const handleRegion = (region) => {
     onSelectRegion(region);

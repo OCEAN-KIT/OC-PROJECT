@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import type { BasicPayload } from '@ocean-kit/dashboard-domain/types/areaBasicInfo'
 import { MapPin, Pencil } from 'lucide-react'
@@ -39,12 +40,58 @@ type Props = {
   isEditing?: boolean
 }
 
+type NumericFieldName = 'depth' | 'areaSize'
+
+const numberToDraft = (value: number) => (value === 0 ? '' : String(value))
+
 export default function BasicInfoSection({
   basicPayload,
   onBasicChange,
   onEdit,
   isEditing,
 }: Props) {
+  const [editingNumericField, setEditingNumericField] =
+    useState<NumericFieldName | null>(null)
+  const [numericDrafts, setNumericDrafts] = useState<
+    Record<NumericFieldName, string>
+  >({
+    depth: numberToDraft(basicPayload.depth),
+    areaSize: numberToDraft(basicPayload.areaSize),
+  })
+
+  useEffect(() => {
+    setNumericDrafts((currentDrafts) => ({
+      depth:
+        editingNumericField === 'depth'
+          ? currentDrafts.depth
+          : numberToDraft(basicPayload.depth),
+      areaSize:
+        editingNumericField === 'areaSize'
+          ? currentDrafts.areaSize
+          : numberToDraft(basicPayload.areaSize),
+    }))
+  }, [basicPayload.areaSize, basicPayload.depth, editingNumericField])
+
+  const handleNumericChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const fieldName = event.target.name as NumericFieldName
+
+    setNumericDrafts((currentDrafts) => ({
+      ...currentDrafts,
+      [fieldName]: event.target.value,
+    }))
+    onBasicChange(event)
+  }
+
+  const handleNumericBlur = (fieldName: NumericFieldName) => {
+    setEditingNumericField((currentField) =>
+      currentField === fieldName ? null : currentField,
+    )
+    setNumericDrafts((currentDrafts) => ({
+      ...currentDrafts,
+      [fieldName]: numberToDraft(basicPayload[fieldName]),
+    }))
+  }
+
   return (
     <DashboardSection.Root>
       <DashboardSection.Header>
@@ -235,8 +282,10 @@ export default function BasicInfoSection({
               type="number"
               id="depth"
               name="depth"
-              value={basicPayload.depth}
-              onChange={onBasicChange}
+              value={numericDrafts.depth}
+              onFocus={() => setEditingNumericField('depth')}
+              onBlur={() => handleNumericBlur('depth')}
+              onChange={handleNumericChange}
               placeholder="0"
               min="0"
               step="0.1"
@@ -255,8 +304,10 @@ export default function BasicInfoSection({
               type="number"
               id="areaSize"
               name="areaSize"
-              value={basicPayload.areaSize}
-              onChange={onBasicChange}
+              value={numericDrafts.areaSize}
+              onFocus={() => setEditingNumericField('areaSize')}
+              onBlur={() => handleNumericBlur('areaSize')}
+              onChange={handleNumericChange}
               placeholder="0"
               min="0"
               step="0.1"
