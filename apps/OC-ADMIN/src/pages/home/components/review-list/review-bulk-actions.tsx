@@ -12,8 +12,10 @@ type Props = {
   selectedCount: number;
   allSelected: boolean;
   onToggleAll: () => void;
+  onExportCsv: () => void;
   onBulkApprove: () => void;
   onOpenReject: () => void;
+  exportingCsv?: boolean;
   disabled?: boolean;
 };
 
@@ -23,8 +25,10 @@ export default function ReviewBulkActions({
   selectedCount,
   allSelected,
   onToggleAll,
+  onExportCsv,
   onBulkApprove,
   onOpenReject,
+  exportingCsv = false,
   disabled = false,
 }: Props) {
   const any = selectedCount > 0;
@@ -43,6 +47,16 @@ export default function ReviewBulkActions({
                    hover:bg-white/10 disabled:opacity-40 disabled:cursor-not-allowed"
       >
         {allSelected ? "전체 해제" : "전체 선택"}
+      </button>
+
+      <button
+        type="button"
+        onClick={onExportCsv}
+        disabled={disabled || exportingCsv || !any}
+        className="h-9 px-3 rounded-md text-sm border border-blue-400/30 bg-blue-400/15
+                   hover:bg-blue-400/20 disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        {exportingCsv ? "내보내는 중" : "CSV 내보내기"}
       </button>
 
       <button

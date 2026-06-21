@@ -2,7 +2,7 @@
 
 /*
  * 홈 목록에서 선택 가능한 제출 항목의 선택 상태를 관리합니다.
- * pending 상태인 항목만 선택 대상으로 계산하고,
+ * CSV 내보내기는 승인/반려 여부와 무관하게 동작해야 하므로 모든 항목을 선택 대상으로 계산하고,
  * 단일/전체 토글, 초기화, 목록 변경 시 사라진 선택 id 정리를 제공합니다.
  */
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -10,10 +10,7 @@ import type { Submission } from "../api/submissions";
 
 export function useSubmissionSelection(items: Submission[]) {
   const selectableIds = useMemo(
-    () =>
-      items
-        .filter((i) => i.status === "pending")
-        .map((i) => String(i.id)),
+    () => items.map((i) => String(i.id)),
     [items]
   );
   const selectableIdSet = useMemo(() => new Set(selectableIds), [selectableIds]);

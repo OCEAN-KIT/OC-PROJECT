@@ -5,6 +5,7 @@
  */
 import { useCallback, useState } from 'react'
 import type { RejectSubmitPayload } from './useRejectSubmissionModal'
+import { csvExportByIds } from '../api/submissions'
 import {
   useApproveMutation,
   useBulkApproveMutation,
@@ -34,6 +35,7 @@ export function useSubmissionReviewActions({
     useBulkRejectMutation()
   const { mutate: deleteOne, isPending: isDeletePending } = useDeleteMutation()
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null)
+  const [isCsvExporting, setIsCsvExporting] = useState(false)
 
   const handleSuccessfulReject = useCallback(() => {
     closeRejectModal()
@@ -106,6 +108,25 @@ export function useSubmissionReviewActions({
     bulkApprove(selectedIds, { onSuccess: clearSelection })
   }, [bulkApprove, clearSelection, selected])
 
+  const handleExportCsv = useCallback(async () => {
+    const selectedIds = Array.from(selected)
+
+    if (selectedIds.length === 0 || isCsvExporting) {
+      return
+    }
+
+    setIsCsvExporting(true)
+
+    try {
+      await csvExportByIds(selectedIds)
+    } catch (error) {
+      console.error(error)
+      window.alert('CSV 내보내기에 실패했습니다.')
+    } finally {
+      setIsCsvExporting(false)
+    }
+  }, [isCsvExporting, selected])
+
   const handleOpenBulkReject = useCallback(() => {
     openRejectModal(Array.from(selected))
   }, [openRejectModal, selected])
@@ -134,10 +155,12 @@ export function useSubmissionReviewActions({
     handleDeleteOne,
     handleRejectOne,
     handleBulkApprove,
+    handleExportCsv,
     handleOpenBulkReject,
     handleRejectSubmit,
     deleteConfirmProps,
     isBulkActionPending: isBulkApprovePending || isBulkRejectPending,
+    isCsvExporting,
     isRejectSubmitting: isRejectPending || isBulkRejectPending,
   }
 }

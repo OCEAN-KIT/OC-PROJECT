@@ -43,8 +43,10 @@ export function useHomePage() {
         selectedCount: selection.count,
         allSelected: selection.allSelected,
         onToggleAll: selection.toggleAll,
+        onExportCsv: reviewActions.handleExportCsv,
         onBulkApprove: reviewActions.handleBulkApprove,
         onOpenReject: reviewActions.handleOpenBulkReject,
+        exportingCsv: reviewActions.isCsvExporting,
         disabled:
           submissionList.listSectionProps.isFetching ||
           reviewActions.isBulkActionPending,

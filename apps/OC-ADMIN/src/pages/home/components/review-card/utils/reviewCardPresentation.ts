@@ -72,6 +72,5 @@ export function getReviewCardPresentation(review: Submission) {
     submittedAtLabel: formatSubmissionDateTime(review.datetime),
     status: REVIEW_STATUS_PRESENTATION[review.status],
     isPending,
-    isSelectable: isPending,
   };
 }

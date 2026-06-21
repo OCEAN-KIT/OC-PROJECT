@@ -15,6 +15,7 @@ import type {
 import type { FilterState } from "../components/filter-bar/types";
 import { debugAxiosError } from "./_debugAxios";
 import { isAxiosError } from "axios";
+import { extractFilename, saveBlobAsFile } from "#/shared/utils/download";
 
 /** 서버 스펙: PENDING, APPROVED, REJECTED, DELETED */
 export type ReviewStatus = "pending" | "approved" | "rejected" | "deleted";
@@ -33,6 +34,7 @@ export type Submission = {
 export type ListFilters = FilterState;
 
 type Reason = { templateCode?: string; message: string };
+type CsvExportId = number | string;
 
 const compact = (obj: Record<string, unknown>) =>
   Object.fromEntries(
@@ -240,6 +242,37 @@ export async function bulkDelete(ids: string[]) {
     return data;
   } catch (err) {
     return debugAxiosError(err, "bulkDelete()", { ids });
+  }
+}
+
+export async function csvExportByIds(ids: CsvExportId[], filename?: string) {
+  if (!ids.length) {
+    throw new Error("다운로드할 ID가 없습니다.");
+  }
+
+  try {
+    const response = await axiosInstance.post(
+      "/api/admin/exports/download/by-ids",
+      { format: "CSV" as const, ids },
+      {
+        responseType: "blob",
+        headers: { Accept: "text/csv,application/octet-stream" },
+      },
+    );
+
+    const blob = new Blob([response.data], { type: "text/csv;charset=utf-8" });
+    const contentDisposition = (
+      response.headers as Record<string, string | undefined>
+    )["content-disposition"];
+    const serverFilename = extractFilename(contentDisposition);
+    const fallback =
+      ids.length === 1
+        ? `submission_${ids[0]}.csv`
+        : `submissions_${ids.length}_items.csv`;
+
+    saveBlobAsFile(blob, filename || serverFilename || fallback);
+  } catch (err) {
+    return debugAxiosError(err, "csvExportByIds()", { ids });
   }
 }
 

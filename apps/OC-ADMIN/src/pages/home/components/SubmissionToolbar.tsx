@@ -18,8 +18,10 @@ type SubmissionToolbarProps = {
     selectedCount: number
     allSelected: boolean
     onToggleAll: () => void
+    onExportCsv: () => void
     onBulkApprove: () => void
     onOpenReject: () => void
+    exportingCsv: boolean
     disabled: boolean
   }
 }
@@ -48,8 +50,10 @@ export function SubmissionToolbar({
         selectedCount={bulkActions.selectedCount}
         allSelected={bulkActions.allSelected}
         onToggleAll={bulkActions.onToggleAll}
+        onExportCsv={bulkActions.onExportCsv}
         onBulkApprove={bulkActions.onBulkApprove}
         onOpenReject={bulkActions.onOpenReject}
+        exportingCsv={bulkActions.exportingCsv}
         disabled={bulkActions.disabled}
       />
     </div>

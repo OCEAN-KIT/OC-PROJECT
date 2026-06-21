@@ -91,7 +91,6 @@ function ReviewCard({
       <div className={`${REVIEW_GRID} items-center`}>
         <ReviewCardSelectionCell
           id={review.id}
-          isSelectable={presentation.isSelectable}
           selected={selected}
           onToggle={handleToggle}
         />
