@@ -6,6 +6,8 @@ import type {
 } from "@ocean-kit/submission-domain/types/submission";
 import axiosInstance from "@/utils/axiosInstance";
 
+const RECORD_SUBMISSIONS_BASE_PATH = "/api/record/submissions";
+
 export type { SubmissionListItemServer, SubmissionListResponse };
 
 /** 프런트에서 쓰기 쉬운 목록 아이템 */
@@ -46,9 +48,13 @@ export async function fetchSubmissions(params?: {
     size,
     status,
     keyword,
+    sortBy: "submittedAt",
+    sortDir: "DESC",
   };
 
-  const data = await getSubmissionList(axiosInstance, queryParams);
+  const data = await getSubmissionList(axiosInstance, queryParams, {
+    basePath: RECORD_SUBMISSIONS_BASE_PATH,
+  });
 
   // 401/403 등은 axiosInstance 인터셉터에서 처리되거나 여기서 throw
   if (!data?.success) {

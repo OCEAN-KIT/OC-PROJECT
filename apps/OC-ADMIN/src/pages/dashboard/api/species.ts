@@ -19,9 +19,12 @@ export type CreateSpeciesRequest = {
 
 export type CreateSpeciesResponse = ApiResponse<Species>
 
+const ADMIN_SPECIES_PATH = '/api/admin/species'
+
 export async function fetchSpecies(): Promise<Species[]> {
-  const res =
-    await axiosInstance.get<ApiResponse<Species[]>>('/api/bio/species')
+  const res = await axiosInstance.get<ApiResponse<Species[]>>(
+    ADMIN_SPECIES_PATH,
+  )
   return res.data.data
 }
 
@@ -29,7 +32,7 @@ export async function createSpecies(
   data: CreateSpeciesRequest,
 ): Promise<CreateSpeciesResponse> {
   const res = await axiosInstance.post<CreateSpeciesResponse>(
-    '/api/bio/species',
+    ADMIN_SPECIES_PATH,
     data,
   )
   return res.data
@@ -40,12 +43,12 @@ export async function updateSpecies(
   data: CreateSpeciesRequest,
 ): Promise<CreateSpeciesResponse> {
   const res = await axiosInstance.patch<CreateSpeciesResponse>(
-    `/api/bio/species/${id}`,
+    `${ADMIN_SPECIES_PATH}/${id}`,
     data,
   )
   return res.data
 }
 
 export async function deleteSpecies(id: number): Promise<void> {
-  await axiosInstance.delete(`/api/bio/species/${id}`)
+  await axiosInstance.delete(`${ADMIN_SPECIES_PATH}/${id}`)
 }

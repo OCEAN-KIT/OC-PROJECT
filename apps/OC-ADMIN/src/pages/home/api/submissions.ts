@@ -36,6 +36,8 @@ export type ListFilters = FilterState;
 type Reason = { templateCode?: string; message: string };
 type CsvExportId = number | string;
 
+const ADMIN_SUBMISSIONS_BASE_PATH = "/api/admin/submissions";
+
 const compact = (obj: Record<string, unknown>) =>
   Object.fromEntries(
     Object.entries(obj).filter(
@@ -144,7 +146,11 @@ export async function fetchSubmissions(params: {
   }) as GetSubmissionListParams;
 
   try {
-    return mapServerToClient(await getSubmissionList(axiosInstance, queryParams));
+    return mapServerToClient(
+      await getSubmissionList(axiosInstance, queryParams, {
+        basePath: ADMIN_SUBMISSIONS_BASE_PATH,
+      }),
+    );
   } catch (err) {
     // 500/C001일 때 status 없이 1회 재시도
     if (isAxiosError(err)) {
@@ -164,7 +170,9 @@ export async function fetchSubmissions(params: {
 
         try {
           return mapServerToClient(
-            await getSubmissionList(axiosInstance, retryParams),
+            await getSubmissionList(axiosInstance, retryParams, {
+              basePath: ADMIN_SUBMISSIONS_BASE_PATH,
+            }),
           );
         } catch (e2) {
           return debugAxiosError(e2, "fetchSubmissions(retry)", {
@@ -181,7 +189,7 @@ export async function fetchSubmissions(params: {
 export async function approveSubmission(id: string) {
   try {
     const { data } = await axiosInstance.post(
-      `/api/admin/submissions/${id}/approve`,
+      `${ADMIN_SUBMISSIONS_BASE_PATH}/${id}/approve`,
     );
     return data;
   } catch (err) {
@@ -192,7 +200,7 @@ export async function approveSubmission(id: string) {
 export async function rejectSubmission(id: string, reason: Reason) {
   try {
     const { data } = await axiosInstance.post(
-      `/api/admin/submissions/${id}/reject`,
+      `${ADMIN_SUBMISSIONS_BASE_PATH}/${id}/reject`,
       { reason },
     );
     return data;
@@ -204,7 +212,7 @@ export async function rejectSubmission(id: string, reason: Reason) {
 export async function bulkApprove(ids: string[]) {
   try {
     const { data } = await axiosInstance.post(
-      `/api/admin/submissions/bulk/approve`,
+      `${ADMIN_SUBMISSIONS_BASE_PATH}/bulk/approve`,
       { ids },
     );
     return data;
@@ -216,7 +224,7 @@ export async function bulkApprove(ids: string[]) {
 export async function bulkReject(ids: string[], reason: Reason) {
   try {
     const { data } = await axiosInstance.post(
-      `/api/admin/submissions/bulk/reject`,
+      `${ADMIN_SUBMISSIONS_BASE_PATH}/bulk/reject`,
       { ids, reason },
     );
     return data;
@@ -227,7 +235,9 @@ export async function bulkReject(ids: string[], reason: Reason) {
 
 export async function deleteSubmission(id: string) {
   try {
-    const { data } = await axiosInstance.delete(`/api/admin/submissions/${id}`);
+    const { data } = await axiosInstance.delete(
+      `${ADMIN_SUBMISSIONS_BASE_PATH}/${id}`,
+    );
     return data;
   } catch (err) {
     return debugAxiosError(err, "deleteSubmission()", { id });
@@ -236,9 +246,12 @@ export async function deleteSubmission(id: string) {
 
 export async function bulkDelete(ids: string[]) {
   try {
-    const { data } = await axiosInstance.delete(`/api/admin/submissions/bulk`, {
-      data: { ids },
-    });
+    const { data } = await axiosInstance.delete(
+      `${ADMIN_SUBMISSIONS_BASE_PATH}/bulk`,
+      {
+        data: { ids },
+      },
+    );
     return data;
   } catch (err) {
     return debugAxiosError(err, "bulkDelete()", { ids });
@@ -280,7 +293,9 @@ export type { SubmissionDetailServer } from "@ocean-kit/submission-domain/types/
 
 export async function getSubmissionDetails(id: number) {
   try {
-    return await getSubmissionDetail(axiosInstance, id);
+    return await getSubmissionDetail(axiosInstance, id, {
+      basePath: ADMIN_SUBMISSIONS_BASE_PATH,
+    });
   } catch (err) {
     return debugAxiosError(err, "getSubmissionDetails()", { id });
   }

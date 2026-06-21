@@ -8,6 +8,7 @@ axiosInstance.interceptors.request.use((config) => {
   const isInternalApi =
     typeof config.url === "string" &&
     (config.url.startsWith("/api/admin") ||
+      config.url.startsWith("/api/record") ||
       config.url.startsWith("/api/user") ||
       config.url.startsWith("/api/image"));
 

@@ -1,5 +1,6 @@
 const DEFAULT_UPLOAD_TIMEOUT_MS = 30_000;
-const DEFAULT_PRESIGNED_PUT_URL_PATH = "/api/image/presigned-put-url";
+const DEFAULT_PRESIGNED_PUT_URL_PATH =
+  "/api/record/images/presigned-put-url";
 const DEFAULT_DELETE_IMAGE_PATH = "/api/image";
 
 type HttpRequestConfig = {

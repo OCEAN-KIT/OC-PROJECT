@@ -5,10 +5,14 @@ import { extractFilename, saveBlobAsFile } from '../utils/download'
 
 type CsvExportId = number | string
 
+const ADMIN_SUBMISSIONS_BASE_PATH = '/api/admin/submissions'
+
 export type { SubmissionDetailServer }
 
 export async function getSubmissionDetails(id: number | string) {
-  return getSubmissionDetail(axiosInstance, id)
+  return getSubmissionDetail(axiosInstance, id, {
+    basePath: ADMIN_SUBMISSIONS_BASE_PATH,
+  })
 }
 
 export async function csvExportByIds(ids: CsvExportId[], filename?: string) {

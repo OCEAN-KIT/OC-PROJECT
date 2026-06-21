@@ -8,7 +8,7 @@ export async function createSubmission(
   payload: SubmissionCreateRequest,
 ): Promise<SubmissionCreateResponse> {
   const { data } = await axiosInstance.post<SubmissionCreateResponse>(
-    "/api/admin/submissions",
+    "/api/record/submissions",
     payload,
   );
 

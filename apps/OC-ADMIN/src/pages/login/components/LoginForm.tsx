@@ -10,7 +10,6 @@ export function LoginForm() {
     values,
     updateField,
     submitLogin,
-    goToRegister,
     errorMessage,
     isSubmitting,
   } = useLoginForm()
@@ -83,16 +82,6 @@ export function LoginForm() {
         </button>
       </form>
 
-      <div className="mt-6 text-center">
-        <button
-          type="button"
-          onClick={goToRegister}
-          disabled={isSubmitting}
-          className="text-[13px] font-medium text-gray-700 underline underline-offset-4 hover:text-gray-900 disabled:opacity-60"
-        >
-          회원가입
-        </button>
-      </div>
     </>
   )
 }

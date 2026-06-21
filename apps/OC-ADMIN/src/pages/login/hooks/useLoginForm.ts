@@ -4,7 +4,6 @@
  * 실제 인증 요청과 라우팅은 useLoginMutation에 위임합니다.
  */
 import { useState } from 'react'
-import { useNavigate } from '@tanstack/react-router'
 import type { LoginFormField, LoginFormValues } from '../types'
 import { useLoginMutation } from './useLoginMutation'
 
@@ -14,7 +13,6 @@ const initialLoginFormValues: LoginFormValues = {
 }
 
 export function useLoginForm() {
-  const navigate = useNavigate()
   const [values, setValues] = useState<LoginFormValues>(initialLoginFormValues)
   const loginMutation = useLoginMutation()
 
@@ -33,15 +31,10 @@ export function useLoginForm() {
     loginMutation.mutate(values)
   }
 
-  const goToRegister = () => {
-    void navigate({ to: '/register' })
-  }
-
   return {
     values,
     updateField,
     submitLogin,
-    goToRegister,
     errorMessage:
       loginMutation.error instanceof Error ? loginMutation.error.message : '',
     isSubmitting: loginMutation.isPending,

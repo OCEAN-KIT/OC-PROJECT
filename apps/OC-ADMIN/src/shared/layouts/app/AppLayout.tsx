@@ -6,7 +6,7 @@
 import { Outlet, useRouterState } from '@tanstack/react-router'
 import { MainHeader } from './MainHeader'
 
-const HEADER_HIDDEN_PATHS = new Set(['/login', '/register'])
+const HEADER_HIDDEN_PATHS = new Set(['/login'])
 
 export function AppLayout() {
   const pathname = useRouterState({

@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HomeRouteImport } from './routes/home'
@@ -21,11 +20,6 @@ import { Route as DashboardSpeciesCreateRouteImport } from './routes/dashboard.s
 import { Route as DashboardCreateRouteImport } from './routes/dashboard.create'
 import { Route as DashboardAreaIdRouteImport } from './routes/dashboard.$areaId'
 
-const RegisterRoute = RegisterRouteImport.update({
-  id: '/register',
-  path: '/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -83,7 +77,6 @@ export interface FileRoutesByFullPath {
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
-  '/register': typeof RegisterRoute
   '/dashboard/$areaId': typeof DashboardAreaIdRoute
   '/dashboard/create': typeof DashboardCreateRoute
   '/dashboard/speciesCreate': typeof DashboardSpeciesCreateRoute
@@ -95,7 +88,6 @@ export interface FileRoutesByTo {
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
-  '/register': typeof RegisterRoute
   '/dashboard/$areaId': typeof DashboardAreaIdRoute
   '/dashboard/create': typeof DashboardCreateRoute
   '/dashboard/speciesCreate': typeof DashboardSpeciesCreateRoute
@@ -109,7 +101,6 @@ export interface FileRoutesById {
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
-  '/register': typeof RegisterRoute
   '/dashboard/$areaId': typeof DashboardAreaIdRoute
   '/dashboard/create': typeof DashboardCreateRoute
   '/dashboard/speciesCreate': typeof DashboardSpeciesCreateRoute
@@ -124,7 +115,6 @@ export interface FileRouteTypes {
     | '/home'
     | '/login'
     | '/profile'
-    | '/register'
     | '/dashboard/$areaId'
     | '/dashboard/create'
     | '/dashboard/speciesCreate'
@@ -136,7 +126,6 @@ export interface FileRouteTypes {
     | '/home'
     | '/login'
     | '/profile'
-    | '/register'
     | '/dashboard/$areaId'
     | '/dashboard/create'
     | '/dashboard/speciesCreate'
@@ -149,7 +138,6 @@ export interface FileRouteTypes {
     | '/home'
     | '/login'
     | '/profile'
-    | '/register'
     | '/dashboard/$areaId'
     | '/dashboard/create'
     | '/dashboard/speciesCreate'
@@ -163,19 +151,11 @@ export interface RootRouteChildren {
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
   ProfileRoute: typeof ProfileRoute
-  RegisterRoute: typeof RegisterRoute
   ReviewSubmissionIdRoute: typeof ReviewSubmissionIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/register': {
-      id: '/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/profile': {
       id: '/profile'
       path: '/profile'
@@ -273,7 +253,6 @@ const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
   ProfileRoute: ProfileRoute,
-  RegisterRoute: RegisterRoute,
   ReviewSubmissionIdRoute: ReviewSubmissionIdRoute,
 }
 export const routeTree = rootRouteImport
