@@ -35,8 +35,31 @@ export type ListFilters = FilterState;
 
 type Reason = { templateCode?: string; message: string };
 type CsvExportId = number | string;
+type ApiEnvelope = {
+  success?: boolean;
+  message?: string | Record<string, unknown>;
+  skipped?: unknown[];
+};
 
 const ADMIN_SUBMISSIONS_BASE_PATH = "/api/admin/submissions";
+const STATUS_CHANGE_LOCKED_MESSAGE =
+  "이미 반려 또는 승인 처리된 작업은 변경할 수 없습니다.";
+
+function getApiEnvelopeMessage(data: ApiEnvelope) {
+  if (typeof data.message === "string" && data.message.trim().length > 0) {
+    return data.message;
+  }
+
+  return null;
+}
+
+function assertApiSuccess<T extends ApiEnvelope>(data: T, fallback: string) {
+  if (data.success === false || (data.skipped?.length ?? 0) > 0) {
+    throw new Error(getApiEnvelopeMessage(data) ?? fallback);
+  }
+
+  return data;
+}
 
 const compact = (obj: Record<string, unknown>) =>
   Object.fromEntries(
@@ -191,7 +214,7 @@ export async function approveSubmission(id: string) {
     const { data } = await axiosInstance.post(
       `${ADMIN_SUBMISSIONS_BASE_PATH}/${id}/approve`,
     );
-    return data;
+    return assertApiSuccess(data, STATUS_CHANGE_LOCKED_MESSAGE);
   } catch (err) {
     return debugAxiosError(err, "approveSubmission()", { id });
   }
@@ -203,7 +226,7 @@ export async function rejectSubmission(id: string, reason: Reason) {
       `${ADMIN_SUBMISSIONS_BASE_PATH}/${id}/reject`,
       { reason },
     );
-    return data;
+    return assertApiSuccess(data, STATUS_CHANGE_LOCKED_MESSAGE);
   } catch (err) {
     return debugAxiosError(err, "rejectSubmission()", { id, reason });
   }
@@ -215,7 +238,7 @@ export async function bulkApprove(ids: string[]) {
       `${ADMIN_SUBMISSIONS_BASE_PATH}/bulk/approve`,
       { ids },
     );
-    return data;
+    return assertApiSuccess(data, STATUS_CHANGE_LOCKED_MESSAGE);
   } catch (err) {
     return debugAxiosError(err, "bulkApprove()", { ids });
   }
@@ -227,7 +250,7 @@ export async function bulkReject(ids: string[], reason: Reason) {
       `${ADMIN_SUBMISSIONS_BASE_PATH}/bulk/reject`,
       { ids, reason },
     );
-    return data;
+    return assertApiSuccess(data, STATUS_CHANGE_LOCKED_MESSAGE);
   } catch (err) {
     return debugAxiosError(err, "bulkReject()", { ids, reason });
   }

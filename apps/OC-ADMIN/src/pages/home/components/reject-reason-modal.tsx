@@ -12,6 +12,7 @@ type Props = {
   open: boolean;
   ids: string[]; // 반려 대상 id들 (단일/일괄 공용)
   loading?: boolean;
+  errorMessage?: string;
   onClose: () => void;
   onSubmit: (payload: {
     ids: string[];
@@ -19,7 +20,14 @@ type Props = {
   }) => void;
 };
 
-export default function RejectModal({ open, ids, loading = false, onClose, onSubmit }: Props) {
+export default function RejectModal({
+  open,
+  ids,
+  loading = false,
+  errorMessage = "",
+  onClose,
+  onSubmit,
+}: Props) {
   const [message, setMessage] = useState("");
   const [templateCode, setTemplateCode] = useState<string | undefined>(
     undefined
@@ -71,6 +79,12 @@ export default function RejectModal({ open, ids, loading = false, onClose, onSub
           <div className="text-sm text-gray-600">
             대상 <b>{ids.length}</b>건: {ids.join(", ")}
           </div>
+
+          {errorMessage && (
+            <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm font-medium text-rose-600">
+              {errorMessage}
+            </p>
+          )}
 
           {/* 필수: 자유 입력 사유 */}
           <div className="space-y-1">

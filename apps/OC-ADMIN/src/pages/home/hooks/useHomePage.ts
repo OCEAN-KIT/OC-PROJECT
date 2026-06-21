@@ -25,6 +25,7 @@ export function useHomePage() {
   // 승인/반려/삭제 같은 서버 변경 동작을 한곳에서 연결합니다.
   // 선택 초기화, 반려 성공 후 모달 닫기처럼 여러 hook을 함께 써야 하는 후처리도 여기서 묶습니다.
   const reviewActions = useSubmissionReviewActions({
+    items: submissionList.items,
     selected: selection.selected,
     clearSelection: selection.clear,
     openRejectModal: rejectModal.open,
@@ -74,7 +75,8 @@ export function useHomePage() {
       open: rejectModal.isOpen,
       ids: rejectModal.ids,
       loading: reviewActions.isRejectSubmitting,
-      onClose: rejectModal.close,
+      errorMessage: reviewActions.rejectErrorMessage ?? '',
+      onClose: reviewActions.handleCloseRejectModal,
       onSubmit: reviewActions.handleRejectSubmit,
     },
 
