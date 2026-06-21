@@ -5,11 +5,24 @@ export type Region = {
   label: string;
   color: string;
   center: [number, number];
+  zoom: number;
 };
 
 export const REGIONS: Region[] = [
-  { id: "POHANG", label: "포항", color: "#ef4444", center: [129.343, 36.019] },
-  { id: "ULJIN", label: "울진", color: "#ef4444", center: [129.409, 36.993] },
+  {
+    id: "POHANG",
+    label: "포항",
+    color: "#ef4444",
+    center: [129.343, 36.019],
+    zoom: 10.3,
+  },
+  {
+    id: "ULJIN",
+    label: "울진",
+    color: "#ef4444",
+    center: [129.467693, 36.722994],
+    zoom: 13.2,
+  },
 ];
 
 export const COORDS = Object.fromEntries(

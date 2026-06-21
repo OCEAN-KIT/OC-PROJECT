@@ -9,6 +9,44 @@
 
 > `apps/OC-ADMIN-NEXT`는 Next.js 기반 레거시 관리자 코드입니다. 현재 workspace에서 제외되어 있고 운영/배포 대상이 아닙니다. 현재 운영 관리자 앱은 `apps/OC-ADMIN`입니다.
 
+## Applications Overview
+
+### OC DASHBOARD
+
+> **B2C | 바다숲 복원 성과를 데이터 기반 3D 지도로 시각화**
+
+- **Geo Analytics**: **PostGIS + H3** 기반 공간 표준화/집계로 구역·기간별 비교 가능한 지표 제공
+- **3D Visualization**: **Mapbox** 기반 3D 레이어로 복원 밀도/성과를 직관적으로 표현
+- **AI Chatbot**: **On-Premise LLM(vLLM) + RAG**로 지표/문서 근거 기반 Q&A 제공
+- **Forecasting**: **활착률·생존률·생물다양성** 등 핵심 지표의 **6개월 시계열 예측 모델** 제공
+- **MLOps Pipeline**: **Airflow + MLflow**로 학습/배포 파이프라인 및 실험·모델 버전 관리
+
+### OC UNDERWATER
+
+> **C2C | 해양 복원 활동을 소셜 콘텐츠로 전환하여 자발적 확산 유도**
+
+- **Marine Weather**: 지역 기반 **수온·풍속·파고** 요약 정보 제공
+- **Species Dictionary**: MBRIS 데이터를 **내부 Taxon DB(자산화)** 로 적재하고, 미등록 종/동의어는 외부 표준 API로 보완하여 생물종 사전/검색 제공
+- **Real-time Trending**: **실시간 인기 게시물/미션** 노출로 UGC 루프 강화
+
+### OC RECORD
+
+> **B2B | 수중 오프라인 환경에서의 기록 및 중앙 집중 관리(승인/자산화)**
+
+- **Local-first Recording**: **IndexedDB** 기반 임시 저장 후 네트워크 확보 시 수동 제출
+- **Underwater Input UX**: 장갑/방수팩 환경을 고려한 **수중 특화 커스텀 키보드 라이브러리**
+- **Hybrid AI Assist**: 오프라인에서도 동작 가능한 **내장 AI 기반 입력 보조/오타 보정**
+- **Wearable Extension**: **Garmin Watch App** 개발로 현장 기록/연동 가능성까지 확장
+
+### OC ADMIN
+
+> **B2B | 현장 기록 데이터를 검토·승인하고 운영 데이터로 자산화하는 관리자 콘솔**
+
+- **Submission Review**: **OC RECORD** 제출 데이터의 목록/상세 확인, 승인·반려·삭제 워크플로 제공
+- **Workspace Management**: 복원 구역·작업영역의 기본 정보, 좌표, 환경/생태 데이터를 관리
+- **Data Governance**: 승인된 현장 기록을 대시보드와 분석 데이터로 연결하기 위한 운영 검수 체계 제공
+- **Admin Operations**: 관리자 인증, 프로필, 상태 관리 등 운영자 중심의 콘솔 기능 제공
+
 ## 프로젝트 구성
 
 ```txt
