@@ -25,6 +25,7 @@ const config = defineConfig(({ mode }) => {
     }),
     devtools(),
     tailwindcss(),
+    visualizer(),
     viteReact(),
   ]
 
@@ -46,9 +47,6 @@ const config = defineConfig(({ mode }) => {
           replacement: sharedS3Upload,
         },
       ],
-    },
-    build: {
-      sourcemap: shouldAnalyze,
     },
     plugins,
   }

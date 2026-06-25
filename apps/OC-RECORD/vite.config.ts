@@ -1,79 +1,80 @@
-import { defineConfig, loadEnv } from 'vite'
-import { tanstackRouter } from '@tanstack/router-plugin/vite'
-import viteReact from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
-import { VitePWA } from 'vite-plugin-pwa'
-import { fileURLToPath } from 'node:url'
+import { defineConfig, loadEnv } from "vite";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
+import viteReact from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+import { VitePWA } from "vite-plugin-pwa";
+import { fileURLToPath } from "node:url";
 
-const appRoot = fileURLToPath(new URL('.', import.meta.url))
-const sourceRoot = fileURLToPath(new URL('./src', import.meta.url))
+const appRoot = fileURLToPath(new URL(".", import.meta.url));
+const sourceRoot = fileURLToPath(new URL("./src", import.meta.url));
 const sharedS3Upload = fileURLToPath(
-  new URL('../../packages/shared-s3/src/upload.ts', import.meta.url),
-)
+  new URL("../../packages/shared-s3/src/upload.ts", import.meta.url),
+);
 
 const config = defineConfig(({ mode }) => {
-  const env: Partial<Record<string, string>> = loadEnv(mode, appRoot, '')
-  const apiBaseUrl = requireEnv(env, 'API_BASE_URL')
-  const s3PublicBase = requireEnv(env, 'S3_PUBLIC_BASE')
+  const env: Partial<Record<string, string>> = loadEnv(mode, appRoot, "");
+  const apiBaseUrl = requireEnv(env, "API_BASE_URL");
+  const s3PublicBase = requireEnv(env, "S3_PUBLIC_BASE");
 
   return {
-    base: '/record/',
+    base: "/record/",
     define: {
-      'process.env.API_BASE_URL': JSON.stringify(apiBaseUrl),
-      'process.env.S3_PUBLIC_BASE': JSON.stringify(s3PublicBase),
+      "process.env.API_BASE_URL": JSON.stringify(apiBaseUrl),
+      "process.env.S3_PUBLIC_BASE": JSON.stringify(s3PublicBase),
     },
     resolve: {
       alias: [
         { find: /^#\//, replacement: `${sourceRoot}/` },
         { find: /^@\//, replacement: `${sourceRoot}/` },
         {
-          find: '@ocean-kit/shared-s3/upload',
+          find: "@ocean-kit/shared-s3/upload",
           replacement: sharedS3Upload,
         },
         {
-          find: 'next/navigation',
+          find: "next/navigation",
           replacement: `${sourceRoot}/shared/next-compat/navigation.ts`,
         },
         {
-          find: 'next/link',
+          find: "next/link",
           replacement: `${sourceRoot}/shared/next-compat/link.tsx`,
         },
       ],
     },
+
     plugins: [
       tanstackRouter({
-        target: 'react',
+        target: "react",
         autoCodeSplitting: true,
       }),
       tailwindcss(),
       viteReact(),
       VitePWA({
-        base: '/record/',
-        scope: '/record/',
-        filename: 'sw.js',
+        base: "/record/",
+        scope: "/record/",
+        filename: "sw.js",
         injectRegister: false,
         manifest: false,
-        registerType: 'prompt',
+        registerType: "prompt",
         workbox: {
           cleanupOutdatedCaches: true,
           inlineWorkboxRuntime: true,
-          globPatterns: ['**/*.{js,css,html,png,svg,ico,webmanifest}'],
-          navigateFallback: '/record/index.html',
+          globPatterns: ["**/*.{js,css,html,png,svg,ico,webmanifest}"],
+          navigateFallback: "/record/index.html",
           navigateFallbackDenylist: [/^\/api\//],
         },
       }),
     ],
-  }
-})
+  };
+});
 
-export default config
+export default config;
 
 function requireEnv(env: Partial<Record<string, string>>, name: string) {
-  const value = env[name]
+  const value = env[name];
 
   if (!value) {
-    throw new Error(`Missing required env: ${name}`)
+    throw new Error(`Missing required env: ${name}`);
   }
 
-  return value
+  return value;
 }

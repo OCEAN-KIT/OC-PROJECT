@@ -39,7 +39,7 @@ const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() => import('./routes/dashboard.lazy').then((d) => d.Route))
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -49,7 +49,9 @@ const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => DashboardRoute,
-} as any)
+} as any).lazy(() =>
+  import('./routes/dashboard.index.lazy').then((d) => d.Route),
+)
 const ReviewSubmissionIdRoute = ReviewSubmissionIdRouteImport.update({
   id: '/review/$submissionId',
   path: '/review/$submissionId',
@@ -59,17 +61,23 @@ const DashboardSpeciesCreateRoute = DashboardSpeciesCreateRouteImport.update({
   id: '/speciesCreate',
   path: '/speciesCreate',
   getParentRoute: () => DashboardRoute,
-} as any)
+} as any).lazy(() =>
+  import('./routes/dashboard.speciesCreate.lazy').then((d) => d.Route),
+)
 const DashboardCreateRoute = DashboardCreateRouteImport.update({
   id: '/create',
   path: '/create',
   getParentRoute: () => DashboardRoute,
-} as any)
+} as any).lazy(() =>
+  import('./routes/dashboard.create.lazy').then((d) => d.Route),
+)
 const DashboardAreaIdRoute = DashboardAreaIdRouteImport.update({
   id: '/$areaId',
   path: '/$areaId',
   getParentRoute: () => DashboardRoute,
-} as any)
+} as any).lazy(() =>
+  import('./routes/dashboard.$areaId.lazy').then((d) => d.Route),
+)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
