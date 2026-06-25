@@ -6,6 +6,7 @@ import { useRegisterSW } from "virtual:pwa-register/react";
 const UPDATE_CHECK_INTERVAL_MS = 5 * 60 * 1000;
 const UPDATE_CHECK_THROTTLE_MS = 30 * 1000;
 
+// 현재 브라우저가 로드한 entry JS 파일명을 찾는다.
 function getCurrentEntryAsset() {
   const script = document.querySelector<HTMLScriptElement>(
     'script[type="module"][src*="/record/assets/index-"]',
@@ -15,12 +16,14 @@ function getCurrentEntryAsset() {
   return new URL(script.src).pathname.replace(/^\/record\//, "");
 }
 
+// 최신 sw.js 내용에서 새 빌드의 entry JS 파일명을 추출한다.
 function getLatestEntryAsset(serviceWorkerScript: string) {
   return (
     serviceWorkerScript.match(/assets\/index-[A-Za-z0-9_-]+\.js/)?.[0] ?? null
   );
 }
 
+// 서비스워커 등록과 앱 업데이트 안내 UI를 담당한다.
 export default function SWRegister() {
   const [hasNetworkUpdate, setHasNetworkUpdate] = useState(false);
   const {
@@ -32,6 +35,7 @@ export default function SWRegister() {
   const lastUpdateCheckAtRef = useRef(0);
   const shouldShowUpdatePrompt = needRefresh || hasNetworkUpdate;
 
+  // 네트워크의 sw.js를 직접 읽어 현재 빌드보다 최신 빌드가 있는지 확인한다.
   const checkLatestBuild = useCallback(async () => {
     try {
       const currentEntryAsset = getCurrentEntryAsset();
@@ -55,6 +59,7 @@ export default function SWRegister() {
     }
   }, []);
 
+  // 서비스워커 등록 상태를 기준으로 업데이트 대기 여부를 확인한다.
   const checkForUpdate = useCallback(async () => {
     if (import.meta.env.DEV) return;
 
@@ -84,6 +89,7 @@ export default function SWRegister() {
     }
   }, [checkLatestBuild, setNeedRefresh]);
 
+  // 업데이트 버튼 클릭 시 새 서비스워커를 적용하거나 캐시 정리 후 새로고침한다.
   const applyUpdate = useCallback(async () => {
     const registration = await navigator.serviceWorker.getRegistration(
       import.meta.env.BASE_URL,
@@ -116,6 +122,7 @@ export default function SWRegister() {
     window.location.reload();
   }, [hasNetworkUpdate, updateServiceWorker]);
 
+  // 앱 실행 중 주기적으로 업데이트를 확인하고, 포커스 복귀 시에도 다시 확인한다.
   useEffect(() => {
     if (import.meta.env.DEV) return;
 
