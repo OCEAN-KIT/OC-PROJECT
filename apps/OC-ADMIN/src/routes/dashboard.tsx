@@ -1,14 +1,3 @@
-import { Outlet, createFileRoute } from '@tanstack/react-router'
-import { AuthGuard } from '#/shared/auth/AuthGuard'
+import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/dashboard')({
-  component: DashboardLayoutRoute,
-})
-
-function DashboardLayoutRoute() {
-  return (
-    <AuthGuard mode="gotoLogin">
-      <Outlet />
-    </AuthGuard>
-  )
-}
+export const Route = createFileRoute('/dashboard')({})
