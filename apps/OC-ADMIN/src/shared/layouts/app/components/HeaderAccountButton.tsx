@@ -27,10 +27,12 @@ export function HeaderAccountButton({
       aria-haspopup="menu"
       aria-expanded={isMenuOpen}
       aria-label={accountLabel}
-      className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 active:translate-y-[1px]"
+      className="inline-flex min-w-0 items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80 active:translate-y-[1px]"
     >
       <UserRound className="h-5 w-5" aria-hidden />
-      <span className="hidden text-sm sm:inline">{accountLabel}</span>
+      <span className="hidden max-w-48 truncate text-sm sm:inline">
+        {accountLabel}
+      </span>
     </button>
   )
 }

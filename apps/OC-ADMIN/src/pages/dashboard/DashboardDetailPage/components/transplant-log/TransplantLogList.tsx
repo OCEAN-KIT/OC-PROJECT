@@ -74,9 +74,9 @@ export default function TransplantLogList({
             새 종 이식 기록 추가
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-6 gap-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
             {/* 날짜 */}
-            <div className="sm:col-span-2">
+            <div>
               <label className="block text-xs text-gray-600 mb-1">
                 기록 날짜
               </label>
@@ -89,7 +89,7 @@ export default function TransplantLogList({
             </div>
 
             {/* 종 */}
-            <div className="sm:col-span-2">
+            <div>
               <label className="block text-xs text-gray-600 mb-1">종</label>
               <select
                 value={form.speciesId}
@@ -110,7 +110,7 @@ export default function TransplantLogList({
             </div>
 
             {/* 방식 */}
-            <div className="sm:col-span-2">
+            <div>
               <label className="block text-xs text-gray-600 mb-1">
                 이식 방식
               </label>
@@ -134,7 +134,7 @@ export default function TransplantLogList({
             </div>
 
             {/* 수량 */}
-            <div className="sm:col-span-3">
+            <div>
               <label className="block text-xs text-gray-600 mb-1">
                 수량{' '}
                 <span className="text-gray-400">
@@ -158,7 +158,7 @@ export default function TransplantLogList({
             </div>
 
             {/* 면적 */}
-            <div className="sm:col-span-3">
+            <div>
               <label className="block text-xs text-gray-600 mb-1">
                 이식 면적 (m²)
               </label>
@@ -185,7 +185,7 @@ export default function TransplantLogList({
             <label className="block text-xs font-medium text-gray-700 mb-2">
               착생 상태
             </label>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {attachmentOptions.map((o) => (
                 <label
                   key={o.value}
@@ -231,11 +231,7 @@ export default function TransplantLogList({
 
       {/* 종별 카드 */}
       {sections.map((sec) => (
-        <TransplantLogCard
-          key={sec.speciesId}
-          areaId={areaId}
-          section={sec}
-        />
+        <TransplantLogCard key={sec.speciesId} areaId={areaId} section={sec} />
       ))}
 
       {/* 하단 CTA */}

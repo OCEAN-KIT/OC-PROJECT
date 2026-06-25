@@ -15,7 +15,7 @@ export function CommonSection({ detail }: CommonSectionProps) {
         <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
           기본 정보
         </h2>
-        <div className="grid gap-x-8 md:grid-cols-2">
+        <div className="grid gap-x-6 lg:grid-cols-2">
           <DetailField label="작업일자" value={detail.submittedAt} />
           <DetailField label="활동 장소" value={detail.siteName} />
           <DetailField
@@ -43,7 +43,7 @@ export function CommonSection({ detail }: CommonSectionProps) {
           <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
             환경 정보
           </h2>
-          <div className="grid gap-x-8 md:grid-cols-2">
+          <div className="grid gap-x-6 lg:grid-cols-2">
             <DetailField
               label="수온"
               value={env.waterTempC != null ? `${env.waterTempC}°C` : undefined}

@@ -103,10 +103,10 @@ function SectionErrorCard({
 }) {
   return (
     <DashboardSection.Root className="border-rose-100">
-      <div className="flex items-center justify-between border-b border-rose-100 bg-rose-50 px-6 py-4">
-        <h2 className="flex items-center gap-2 font-semibold text-rose-700">
-          <TriangleAlert className="h-5 w-5" />
-          {title}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-rose-100 bg-rose-50 px-6 py-4">
+        <h2 className="flex min-w-0 items-center gap-2 font-semibold text-rose-700">
+          <TriangleAlert className="h-5 w-5 shrink-0" />
+          <span className="break-words">{title}</span>
         </h2>
         <button
           type="button"
@@ -310,7 +310,7 @@ export default function DashboardDetailPage({ areaId }: Props) {
     <div className="min-h-[calc(100vh-64px)] bg-gray-50">
       <div className="mx-auto max-w-[900px] p-4">
         <div className="mb-6">
-          <div className="flex items-center gap-4">
+          <div className="flex items-start gap-4">
             <button
               type="button"
               onClick={goDashboard}
@@ -319,11 +319,11 @@ export default function DashboardDetailPage({ areaId }: Props) {
             >
               <ArrowLeft className="h-5 w-5 text-gray-600" />
             </button>
-            <div className="flex w-full justify-between gap-3">
+            <div className="flex min-w-0 flex-1 flex-wrap justify-between gap-3">
               <h1 className="text-2xl font-bold text-gray-900">
                 작업영역 수정
               </h1>
-              <p className="self-end text-sm text-gray-500">
+              <p className="min-w-0 break-words text-sm text-gray-500">
                 작업영역의 정보를 수정합니다.
               </p>
             </div>

@@ -44,20 +44,16 @@ export default function AreaCardContent({ area }: Props) {
     area.restorationRegion,
   )
   const levelLabel = getMappedValue(levelLabels, area.level, area.level)
-  const habitatLabel = getMappedValue(
-    habitatLabels,
-    area.habitat,
-    area.habitat,
-  )
+  const habitatLabel = getMappedValue(habitatLabels, area.habitat, area.habitat)
 
   return (
     <Link
       to="/dashboard/$areaId"
       params={{ areaId: String(area.id) }}
-      className="flex-1 p-5"
+      className="min-w-0 flex-1 p-5"
     >
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3 min-w-0">
+      <div className="flex min-w-0 items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
           <div className="shrink-0 w-10 h-10 rounded-lg bg-[#2C67BC]/10 flex items-center justify-center">
             <Waves className="h-5 w-5 text-[#2C67BC]" />
           </div>
@@ -76,49 +72,57 @@ export default function AreaCardContent({ area }: Props) {
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-y-3 gap-x-4 text-sm sm:grid-cols-4 lg:grid-cols-9">
-        <div>
+      <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 text-sm md:grid-cols-4 xl:grid-cols-9">
+        <div className="min-w-0">
           <p className="text-xs text-gray-400">지역</p>
-          <p className="font-medium text-gray-900 flex items-center gap-1">
-            <MapPin className="h-3.5 w-3.5 text-gray-400" />
-            {regionLabel}
+          <p className="flex min-w-0 items-center gap-1 font-medium text-gray-900">
+            <MapPin className="h-3.5 w-3.5 shrink-0 text-gray-400" />
+            <span className="truncate">{regionLabel}</span>
           </p>
         </div>
 
-        <div className="col-span-2">
+        <div className="col-span-2 min-w-0">
           <p className="text-xs text-gray-400">기간</p>
-          <p className="font-medium text-gray-900 flex items-center gap-1 whitespace-nowrap">
+          <p
+            className="flex min-w-0 items-center gap-1 font-medium text-gray-900"
+            title={`${startDate}${endDate ? ` ~ ${endDate}` : ' ~'}`}
+          >
             <Calendar className="h-3.5 w-3.5 shrink-0 text-gray-400" />
-            {startDate}
-            {endDate ? ` ~ ${endDate}` : ' ~'}
+            <span className="truncate">
+              {startDate}
+              {endDate ? ` ~ ${endDate}` : ' ~'}
+            </span>
           </p>
         </div>
 
-        <div>
+        <div className="min-w-0">
           <p className="text-xs text-gray-400">단계</p>
-          <p className="font-medium text-gray-900">{levelLabel}</p>
+          <p className="truncate font-medium text-gray-900">{levelLabel}</p>
         </div>
 
-        <div>
+        <div className="min-w-0">
           <p className="text-xs text-gray-400">서식지</p>
-          <p className="font-medium text-gray-900">{habitatLabel}</p>
+          <p className="truncate font-medium text-gray-900">{habitatLabel}</p>
         </div>
 
-        <div>
+        <div className="min-w-0">
           <p className="text-xs text-gray-400">수심</p>
-          <p className="font-medium text-gray-900">{area.depth}m</p>
+          <p className="truncate font-medium text-gray-900">{area.depth}m</p>
         </div>
 
-        <div>
+        <div className="min-w-0">
           <p className="text-xs text-gray-400">면적</p>
-          <p className="font-medium text-gray-900">
+          <p className="truncate font-medium text-gray-900">
             {area.areaSize.toLocaleString()}m²
           </p>
         </div>
 
-        <div className="col-span-2">
+        <div className="col-span-2 min-w-0">
           <p className="text-xs text-gray-400">좌표</p>
-          <p className="font-medium text-gray-900 whitespace-nowrap">
+          <p
+            className="truncate font-medium text-gray-900"
+            title={`${area.lat}, ${area.lon}`}
+          >
             {area.lat}, {area.lon}
           </p>
         </div>

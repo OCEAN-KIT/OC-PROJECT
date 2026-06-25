@@ -18,7 +18,7 @@ export default function AreaCard({ area, onRequestDelete }: Props) {
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-gray-200 transition-all group overflow-hidden">
-      <div className="flex">
+      <div className="flex min-w-0">
         <AreaCardContent area={area} />
 
         <div className="shrink-0 w-14 sm:w-16 border-l border-gray-100">

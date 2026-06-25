@@ -23,7 +23,7 @@ export function ReviewDetailTopBar({
   const canExport = detail.status === 'APPROVED'
 
   return (
-    <div className="mb-6 flex items-center justify-between">
+    <div className="mb-6 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
       <button
         type="button"
         onClick={onBack}
@@ -33,11 +33,14 @@ export function ReviewDetailTopBar({
         뒤로
       </button>
 
-      <div className="text-lg font-bold tracking-tight text-gray-900">
+      <div
+        className="min-w-0 truncate text-center text-lg font-bold tracking-tight text-gray-900"
+        title={detail.siteName}
+      >
         {detail.siteName}
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
         {showActions && (
           <button
             type="button"

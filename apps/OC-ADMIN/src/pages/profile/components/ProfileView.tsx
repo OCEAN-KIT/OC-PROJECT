@@ -8,22 +8,22 @@ type ProfileViewProps = {
 export function ProfileView({ profile, onEditClick }: ProfileViewProps) {
   return (
     <div className="space-y-5">
-      <dl className="grid gap-4 sm:grid-cols-3">
-        <div>
+      <dl className="grid gap-4 md:grid-cols-3">
+        <div className="min-w-0">
           <dt className="text-sm font-medium text-gray-500">닉네임</dt>
-          <dd className="mt-1 text-base font-semibold text-gray-900">
+          <dd className="mt-1 break-words text-base font-semibold text-gray-900 [overflow-wrap:anywhere]">
             {profile.nickname ?? '-'}
           </dd>
         </div>
-        <div>
+        <div className="min-w-0">
           <dt className="text-sm font-medium text-gray-500">이메일</dt>
-          <dd className="mt-1 text-base font-semibold text-gray-900">
+          <dd className="mt-1 break-all text-base font-semibold text-gray-900">
             {profile.email ?? '-'}
           </dd>
         </div>
-        <div>
+        <div className="min-w-0">
           <dt className="text-sm font-medium text-gray-500">전화번호</dt>
-          <dd className="mt-1 text-base font-semibold text-gray-900">
+          <dd className="mt-1 break-words text-base font-semibold text-gray-900">
             {profile.phone ?? '-'}
           </dd>
         </div>

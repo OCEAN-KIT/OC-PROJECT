@@ -50,9 +50,9 @@ function PhotoZone({
   return (
     <div className="space-y-3">
       {/* 라벨 + 버튼 같은 라인 */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm font-medium text-gray-700">{label}</p>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-end gap-2">
           {entry && (
             <button
               type="button"
@@ -136,7 +136,7 @@ function TimelineSavedRow({
   const dateText = `${y}년 ${m}월 ${d}일`
 
   return (
-    <div className="flex items-stretch rounded-xl border border-gray-200 bg-white overflow-hidden">
+    <div className="flex min-w-0 items-stretch overflow-hidden rounded-xl border border-gray-200 bg-white">
       {/* 왼쪽: 썸네일 (원래 느낌 유지) */}
       <div className="shrink-0 w-24 h-24 sm:w-28 sm:h-28 border-r border-gray-100 bg-gray-50">
         {entry.mediaUrl ? (
@@ -153,8 +153,8 @@ function TimelineSavedRow({
       </div>
 
       {/* 가운데: 날짜 강조 + 캡션(덜 중요) */}
-      <div className="flex-1 min-w-0 p-3">
-        <p className="text-base sm:text-lg font-semibold text-gray-900 tracking-tight">
+      <div className="min-w-0 flex-1 p-3">
+        <p className="truncate text-base font-semibold tracking-tight text-gray-900 sm:text-lg">
           {dateText}
         </p>
 
@@ -218,7 +218,7 @@ function TimelineAddForm({
   return (
     <div className="p-4 rounded-lg border-2 border-[#2C67BC]/30 bg-blue-50/20 space-y-3">
       {/* 사진 선택 + 입력 필드 */}
-      <div className="flex items-start gap-3">
+      <div className="flex min-w-0 flex-wrap items-start gap-3">
         <div
           onClick={() => inputRef.current?.click()}
           className="shrink-0 w-24 h-24 rounded-lg border-2 border-dashed border-gray-300 bg-white overflow-hidden cursor-pointer hover:border-[#2C67BC]/40 transition-colors"
@@ -252,7 +252,7 @@ function TimelineAddForm({
           />
         </div>
 
-        <div className="flex-1 space-y-2">
+        <div className="min-w-[14rem] flex-1 space-y-2">
           <input
             type="date"
             value={recordDate}
@@ -280,7 +280,7 @@ function TimelineAddForm({
       </div>
 
       {/* 버튼 */}
-      <div className="flex justify-end gap-2">
+      <div className="flex flex-wrap justify-end gap-2">
         <button
           type="button"
           onClick={onCancel}
@@ -422,7 +422,7 @@ export default function MediaLogSection({ areaId, mediaPayload }: Props) {
 
         {/* 타임라인 구역 */}
         <div>
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <h3 className="text-sm font-semibold text-gray-800 flex items-center gap-2">
               <span className="w-1 h-4 bg-[#2C67BC] rounded-full" />
               타임라인 사진

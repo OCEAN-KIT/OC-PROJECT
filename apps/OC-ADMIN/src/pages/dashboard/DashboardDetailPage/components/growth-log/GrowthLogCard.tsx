@@ -67,10 +67,10 @@ export default function GrowthLogCard({
     <div className="border border-gray-200 rounded-lg overflow-hidden">
       {/* 헤더 */}
       <div
-        className="flex items-center justify-between px-4 py-3 bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"
+        className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"
         onClick={() => setExpanded((v) => !v)}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
           {expanded ? (
             <ChevronUp className="h-4 w-4 text-gray-500" />
           ) : (
@@ -81,11 +81,11 @@ export default function GrowthLogCard({
             <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
           )}
 
-          <span className="font-medium text-gray-900">
+          <span className="min-w-0 truncate font-medium text-gray-900">
             {section.speciesName}
           </span>
 
-          <span className="text-xs text-gray-500">
+          <span className="min-w-0 truncate text-xs text-gray-500">
             {section.logs.length === 0
               ? '(아직 기록 없음)'
               : `(${section.logs.length}회 기록 · 최근 ${
@@ -94,7 +94,7 @@ export default function GrowthLogCard({
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
           <button
             type="button"
             onClick={(e) => {
@@ -131,61 +131,63 @@ export default function GrowthLogCard({
       {expanded && (
         <div className="p-4 space-y-3">
           {/* 테이블 */}
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left py-2 font-medium text-gray-600">
-                  날짜
-                </th>
-                <th className="text-left py-2 font-medium text-gray-600">
-                  현재 길이
-                </th>
-                <th className="text-left py-2 font-medium text-gray-600">
-                  상태
-                </th>
-                <th className="w-10 py-2" />
-              </tr>
-            </thead>
-            <tbody>
-              {section.logs.map((g) => {
-                const statusLabel = statusOptions.find(
-                  (o) => o.value === g.status,
-                )
-                return (
-                  <tr key={g.id} className="border-b last:border-0">
-                    <td className="py-3 text-gray-500">
-                      {g.recordDate[0]}.{g.recordDate[1]}.{g.recordDate[2]}
-                    </td>
-                    <td className="py-3">{g.growthLength}mm</td>
-                    <td className="py-3">
-                      {statusLabel && (
-                        <span
-                          className={`px-2 py-0.5 rounded text-xs ${
-                            statusLabel.value === 'GOOD'
-                              ? 'bg-emerald-100 text-emerald-700'
-                              : statusLabel.value === 'NORMAL'
-                                ? 'bg-yellow-100 text-yellow-700'
-                                : 'bg-rose-100 text-rose-700'
-                          }`}
+          <div className="overflow-x-auto">
+            <table className="min-w-[420px] w-full text-sm">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-2 font-medium text-gray-600">
+                    날짜
+                  </th>
+                  <th className="text-left py-2 font-medium text-gray-600">
+                    현재 길이
+                  </th>
+                  <th className="text-left py-2 font-medium text-gray-600">
+                    상태
+                  </th>
+                  <th className="w-10 py-2" />
+                </tr>
+              </thead>
+              <tbody>
+                {section.logs.map((g) => {
+                  const statusLabel = statusOptions.find(
+                    (o) => o.value === g.status,
+                  )
+                  return (
+                    <tr key={g.id} className="border-b last:border-0">
+                      <td className="py-3 text-gray-500">
+                        {g.recordDate[0]}.{g.recordDate[1]}.{g.recordDate[2]}
+                      </td>
+                      <td className="py-3">{g.growthLength}mm</td>
+                      <td className="py-3">
+                        {statusLabel && (
+                          <span
+                            className={`px-2 py-0.5 rounded text-xs ${
+                              statusLabel.value === 'GOOD'
+                                ? 'bg-emerald-100 text-emerald-700'
+                                : statusLabel.value === 'NORMAL'
+                                  ? 'bg-yellow-100 text-yellow-700'
+                                  : 'bg-rose-100 text-rose-700'
+                            }`}
+                          >
+                            {statusLabel.label}
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-3 text-right">
+                        <button
+                          type="button"
+                          onClick={() => deleteLog(g.id)}
+                          className="p-1 rounded hover:bg-rose-50 text-gray-400 hover:text-rose-500 transition-colors"
                         >
-                          {statusLabel.label}
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-3 text-right">
-                      <button
-                        type="button"
-                        onClick={() => deleteLog(g.id)}
-                        className="p-1 rounded hover:bg-rose-50 text-gray-400 hover:text-rose-500 transition-colors"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
 
           {/* 인라인 기록 추가 폼 */}
           {isAddingLog && (
@@ -194,12 +196,12 @@ export default function GrowthLogCard({
                 {section.speciesName} 성장 기록 추가
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-6 gap-2">
+              <div className="grid grid-cols-[repeat(auto-fit,minmax(8rem,1fr))] gap-2">
                 <input
                   type="date"
                   value={form.recordDate}
                   onChange={(e) => setField('recordDate', e.target.value)}
-                  className="px-2 py-1.5 text-sm rounded border border-gray-200"
+                  className="w-full px-2 py-1.5 text-sm rounded border border-gray-200"
                 />
 
                 <input
@@ -212,7 +214,7 @@ export default function GrowthLogCard({
                       e.target.value === '' ? 0 : Number(e.target.value),
                     )
                   }
-                  className="px-2 py-1.5 text-sm rounded border border-gray-200"
+                  className="w-full px-2 py-1.5 text-sm rounded border border-gray-200"
                 />
 
                 <select
@@ -220,7 +222,7 @@ export default function GrowthLogCard({
                   onChange={(e) =>
                     setField('status', e.target.value as GrowthStatus | '')
                   }
-                  className="px-2 py-1.5 text-sm rounded border border-gray-200 bg-white"
+                  className="w-full px-2 py-1.5 text-sm rounded border border-gray-200 bg-white"
                 >
                   <option value="">상태</option>
                   {statusOptions.map((s) => (
@@ -230,7 +232,7 @@ export default function GrowthLogCard({
                   ))}
                 </select>
 
-                <div className="flex justify-end gap-2 sm:justify-start">
+                <div className="flex flex-wrap justify-end gap-2">
                   <button
                     type="button"
                     onClick={handleCancelLog}

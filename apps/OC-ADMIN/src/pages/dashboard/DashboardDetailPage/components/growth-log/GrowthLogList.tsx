@@ -70,9 +70,9 @@ export default function GrowthLogList({
             새 종 성장 기록 추가
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-6 gap-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
             {/* 날짜 */}
-            <div className="sm:col-span-2">
+            <div>
               <label className="block text-xs text-gray-600 mb-1">
                 기록 날짜
               </label>
@@ -85,7 +85,7 @@ export default function GrowthLogList({
             </div>
 
             {/* 종 */}
-            <div className="sm:col-span-2">
+            <div>
               <label className="block text-xs text-gray-600 mb-1">종</label>
               <select
                 value={form.speciesId}
@@ -106,7 +106,7 @@ export default function GrowthLogList({
             </div>
 
             {/* 상태 */}
-            <div className="sm:col-span-2">
+            <div>
               <label className="block text-xs text-gray-600 mb-1">상태</label>
               <select
                 value={form.status}
@@ -125,7 +125,7 @@ export default function GrowthLogList({
             </div>
 
             {/* 길이 */}
-            <div className="sm:col-span-2">
+            <div>
               <label className="block text-xs text-gray-600 mb-1">
                 현재 길이 (mm)
               </label>

@@ -21,7 +21,7 @@ export function CleanupSection({ detail }: CleanupSectionProps) {
       <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
         해양정화 상세
       </h2>
-      <div className="grid gap-x-8 md:grid-cols-2">
+      <div className="grid gap-x-6 lg:grid-cols-2">
         <DetailField
           label="폐기물 유형"
           value={toLabels(WASTE_TYPE_LABEL, activity.wasteTypes)}
@@ -33,10 +33,7 @@ export function CleanupSection({ detail }: CleanupSectionProps) {
         <DetailField label="수거량" value={activity.collectionAmount} />
         <DetailField
           label="미수거 폐기물 규모"
-          value={toLabel(
-            UNCOLLECTED_SCALE_LABEL,
-            activity.uncollectedScale,
-          )}
+          value={toLabel(UNCOLLECTED_SCALE_LABEL, activity.uncollectedScale)}
         />
       </div>
     </section>

@@ -1,55 +1,55 @@
-"use client";
+'use client'
 
 /*
  * 반려 사유 입력 모달입니다.
  * textarea 입력값과 template 선택 같은 모달 내부 표시 상태만 소유하고,
  * 실제 반려 mutation은 onSubmit 콜백을 통해 상위 hook에 위임합니다.
  */
-import { useEffect, useRef, useState } from "react";
-import { LoadingSpinner } from "#/shared/components/LoadingSpinner";
+import { useEffect, useRef, useState } from 'react'
+import { LoadingSpinner } from '#/shared/components/LoadingSpinner'
 
 type Props = {
-  open: boolean;
-  ids: string[]; // 반려 대상 id들 (단일/일괄 공용)
-  loading?: boolean;
-  errorMessage?: string;
-  onClose: () => void;
+  open: boolean
+  ids: string[] // 반려 대상 id들 (단일/일괄 공용)
+  loading?: boolean
+  errorMessage?: string
+  onClose: () => void
   onSubmit: (payload: {
-    ids: string[];
-    reason: { templateCode?: string; message: string };
-  }) => void;
-};
+    ids: string[]
+    reason: { templateCode?: string; message: string }
+  }) => void
+}
 
 export default function RejectModal({
   open,
   ids,
   loading = false,
-  errorMessage = "",
+  errorMessage = '',
   onClose,
   onSubmit,
 }: Props) {
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('')
   const [templateCode, setTemplateCode] = useState<string | undefined>(
-    undefined
-  );
-  const dialogRef = useRef<HTMLDivElement>(null);
+    undefined,
+  )
+  const dialogRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    if (open) window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    if (open) window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open, onClose])
 
   useEffect(() => {
     if (open) {
-      setMessage("");
-      setTemplateCode(undefined);
+      setMessage('')
+      setTemplateCode(undefined)
     }
-  }, [open]);
+  }, [open])
 
-  if (!open) return null;
+  if (!open) return null
 
-  const disabled = message.trim().length === 0 || loading;
+  const disabled = message.trim().length === 0 || loading
 
   return (
     <div
@@ -77,7 +77,14 @@ export default function RejectModal({
 
         <div className="p-5 space-y-4">
           <div className="text-sm text-gray-600">
-            대상 <b>{ids.length}</b>건: {ids.join(", ")}
+            <p>
+              대상 <b>{ids.length}</b>건
+            </p>
+            {ids.length > 0 && (
+              <div className="mt-2 max-h-24 overflow-y-auto rounded-lg bg-gray-50 p-2 text-xs leading-5 text-gray-500">
+                <span className="break-all">{ids.join(', ')}</span>
+              </div>
+            )}
           </div>
 
           {errorMessage && (
@@ -120,5 +127,5 @@ export default function RejectModal({
         </div>
       </div>
     </div>
-  );
+  )
 }

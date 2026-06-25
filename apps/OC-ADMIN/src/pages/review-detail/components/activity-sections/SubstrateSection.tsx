@@ -15,13 +15,16 @@ export function SubstrateSection({ detail }: SubstrateSectionProps) {
       <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
         부착기질 개선 상세
       </h2>
-      <div className="grid gap-x-8 md:grid-cols-2">
+      <div className="grid gap-x-6 lg:grid-cols-2">
         <DetailField
           label="작업 대상"
           value={toLabel(SUBSTRATE_TARGET_LABEL, activity.targetType)}
         />
         <DetailField label="작업 범위" value={activity.workScope} />
-        <DetailField label="작업 후 기질 상태" value={activity.substrateState} />
+        <DetailField
+          label="작업 후 기질 상태"
+          value={activity.substrateState}
+        />
       </div>
     </section>
   )

@@ -18,10 +18,10 @@ export function MainHeader() {
 
   return (
     <header className="w-full bg-[#2C67BC] text-white">
-      <div className="mx-auto flex h-16 max-w-[1500px] items-center justify-between px-4">
+      <div className="mx-auto flex h-16 max-w-[1500px] items-center justify-between gap-4 px-4">
         <Link
           to="/home"
-          className="text-3xl font-extrabold tracking-tight"
+          className="shrink-0 text-3xl font-extrabold tracking-tight"
         >
           OceanCampus
         </Link>

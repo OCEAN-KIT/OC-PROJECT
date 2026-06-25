@@ -20,7 +20,7 @@ export function TransplantSection({ detail }: TransplantSectionProps) {
       <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
         이식 상세
       </h2>
-      <div className="grid gap-x-8 md:grid-cols-2">
+      <div className="grid gap-x-6 lg:grid-cols-2">
         <DetailField
           label="이식 대상 종류"
           value={toLabel(SPECIES_TYPE_LABEL, activity.speciesType)}
