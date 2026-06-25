@@ -29,9 +29,11 @@ export function HeaderAccountMenu({
       ref={menuRef}
       role="menu"
       aria-label="user menu"
-      className="absolute right-0 z-50 mt-2 w-44 overflow-hidden rounded-xl border border-black/5 bg-white text-gray-900 shadow-lg"
+      className="absolute right-0 z-50 mt-2 min-w-44 max-w-[min(20rem,calc(100vw-2rem))] overflow-hidden rounded-xl border border-black/5 bg-white text-gray-900 shadow-lg"
     >
-      <div className="px-3 py-2 text-xs text-gray-500">{accountMenuLabel}</div>
+      <div className="break-words px-3 py-2 text-xs text-gray-500">
+        {accountMenuLabel}
+      </div>
       <div className="h-px bg-gray-100" />
       <Link
         to="/dashboard"
@@ -44,7 +46,9 @@ export function HeaderAccountMenu({
       </Link>
       <div className="h-px bg-gray-100" />
       {logoutError && (
-        <p className="px-3 py-2 text-xs text-red-600">{logoutError}</p>
+        <p className="break-words px-3 py-2 text-xs text-red-600">
+          {logoutError}
+        </p>
       )}
       <button
         type="button"

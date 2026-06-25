@@ -26,7 +26,7 @@ export function MonitoringSection({ detail }: MonitoringSectionProps) {
       </h2>
 
       <h3 className="mb-1 mt-3 text-xs font-medium text-gray-500">적지조사</h3>
-      <div className="grid gap-x-8 md:grid-cols-2">
+      <div className="grid gap-x-6 lg:grid-cols-2">
         <DetailField label="입수 좌표" value={activity.entryCoordinate} />
         <DetailField label="출수 좌표" value={activity.exitCoordinate} />
         <DetailField label="진행 방위" value={activity.direction} />
@@ -58,14 +58,11 @@ export function MonitoringSection({ detail }: MonitoringSectionProps) {
       <h3 className="mb-1 mt-4 text-xs font-medium text-gray-500">
         해조류 상태
       </h3>
-      <div className="grid gap-x-8 md:grid-cols-2">
+      <div className="grid gap-x-6 lg:grid-cols-2">
         <DetailField label="측정 식별번호" value={activity.seaweedIdNumber} />
         <DetailField
           label="생육 상태"
-          value={toLabel(
-            SEAWEED_HEALTH_LABEL,
-            activity.seaweedHealthStatus,
-          )}
+          value={toLabel(SEAWEED_HEALTH_LABEL, activity.seaweedHealthStatus)}
         />
         <DetailField label="엽장" value={activity.leafLength} />
         <DetailField label="최대엽폭" value={activity.maxLeafWidth} />

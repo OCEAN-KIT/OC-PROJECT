@@ -8,6 +8,21 @@ import { MainHeader } from './MainHeader'
 
 const HEADER_HIDDEN_PATHS = new Set(['/login'])
 
+function DesktopOnlyNotice() {
+  return (
+    <main className="flex min-h-dvh items-center justify-center bg-gray-50 px-6 text-center text-gray-900 min-[900px]:hidden">
+      <section className="max-w-sm rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+        <h1 className="text-lg font-semibold">
+          데스크탑 환경에서 사용해주세요
+        </h1>
+        <p className="mt-2 text-sm leading-6 text-gray-500">
+          관리자 화면은 900px 이상의 가로 폭에 맞춰 제공됩니다.
+        </p>
+      </section>
+    </main>
+  )
+}
+
 export function AppLayout() {
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
@@ -17,8 +32,11 @@ export function AppLayout() {
 
   return (
     <>
-      {shouldShowHeader && <MainHeader />}
-      <Outlet />
+      <div className="hidden min-[900px]:block">
+        {shouldShowHeader && <MainHeader />}
+        <Outlet />
+      </div>
+      <DesktopOnlyNotice />
     </>
   )
 }

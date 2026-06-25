@@ -16,8 +16,8 @@ export default function AreaSearchBar({
   onToggleFilterPanel,
 }: Props) {
   return (
-    <div className="p-4 flex flex-col sm:flex-row gap-3">
-      <div className="relative flex-1">
+    <div className="flex flex-wrap gap-3 p-4">
+      <div className="relative min-w-[18rem] flex-1">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
         <input
           type="text"
@@ -27,7 +27,7 @@ export default function AreaSearchBar({
           className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#2C67BC]/20 focus:border-[#2C67BC]"
         />
       </div>
-      <div className="flex gap-2">
+      <div className="flex shrink-0 gap-2">
         <button
           type="button"
           onClick={onToggleFilterPanel}

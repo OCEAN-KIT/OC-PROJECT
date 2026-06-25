@@ -52,7 +52,7 @@ export default function AreaCreatePage() {
     <div className="min-h-[calc(100vh-64px)] bg-gray-50">
       <div className="mx-auto max-w-[900px] p-4">
         <div className="mb-6">
-          <div className="flex items-center gap-4">
+          <div className="flex items-start gap-4">
             <button
               type="button"
               onClick={() => {
@@ -63,11 +63,11 @@ export default function AreaCreatePage() {
             >
               <ArrowLeft className="h-5 w-5 text-gray-600" />
             </button>
-            <div className="flex w-full justify-between gap-3">
+            <div className="flex min-w-0 flex-1 flex-wrap justify-between gap-3">
               <h1 className="text-2xl font-bold text-gray-900">
                 새 작업영역 추가
               </h1>
-              <p className="self-end text-sm text-gray-500">
+              <p className="min-w-0 break-words text-sm text-gray-500">
                 해양 생태 복원 프로젝트의 새로운 작업영역을 등록합니다.
               </p>
             </div>

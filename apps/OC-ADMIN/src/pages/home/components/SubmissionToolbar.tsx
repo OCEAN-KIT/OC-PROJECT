@@ -34,18 +34,24 @@ export function SubmissionToolbar({
   bulkActions,
 }: SubmissionToolbarProps) {
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <FilterBar value={filters} onChange={onFiltersChange} />
-      <button
-        className="ml-2 h-10 rounded-xl border border-gray-200 px-4 text-sm"
-        onClick={onSearch}
-        disabled={isFetching}
-      >
-        검색
-      </button>
+    <div className="grid gap-3 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-start">
+      <div className="flex min-w-0 flex-wrap items-center gap-3">
+        <FilterBar
+          className="min-w-0 flex-1"
+          value={filters}
+          onChange={onFiltersChange}
+        />
+        <button
+          className="h-10 shrink-0 rounded-xl border border-gray-200 px-4 text-sm"
+          onClick={onSearch}
+          disabled={isFetching}
+        >
+          검색
+        </button>
+      </div>
 
       <ReviewBulkActions
-        className="ml-auto"
+        className="justify-start xl:justify-end"
         total={bulkActions.total}
         selectedCount={bulkActions.selectedCount}
         allSelected={bulkActions.allSelected}

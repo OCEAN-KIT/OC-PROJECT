@@ -110,24 +110,27 @@ export function ConfirmDialog({
             <AlertTriangle className="h-5 w-5" />
           </div>
 
-          <h2 id="confirm-dialog-title" className="text-base font-semibold">
+          <h2
+            id="confirm-dialog-title"
+            className="break-words text-base font-semibold"
+          >
             {title}
           </h2>
           <p
             id="confirm-dialog-description"
-            className="mt-2 text-sm leading-6 text-gray-600"
+            className="mt-2 break-words text-sm leading-6 text-gray-600"
           >
             {description}
           </p>
         </div>
 
-        <div className="flex items-center justify-end gap-2 border-t border-gray-100 px-6 py-4">
+        <div className="flex flex-wrap items-center justify-end gap-2 border-t border-gray-100 px-6 py-4">
           <button
             ref={cancelButtonRef}
             type="button"
             disabled={loading}
             onClick={onClose}
-            className="h-9 rounded-lg border border-gray-200 bg-white px-3 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="min-h-9 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {cancelLabel}
           </button>
@@ -135,7 +138,7 @@ export function ConfirmDialog({
             type="button"
             disabled={loading}
             onClick={onConfirm}
-            className={`inline-flex h-9 items-center gap-2 rounded-lg px-3 text-sm font-medium shadow-sm focus:outline-none focus:ring-4 disabled:cursor-not-allowed disabled:opacity-50 ${classes.confirmButton}`}
+            className={`inline-flex min-h-9 items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium shadow-sm focus:outline-none focus:ring-4 disabled:cursor-not-allowed disabled:opacity-50 ${classes.confirmButton}`}
           >
             {loading && <LoadingSpinner size={14} color="#fff" />}
             {confirmLabel}

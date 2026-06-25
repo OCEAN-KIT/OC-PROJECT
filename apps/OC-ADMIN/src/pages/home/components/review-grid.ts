@@ -3,5 +3,6 @@
  * 헤더와 row가 같은 레이아웃을 사용해야 하므로 별도 상수로 분리합니다.
  */
 export const REVIEW_GRID =
-  "grid items-center gap-5 text-sm " +
-  "[grid-template-columns:80px_1.6fr_1.2fr_1fr_1fr_1fr_.9fr_160px]";
+  'grid items-center gap-3 text-sm ' +
+  '[grid-template-columns:64px_minmax(0,1.5fr)_minmax(0,1.05fr)_minmax(0,.9fr)_minmax(0,.9fr)_minmax(0,.8fr)_minmax(0,.75fr)_132px] ' +
+  'xl:gap-5 xl:[grid-template-columns:80px_minmax(0,1.6fr)_minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,.9fr)_160px]'

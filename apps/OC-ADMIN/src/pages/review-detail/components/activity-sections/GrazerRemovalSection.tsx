@@ -21,7 +21,7 @@ export function GrazerRemovalSection({ detail }: GrazerRemovalSectionProps) {
       <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-400">
         조식동물 작업 상세
       </h2>
-      <div className="grid gap-x-8 md:grid-cols-2">
+      <div className="grid gap-x-6 lg:grid-cols-2">
         <DetailField
           label="대상 생물"
           value={toLabels(TARGET_SPECIES_LABEL, activity.targetSpecies)}

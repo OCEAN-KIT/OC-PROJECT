@@ -1,10 +1,4 @@
-type DetailFieldValue =
-  | string
-  | number
-  | number[]
-  | string[]
-  | null
-  | undefined
+type DetailFieldValue = string | number | number[] | string[] | null | undefined
 
 function formatDetailValue(value: DetailFieldValue) {
   if (Array.isArray(value)) {
@@ -31,9 +25,9 @@ type DetailFieldProps = {
 
 export function DetailField({ label, value }: DetailFieldProps) {
   return (
-    <dl className="flex items-baseline justify-between gap-4 border-b border-gray-100 py-2">
-      <dt className="shrink-0 text-sm text-gray-500">{label}</dt>
-      <dd className="text-right text-sm font-medium text-gray-900">
+    <dl className="grid grid-cols-[max-content_minmax(0,1fr)] items-start gap-4 border-b border-gray-100 py-2">
+      <dt className="text-sm text-gray-500">{label}</dt>
+      <dd className="min-w-0 break-words text-right text-sm font-medium text-gray-900 [overflow-wrap:anywhere]">
         {formatDetailValue(value)}
       </dd>
     </dl>

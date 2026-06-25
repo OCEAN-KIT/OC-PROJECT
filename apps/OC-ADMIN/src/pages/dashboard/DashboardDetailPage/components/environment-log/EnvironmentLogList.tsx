@@ -78,9 +78,9 @@ export default function EnvironmentLogList({
             새 환경 기록 추가
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-6 gap-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
             {/* 날짜 */}
-            <div className="sm:col-span-2">
+            <div>
               <label className="block text-xs text-gray-600 mb-1">
                 기록 날짜
               </label>
@@ -93,7 +93,7 @@ export default function EnvironmentLogList({
             </div>
 
             {/* 수온 */}
-            <div className="sm:col-span-2">
+            <div>
               <label className="block text-xs text-gray-600 mb-1">
                 수온 (&deg;C)
               </label>
@@ -113,7 +113,7 @@ export default function EnvironmentLogList({
             </div>
 
             {/* 시야 */}
-            <div className="sm:col-span-1">
+            <div>
               <label className="block text-xs text-gray-600 mb-1">시야</label>
               <select
                 value={form.visibility}
@@ -135,7 +135,7 @@ export default function EnvironmentLogList({
             </div>
 
             {/* 조류 */}
-            <div className="sm:col-span-1">
+            <div>
               <label className="block text-xs text-gray-600 mb-1">조류</label>
               <select
                 value={form.current}
@@ -157,7 +157,7 @@ export default function EnvironmentLogList({
             </div>
 
             {/* 서지 */}
-            <div className="sm:col-span-1">
+            <div>
               <label className="block text-xs text-gray-600 mb-1">서지</label>
               <select
                 value={form.surge}
@@ -176,7 +176,7 @@ export default function EnvironmentLogList({
             </div>
 
             {/* 파도 */}
-            <div className="sm:col-span-1">
+            <div>
               <label className="block text-xs text-gray-600 mb-1">파도</label>
               <select
                 value={form.wave}
@@ -218,8 +218,8 @@ export default function EnvironmentLogList({
 
       {/* 기록 테이블 */}
       {entries.length > 0 && (
-        <div className="border border-gray-200 rounded-lg overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto rounded-lg border border-gray-200">
+          <table className="min-w-[720px] w-full text-sm">
             <thead>
               <tr className="bg-gray-50 border-b">
                 <th className="text-left px-4 py-2 font-medium text-gray-600">

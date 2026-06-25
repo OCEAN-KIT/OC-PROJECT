@@ -19,7 +19,7 @@ type HeaderProps = ComponentPropsWithoutRef<'div'>
 function Header({ className = '', children, ...props }: HeaderProps) {
   return (
     <div
-      className={`flex items-center justify-between border-b border-gray-100 bg-gray-50 px-6 py-4 ${className}`}
+      className={`flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 bg-gray-50 px-4 py-4 sm:px-6 ${className}`}
       {...props}
     >
       {children}
@@ -35,13 +35,15 @@ type TitleProps = {
 
 function Title({ icon: Icon, children, description }: TitleProps) {
   return (
-    <div>
-      <h2 className="flex items-center gap-2 font-semibold text-gray-900">
-        <Icon className="h-5 w-5 text-[#2C67BC]" />
-        {children}
+    <div className="min-w-0 flex-1">
+      <h2 className="flex min-w-0 items-center gap-2 font-semibold text-gray-900">
+        <Icon className="h-5 w-5 shrink-0 text-[#2C67BC]" />
+        <span className="min-w-0 break-words">{children}</span>
       </h2>
       {description && (
-        <p className="ml-7 mt-1 text-xs text-gray-500">{description}</p>
+        <p className="ml-7 mt-1 break-words text-xs text-gray-500">
+          {description}
+        </p>
       )}
     </div>
   )
@@ -51,14 +53,16 @@ type BodyProps = ComponentPropsWithoutRef<'div'>
 
 function Body({ className = '', children, ...props }: BodyProps) {
   return (
-    <div className={`p-6 ${className}`} {...props}>
+    <div className={`p-4 sm:p-6 ${className}`} {...props}>
       {children}
     </div>
   )
 }
 
 function Action({ children }: { children: ReactNode }) {
-  return <div className="shrink-0">{children}</div>
+  return (
+    <div className="flex shrink-0 flex-wrap justify-end gap-2">{children}</div>
+  )
 }
 
 export const DashboardSection = {

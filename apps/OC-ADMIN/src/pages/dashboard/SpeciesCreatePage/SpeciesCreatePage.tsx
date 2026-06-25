@@ -51,7 +51,7 @@ export default function SpeciesCreatePage() {
       <div className="mx-auto max-w-[900px] p-4">
         {/* 페이지 헤더 */}
         <div className="mb-6">
-          <div className="flex items-center gap-4">
+          <div className="flex items-start gap-4">
             <button
               type="button"
               onClick={() => {
@@ -61,9 +61,9 @@ export default function SpeciesCreatePage() {
             >
               <ArrowLeft className="h-5 w-5 text-gray-600" />
             </button>
-            <div className="flex w-full justify-between gap-3">
+            <div className="flex min-w-0 flex-1 flex-wrap justify-between gap-3">
               <h1 className="text-2xl font-bold text-gray-900">종 관리</h1>
-              <p className="text-sm text-gray-500 self-end">
+              <p className="min-w-0 break-words text-sm text-gray-500">
                 이식, 성장기록 등 데이터를 추가할 때 사용할 종들을 추가/삭제
                 합니다.
               </p>
@@ -72,20 +72,20 @@ export default function SpeciesCreatePage() {
         </div>
 
         {/* 종 추가 입력 */}
-        <div className="mb-4 flex gap-2">
+        <div className="mb-4 flex min-w-0 gap-2">
           <input
             type="text"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
             placeholder="새 종 이름 입력"
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="min-w-0 flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
             type="button"
             onClick={handleCreate}
             disabled={createMutation.isPending || !newName.trim()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="flex shrink-0 items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Plus className="h-4 w-4" />
             추가
@@ -150,7 +150,7 @@ function SpeciesItem({
 
   if (isEditing) {
     return (
-      <li className="flex items-center gap-2 p-3">
+      <li className="flex min-w-0 items-center gap-2 p-3">
         <input
           type="text"
           value={editingName}
@@ -159,7 +159,7 @@ function SpeciesItem({
             if (e.key === 'Enter') handleUpdate()
             if (e.key === 'Escape') onCancelEdit()
           }}
-          className="flex-1 px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="min-w-0 flex-1 px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           autoFocus
         />
         <button
@@ -182,9 +182,11 @@ function SpeciesItem({
   }
 
   return (
-    <li className="flex items-center justify-between p-3 hover:bg-gray-50">
-      <span className="text-gray-900">{species.name}</span>
-      <div className="flex gap-1">
+    <li className="flex min-w-0 items-center justify-between gap-3 p-3 hover:bg-gray-50">
+      <span className="min-w-0 truncate text-gray-900" title={species.name}>
+        {species.name}
+      </span>
+      <div className="flex shrink-0 gap-1">
         <button
           type="button"
           onClick={onStartEdit}
