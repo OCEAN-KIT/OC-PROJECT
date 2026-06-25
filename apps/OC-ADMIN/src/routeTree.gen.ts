@@ -24,17 +24,17 @@ const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() => import('./routes/profile.lazy').then((d) => d.Route))
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() => import('./routes/login.lazy').then((d) => d.Route))
 const HomeRoute = HomeRouteImport.update({
   id: '/home',
   path: '/home',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() => import('./routes/home.lazy').then((d) => d.Route))
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -56,7 +56,9 @@ const ReviewSubmissionIdRoute = ReviewSubmissionIdRouteImport.update({
   id: '/review/$submissionId',
   path: '/review/$submissionId',
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any).lazy(() =>
+  import('./routes/review.$submissionId.lazy').then((d) => d.Route),
+)
 const DashboardSpeciesCreateRoute = DashboardSpeciesCreateRouteImport.update({
   id: '/speciesCreate',
   path: '/speciesCreate',

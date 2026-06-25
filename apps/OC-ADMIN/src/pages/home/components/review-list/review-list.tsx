@@ -19,7 +19,7 @@ type Props = {
   onDeleteOne: (id: string) => void
 }
 
-function HeaderCell({ children }: { children: React.ReactNode }) {
+function HeaderCell({ children }: { children?: React.ReactNode }) {
   return <div className="min-w-0 truncate whitespace-nowrap">{children}</div>
 }
 

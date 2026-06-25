@@ -25,7 +25,6 @@ const config = defineConfig(({ mode }) => {
     }),
     devtools(),
     tailwindcss(),
-    visualizer(),
     viteReact(),
   ]
 

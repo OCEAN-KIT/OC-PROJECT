@@ -3,17 +3,5 @@
  * submissionId 파라미터를 가진 URL만 선언하고, 상세 데이터 처리는 페이지 쪽 책임입니다.
  */
 import { createFileRoute } from '@tanstack/react-router'
-import { ReviewDetailPage } from '#/pages/review-detail/ReviewDetailPage'
-import { AuthGuard } from '#/shared/auth/AuthGuard'
 
-export const Route = createFileRoute('/review/$submissionId')({
-  component: ReviewDetailRoute,
-})
-
-function ReviewDetailRoute() {
-  return (
-    <AuthGuard mode="gotoLogin">
-      <ReviewDetailPage />
-    </AuthGuard>
-  )
-}
+export const Route = createFileRoute('/review/$submissionId')({})
