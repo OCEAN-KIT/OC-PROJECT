@@ -3,5 +3,10 @@
  * submissionId 파라미터를 가진 URL만 선언하고, 상세 데이터 처리는 페이지 쪽 책임입니다.
  */
 import { createFileRoute } from '@tanstack/react-router'
+import { requireAuth } from '#/shared/auth/routeGuards'
 
-export const Route = createFileRoute('/review/$submissionId')({})
+export const Route = createFileRoute('/review/$submissionId')({
+  beforeLoad: ({ context }) => {
+    return requireAuth(context.queryClient)
+  },
+})

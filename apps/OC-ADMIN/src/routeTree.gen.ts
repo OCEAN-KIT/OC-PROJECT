@@ -34,7 +34,7 @@ const HomeRoute = HomeRouteImport.update({
   id: '/home',
   path: '/home',
   getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/home.lazy').then((d) => d.Route))
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
