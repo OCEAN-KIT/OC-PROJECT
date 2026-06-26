@@ -7,11 +7,15 @@ import { myInfo } from '@ocean-kit/shared-auth/user'
 import { useQuery } from '@tanstack/react-query'
 import { queryKeys } from '#/shared/query/queryKeys'
 
-export function useMyInfo() {
-  return useQuery({
+export function myInfoQueryOptions() {
+  return {
     queryKey: queryKeys.myInfo,
     queryFn: () => myInfo(axiosInstance),
     staleTime: 1000 * 60 * 5,
     retry: false,
-  })
+  }
+}
+
+export function useMyInfo() {
+  return useQuery(myInfoQueryOptions())
 }

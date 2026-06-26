@@ -1,11 +1,17 @@
-import { StrictMode } from 'react'
+import { lazy, StrictMode, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 import { RouterProvider } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
 import { router } from './router'
 import { QueryProvider } from './shared/providers/QueryProvider'
 import './styles.css'
+
+const AppDevtools = import.meta.env.DEV
+  ? lazy(() =>
+      import('./shared/devtools/AppDevtools').then((module) => ({
+        default: module.AppDevtools,
+      })),
+    )
+  : null
 
 const rootElement = document.getElementById('root')
 
@@ -30,17 +36,11 @@ createRoot(rootElement).render(
   <StrictMode>
     <QueryProvider>
       <RouterProvider router={router} />
-      <TanStackDevtools
-        config={{
-          position: 'bottom-right',
-        }}
-        plugins={[
-          {
-            name: 'Tanstack Router',
-            render: <TanStackRouterDevtoolsPanel router={router} />,
-          },
-        ]}
-      />
+      {AppDevtools ? (
+        <Suspense fallback={null}>
+          <AppDevtools router={router} />
+        </Suspense>
+      ) : null}
     </QueryProvider>
   </StrictMode>,
 )
