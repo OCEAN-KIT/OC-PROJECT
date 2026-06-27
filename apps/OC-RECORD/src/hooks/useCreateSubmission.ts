@@ -6,6 +6,7 @@ import { createSubmission } from "@/api/createSubmission";
 import { queryKeys } from "@/react-query/keys";
 import { formToPayload, type FormToPayloadParams } from "@/utils/formToPayload";
 import type { SubmissionAttachment } from "@ocean-kit/submission-domain/types/submission";
+import { convertImageToWebp } from "@/utils/convertImageToWebp";
 
 type Params = {
   form: FormToPayloadParams["form"];
@@ -30,14 +31,17 @@ export function useCreateSubmission() {
 
       const uploadResults = await Promise.allSettled(
         files.map(async (file) => {
-          const fileUrl = await uploadImage(file);
+          // 이미지를 webp형식으로 변환
+          const uploadFile = await convertImageToWebp(file);
+
+          const fileUrl = await uploadImage(uploadFile);
           uploadedKeys.push(fileUrl);
 
           return {
-            fileName: file.name,
+            fileName: uploadFile.name,
             fileUrl,
-            mimeType: file.type || "application/octet-stream",
-            fileSize: file.size,
+            mimeType: uploadFile.type || "application/octet-stream",
+            fileSize: uploadFile.size,
           };
         }),
       );
