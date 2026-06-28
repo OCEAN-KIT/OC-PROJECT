@@ -39,6 +39,8 @@ export function useSubmitSubmission({
   ].filter((message): message is string => Boolean(message));
 
   const handleSubmit = () => {
+    if (loading) return;
+
     if (!isOnline) {
       alert("오프라인 상태에선 제출 불가합니다.");
       return;

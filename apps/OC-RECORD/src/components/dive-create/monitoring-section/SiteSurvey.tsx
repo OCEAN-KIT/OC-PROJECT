@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { MapPin, Compass, Mountain } from "lucide-react";
 import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
+import MultiOptionGrid from "@/components/ui/MultiOptionGrid";
 import { useController } from "react-hook-form";
 import CheonjiinKeyboardSheet from "../CheonjiinKeyboardSheet";
 
@@ -207,11 +208,11 @@ export default function SiteSurvey() {
 
         {/* 암반 특성 - [배열로 변경됨] 복수 선택 */}
         <SelectCard title="암반 특성">
-          <OptionGrid<RockCharacteristic>
+          <MultiOptionGrid<RockCharacteristic>
             options={ROCK_CHARACTERISTICS}
-            value={rockFeaturesField.value[0] ?? "매끈"}
+            value={rockFeaturesField.value}
             columns={3}
-            onChange={(opt) => rockFeaturesField.onChange([opt])}
+            onChange={rockFeaturesField.onChange}
           />
         </SelectCard>
 
