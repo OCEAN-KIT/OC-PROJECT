@@ -3,20 +3,21 @@
 import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
 import { MapPin } from "lucide-react";
+import { useController } from "react-hook-form";
 
-import type { OcRecordForm, TransplantPlace } from "@ocean-kit/submission-domain/types/form";
+import type { TransplantPlace } from "@ocean-kit/submission-domain/types/form";
+import type { SubmissionFormValues } from "../DiveFormProvider";
 
 const TRANSPLANT_PLACES: TransplantPlace[] = ["어초", "암반", "기타"];
 
-type Props = {
-  locationType: OcRecordForm["transplant"]["locationType"];
-  setTransplant: (patch: Partial<OcRecordForm["transplant"]>) => void;
-};
+export default function TransplantPlaceSelector() {
+  const { field } = useController<
+    SubmissionFormValues,
+    "transplant.locationType"
+  >({
+    name: "transplant.locationType",
+  });
 
-export default function TransplantPlaceSelector({
-  locationType,
-  setTransplant,
-}: Props) {
   return (
     <SelectCard
       title="이식 장소"
@@ -24,9 +25,9 @@ export default function TransplantPlaceSelector({
     >
       <OptionGrid<TransplantPlace>
         options={TRANSPLANT_PLACES}
-        value={locationType}
+        value={field.value}
         columns={3}
-        onChange={(opt) => setTransplant({ locationType: opt })}
+        onChange={field.onChange}
       />
     </SelectCard>
   );

@@ -3,13 +3,10 @@
 import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
 import { Network } from "lucide-react";
+import { useController } from "react-hook-form";
 
-import type { OcRecordForm, TransplantSystem } from "@ocean-kit/submission-domain/types/form";
-
-type Props = {
-  methodType: OcRecordForm["transplant"]["methodType"];
-  setTransplant: (patch: Partial<OcRecordForm["transplant"]>) => void;
-};
+import type { TransplantSystem } from "@ocean-kit/submission-domain/types/form";
+import type { SubmissionFormValues } from "../DiveFormProvider";
 
 const TRANSPLANT_SYSTEMS: TransplantSystem[] = [
   "로프 연승",
@@ -18,10 +15,14 @@ const TRANSPLANT_SYSTEMS: TransplantSystem[] = [
   "기타",
 ];
 
-export default function TransplantSystemSelector({
-  methodType,
-  setTransplant,
-}: Props) {
+export default function TransplantSystemSelector() {
+  const { field } = useController<
+    SubmissionFormValues,
+    "transplant.methodType"
+  >({
+    name: "transplant.methodType",
+  });
+
   return (
     <SelectCard
       title="이식 방식"
@@ -29,9 +30,9 @@ export default function TransplantSystemSelector({
     >
       <OptionGrid<TransplantSystem>
         options={TRANSPLANT_SYSTEMS}
-        value={methodType}
+        value={field.value}
         columns={2}
-        onChange={(opt) => setTransplant({ methodType: opt })}
+        onChange={field.onChange}
       />
     </SelectCard>
   );
