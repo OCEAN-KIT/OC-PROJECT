@@ -2,6 +2,8 @@ import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
 import type { ReactNode } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
+// 제출 항목들 상태를 들고있는 Provider입니다.
+
 export type SubmissionFormValues = OcRecordForm & {
   details: string;
 };

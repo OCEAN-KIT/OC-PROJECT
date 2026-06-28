@@ -26,75 +26,6 @@ import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { useIsLoggined } from "@/hooks/useIsLoggined";
 import type { SubmissionFormValues } from "./DiveFormProvider";
 
-const createDefaultForm = (): OcRecordForm => ({
-  basic: {
-    siteName: "",
-    date: new Date().toISOString().slice(0, 10),
-    time: (() => {
-      const now = new Date();
-      const hh = String(now.getHours()).padStart(2, "0");
-      const mm = String(now.getMinutes()).padStart(2, "0");
-      return `${hh}:${mm}`;
-    })(),
-    diveRound: 1,
-    workType: "이식",
-    workers: "",
-  },
-  env: {
-    avgDepthM: "",
-    maxDepthM: "",
-    waterTempC: "",
-    visibilityStatus: "보통",
-    waveStatus: "보통",
-    surgeStatus: "보통",
-    currentStatus: "보통",
-  },
-  transplant: {
-    speciesType: "감태",
-    locationType: "어초",
-    methodType: "로프 연승",
-    scale: "",
-    healthStatus: "A",
-  },
-  grazing: {
-    targetSpecies: ["성게"],
-    densityBeforeWork: "적음",
-    workScope: "국소",
-    note: "",
-    collectionAmount: "",
-  },
-  substrate: {
-    targetType: "암반",
-    workScope: "",
-    substrateState: "",
-  },
-  monitoring: {
-    entryCoordinate: "",
-    exitCoordinate: "",
-    direction: "",
-    terrain: "암반",
-    barrenExtent: "없음",
-    grazerDistribution: "낮음",
-    rockFeatures: ["매끈"], // [배열로 변경됨]
-    suitability: "적합",
-    seaweedIdNumber: "",
-    seaweedHealthStatus: "양호",
-    precisionMeasurement: false,
-    leafLength: "",
-    maxLeafWidth: "",
-  },
-  cleanup: {
-    wasteTypes: [],
-    method: "수작업",
-    collectionAmount: "",
-    uncollectedScale: "소",
-  },
-});
-
-////////////////////////////
-
-////////////////////////////
-
 const buildAttachmentMeta = (attachments: File[]) =>
   attachments.map((file) => ({
     name: file.name,
@@ -115,7 +46,6 @@ const buildDraftSnapshot = (
   });
 
 export default function DiveCreateContent() {
-  // useAuthGuard({ mode: "gotoLogin" });
   const router = useRouter();
   const isLoggedIn = useIsLoggined();
   const { getValues, setValue } = useFormContext<SubmissionFormValues>();
@@ -138,56 +68,6 @@ export default function DiveCreateContent() {
       setIsMobile(window.matchMedia("(pointer: coarse)").matches);
     }
   }, []);
-
-  // ========= form =========
-  const [form, setForm] = useState<OcRecordForm>(createDefaultForm);
-
-  const setBasic = (patch: Partial<OcRecordForm["basic"]>) => {
-    setForm((prev) => ({
-      ...prev,
-      basic: { ...prev.basic, ...patch },
-    }));
-  };
-  const setEnv = (patch: Partial<OcRecordForm["env"]>) => {
-    setForm((prev) => ({
-      ...prev,
-      env: { ...prev.env, ...patch },
-    }));
-  };
-  const setTransplant = (patch: Partial<OcRecordForm["transplant"]>) => {
-    setForm((prev) => ({
-      ...prev,
-      transplant: { ...prev.transplant, ...patch },
-    }));
-  };
-  const setGrazing = (patch: Partial<OcRecordForm["grazing"]>) => {
-    setForm((prev) => ({
-      ...prev,
-      grazing: { ...prev.grazing, ...patch },
-    }));
-  };
-  const setSubstrate = (patch: Partial<OcRecordForm["substrate"]>) => {
-    setForm((prev) => ({
-      ...prev,
-      substrate: { ...prev.substrate, ...patch },
-    }));
-  };
-  const setMonitoring = (patch: Partial<OcRecordForm["monitoring"]>) => {
-    setForm((prev) => ({
-      ...prev,
-      monitoring: { ...prev.monitoring, ...patch },
-    }));
-  };
-  const setCleanup = (patch: Partial<OcRecordForm["cleanup"]>) => {
-    setForm((prev) => ({
-      ...prev,
-      cleanup: { ...prev.cleanup, ...patch },
-    }));
-  };
-
-  // ========= 작업내용 =========
-  const DETAILS_MAX = 2000;
-  const [details, setDetails] = useState("");
 
   // ========= 유효성 검증 에러 =========
   const [validationError, setValidationError] = useState<string | null>(null);
@@ -455,7 +335,10 @@ export default function DiveCreateContent() {
       return;
     }
 
-    const error = validateSubmission(form, details);
+    const values = getValues();
+    const { details, ...formValues } = values;
+
+    const error = validateSubmission(formValues, details);
     if (error) {
       setValidationError(error);
       return;
@@ -464,7 +347,7 @@ export default function DiveCreateContent() {
 
     submitMutation(
       {
-        form,
+        form: formValues,
         details,
         files: attachments,
       },
