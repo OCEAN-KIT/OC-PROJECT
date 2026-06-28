@@ -3,20 +3,21 @@
 import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
 import { Layers } from "lucide-react";
+import { useController } from "react-hook-form";
 
-import type { OcRecordForm, SubstrateTarget } from "@ocean-kit/submission-domain/types/form";
+import type { SubstrateTarget } from "@ocean-kit/submission-domain/types/form";
+import type { SubmissionFormValues } from "../DiveFormProvider";
 
 const SUBSTRATE_TARGETS: SubstrateTarget[] = ["암반", "어초", "구조물", "기타"];
 
-type Props = {
-  targetType: OcRecordForm["substrate"]["targetType"];
-  setSubstrate: (patch: Partial<OcRecordForm["substrate"]>) => void;
-};
+export default function SubstrateTargetSelector() {
+  const { field } = useController<
+    SubmissionFormValues,
+    "substrate.targetType"
+  >({
+    name: "substrate.targetType",
+  });
 
-export default function SubstrateTargetSelector({
-  targetType,
-  setSubstrate,
-}: Props) {
   return (
     <SelectCard
       title="작업 대상"
@@ -24,9 +25,9 @@ export default function SubstrateTargetSelector({
     >
       <OptionGrid<SubstrateTarget>
         options={SUBSTRATE_TARGETS}
-        value={targetType}
+        value={field.value}
         columns={4}
-        onChange={(opt) => setSubstrate({ targetType: opt })}
+        onChange={field.onChange}
       />
     </SelectCard>
   );

@@ -12,14 +12,12 @@ import CleanupWrapper from "@/components/dive-create/cleanup-section/CleanupWrap
 
 type SectionProps = {
   form: OcRecordForm;
-  setSubstrate: (patch: Partial<OcRecordForm["substrate"]>) => void;
   setMonitoring: (patch: Partial<OcRecordForm["monitoring"]>) => void;
   setCleanup: (patch: Partial<OcRecordForm["cleanup"]>) => void;
 };
 
 export default function WorkTypeSection({
   form,
-  setSubstrate,
   setMonitoring,
   setCleanup,
 }: SectionProps) {
@@ -33,7 +31,7 @@ export default function WorkTypeSection({
     case "조식동물 작업":
       return <GrazingWrapper />;
     case "부착기질 개선":
-      return <SubstrateWrapper form={form} setSubstrate={setSubstrate} />;
+      return <SubstrateWrapper />;
     case "모니터링":
       return <MonitoringWrapper form={form} setMonitoring={setMonitoring} />;
     case "해양정화":
