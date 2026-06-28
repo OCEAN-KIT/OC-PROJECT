@@ -1,17 +1,21 @@
 "use client";
 
+import { useController } from "react-hook-form";
 import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
+import type { SubmissionFormValues } from "../DiveFormProvider";
 import { cardCls } from "../styles";
 import { Hash } from "lucide-react";
 
-type Props = {
-  diveRound: OcRecordForm["basic"]["diveRound"];
-  setBasic: (patch: Partial<OcRecordForm["basic"]>) => void;
-};
-
 const ROUNDS: OcRecordForm["basic"]["diveRound"][] = [1, 2, 3, 4, 5];
 
-export default function DiveRoundSelector({ diveRound, setBasic }: Props) {
+export default function DiveRoundSelector() {
+  const { field } = useController<
+    SubmissionFormValues,
+    "basic.diveRound"
+  >({
+    name: "basic.diveRound",
+  });
+
   return (
     <section className="mb-7">
       <div className="flex items-center gap-2 mb-2">
@@ -21,12 +25,12 @@ export default function DiveRoundSelector({ diveRound, setBasic }: Props) {
 
       <div className="grid grid-cols-5 gap-2">
         {ROUNDS.map((round) => {
-          const active = diveRound === round;
+          const active = field.value === round;
           return (
             <button
               key={round}
               type="button"
-              onClick={() => setBasic({ diveRound: round })}
+              onClick={() => field.onChange(round)}
               className={[
                 "h-10 rounded-xl text-[13px] font-semibold transition",
                 active

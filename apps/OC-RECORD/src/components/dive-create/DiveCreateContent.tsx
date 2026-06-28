@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { ClipLoader } from "react-spinners";
+import { useFormContext } from "react-hook-form";
 
 import {
   generateDraftId,
@@ -23,6 +24,7 @@ import CommonWrapper from "@/components/dive-create/common-section/CommonWrapper
 import UnsavedChangesModal from "@/components/ui/UnsavedChangesModal";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { useIsLoggined } from "@/hooks/useIsLoggined";
+import type { SubmissionFormValues } from "./DiveFormProvider";
 
 const createDefaultForm = (): OcRecordForm => ({
   basic: {
@@ -116,6 +118,7 @@ export default function DiveCreateContent() {
   // useAuthGuard({ mode: "gotoLogin" });
   const router = useRouter();
   const isLoggedIn = useIsLoggined();
+  const { getValues, setValue } = useFormContext<SubmissionFormValues>();
 
   useEffect(() => {
     router.prefetch("/dive-drafts");
@@ -223,8 +226,8 @@ export default function DiveCreateContent() {
     const el = dateInputRef.current;
     if (el && typeof el.showPicker === "function") el.showPicker();
     else {
-      const v = prompt("날짜 (YYYY-MM-DD)", form.basic.date);
-      if (v) setBasic({ date: v });
+      const v = prompt("날짜 (YYYY-MM-DD)", getValues("basic.date"));
+      if (v) setValue("basic.date", v);
     }
   };
 
@@ -232,8 +235,8 @@ export default function DiveCreateContent() {
     const el = timeInputRef.current;
     if (el && typeof el.showPicker === "function") el.showPicker();
     else {
-      const v = prompt("시간 (HH:MM)", form.basic.time);
-      if (v) setBasic({ time: v });
+      const v = prompt("시간 (HH:MM)", getValues("basic.time"));
+      if (v) setValue("basic.time", v);
     }
   };
 
@@ -506,9 +509,6 @@ export default function DiveCreateContent() {
 
       <main className="mx-auto max-w-105 px-4 pt-4 pb-40 space-y-4">
         <CommonWrapper
-          form={form}
-          setBasic={setBasic}
-          setEnv={setEnv}
           isMobile={isMobile}
           openDatePicker={openDatePicker}
           openTimePicker={openTimePicker}
@@ -516,7 +516,7 @@ export default function DiveCreateContent() {
           timeInputRef={timeInputRef}
         />
 
-        <WorkTypeSelector workType={form.basic.workType} setBasic={setBasic} />
+        <WorkTypeSelector />
 
         <WorkTypeSection
           form={form}
@@ -526,11 +526,7 @@ export default function DiveCreateContent() {
           setCleanup={setCleanup}
         />
 
-        <DetailsInput
-          value={details}
-          onChange={setDetails}
-          maxLen={DETAILS_MAX}
-        />
+        <DetailsInput maxLen={DETAILS_MAX} />
 
         <MediaUploadSection
           attachments={attachments}

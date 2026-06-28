@@ -2,16 +2,16 @@
 
 import { useState } from "react";
 import { Wind, ChevronDown } from "lucide-react";
-import type { OcRecordForm, Rating3 } from "@ocean-kit/submission-domain/types/form";
-
-type Props = {
-  currentStatus: OcRecordForm["env"]["currentStatus"];
-  setEnv: (patch: Partial<OcRecordForm["env"]>) => void;
-};
+import { useController } from "react-hook-form";
+import type { Rating3 } from "@ocean-kit/submission-domain/types/form";
+import type { SubmissionFormValues } from "../DiveFormProvider";
 
 const OPTIONS: Rating3[] = ["나쁨", "보통", "좋음"];
 
-export default function CurrentSelector({ currentStatus, setEnv }: Props) {
+export default function CurrentSelector() {
+  const { field } = useController<SubmissionFormValues, "env.currentStatus">({
+    name: "env.currentStatus",
+  });
   const [open, setOpen] = useState(false);
 
   return (
@@ -42,7 +42,7 @@ export default function CurrentSelector({ currentStatus, setEnv }: Props) {
 
         <div className="mt-1 flex items-center justify-between">
           <span className="text-[13px] font-semibold text-sky-700 truncate">
-            {currentStatus}
+            {field.value}
           </span>
           <ChevronDown
             className={[
@@ -61,14 +61,14 @@ export default function CurrentSelector({ currentStatus, setEnv }: Props) {
         >
           <div className="grid grid-cols-1 gap-2">
             {OPTIONS.map((opt) => {
-              const active = currentStatus === opt;
+              const active = field.value === opt;
 
               return (
                 <button
                   key={opt}
                   type="button"
                   onClick={() => {
-                    setEnv({ currentStatus: opt });
+                    field.onChange(opt);
                     setOpen(false);
                   }}
                   className={[

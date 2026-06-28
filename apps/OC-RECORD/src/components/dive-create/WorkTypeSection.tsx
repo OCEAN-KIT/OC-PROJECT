@@ -1,6 +1,8 @@
 "use client";
 
+import { useWatch } from "react-hook-form";
 import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
+import type { SubmissionFormValues } from "./DiveFormProvider";
 
 import TransplantWrapper from "@/components/dive-create/transplant-section/TransplantWrapper";
 import GrazingWrapper from "@/components/dive-create/grazing-section/GrazingWrapper";
@@ -23,7 +25,9 @@ export default function WorkTypeSection({
   setMonitoring,
   setCleanup,
 }: SectionProps) {
-  const workType = form.basic.workType;
+  const workType = useWatch<SubmissionFormValues, "basic.workType">({
+    name: "basic.workType",
+  });
 
   switch (workType) {
     case "이식":
