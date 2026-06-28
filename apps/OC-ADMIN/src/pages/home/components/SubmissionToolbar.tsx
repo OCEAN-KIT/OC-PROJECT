@@ -46,7 +46,7 @@ export function SubmissionToolbar({
           onClick={onSearch}
           disabled={isFetching}
         >
-          검색
+          검색테스트
         </button>
       </div>
 
