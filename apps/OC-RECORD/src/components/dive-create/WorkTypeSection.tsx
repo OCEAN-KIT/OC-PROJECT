@@ -12,13 +12,11 @@ import CleanupWrapper from "@/components/dive-create/cleanup-section/CleanupWrap
 
 type SectionProps = {
   form: OcRecordForm;
-  setMonitoring: (patch: Partial<OcRecordForm["monitoring"]>) => void;
   setCleanup: (patch: Partial<OcRecordForm["cleanup"]>) => void;
 };
 
 export default function WorkTypeSection({
   form,
-  setMonitoring,
   setCleanup,
 }: SectionProps) {
   const workType = useWatch<SubmissionFormValues, "basic.workType">({
@@ -33,7 +31,7 @@ export default function WorkTypeSection({
     case "부착기질 개선":
       return <SubstrateWrapper />;
     case "모니터링":
-      return <MonitoringWrapper form={form} setMonitoring={setMonitoring} />;
+      return <MonitoringWrapper />;
     case "해양정화":
       return <CleanupWrapper form={form} setCleanup={setCleanup} />;
     default:

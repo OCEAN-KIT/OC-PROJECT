@@ -520,7 +520,6 @@ export default function DiveCreateContent() {
 
         <WorkTypeSection
           form={form}
-          setMonitoring={setMonitoring}
           setCleanup={setCleanup}
         />
 

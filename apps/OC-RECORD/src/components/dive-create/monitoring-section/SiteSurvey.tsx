@@ -4,16 +4,17 @@ import { useRef, useState } from "react";
 import { MapPin, Compass, Mountain } from "lucide-react";
 import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
+import { useController } from "react-hook-form";
 import CheonjiinKeyboardSheet from "../CheonjiinKeyboardSheet";
 
 import type {
-  OcRecordForm,
   TerrainType,
   WhiteningLevel,
   GrazerDistribution,
   RockCharacteristic,
   TransplantSuitability,
 } from "@ocean-kit/submission-domain/types/form";
+import type { SubmissionFormValues } from "../DiveFormProvider";
 
 const TERRAIN_TYPES: TerrainType[] = ["암반", "모래", "혼합", "기타"];
 const WHITENING_LEVELS: WhiteningLevel[] = ["없음", "진행", "심각"];
@@ -27,19 +28,68 @@ const ROCK_CHARACTERISTICS: RockCharacteristic[] = [
 ];
 const TRANSPLANT_SUITABILITIES: TransplantSuitability[] = ["적합", "부적합"];
 
-type Props = {
-  monitoring: OcRecordForm["monitoring"];
-  setMonitoring: (patch: Partial<OcRecordForm["monitoring"]>) => void;
-};
-
 type TextFieldType = "entryCoordinate" | "exitCoordinate" | "direction";
 
-export default function SiteSurvey({ monitoring, setMonitoring }: Props) {
+export default function SiteSurvey() {
+  const { field: entryCoordinateField } = useController<
+    SubmissionFormValues,
+    "monitoring.entryCoordinate"
+  >({
+    name: "monitoring.entryCoordinate",
+  });
+  const { field: exitCoordinateField } = useController<
+    SubmissionFormValues,
+    "monitoring.exitCoordinate"
+  >({
+    name: "monitoring.exitCoordinate",
+  });
+  const { field: directionField } = useController<
+    SubmissionFormValues,
+    "monitoring.direction"
+  >({
+    name: "monitoring.direction",
+  });
+  const { field: terrainField } = useController<
+    SubmissionFormValues,
+    "monitoring.terrain"
+  >({
+    name: "monitoring.terrain",
+  });
+  const { field: barrenExtentField } = useController<
+    SubmissionFormValues,
+    "monitoring.barrenExtent"
+  >({
+    name: "monitoring.barrenExtent",
+  });
+  const { field: grazerDistributionField } = useController<
+    SubmissionFormValues,
+    "monitoring.grazerDistribution"
+  >({
+    name: "monitoring.grazerDistribution",
+  });
+  const { field: rockFeaturesField } = useController<
+    SubmissionFormValues,
+    "monitoring.rockFeatures"
+  >({
+    name: "monitoring.rockFeatures",
+  });
+  const { field: suitabilityField } = useController<
+    SubmissionFormValues,
+    "monitoring.suitability"
+  >({
+    name: "monitoring.suitability",
+  });
+
   const [activeField, setActiveField] = useState<TextFieldType | null>(null);
   const inputRefs = {
     entryCoordinate: useRef<HTMLInputElement | null>(null),
     exitCoordinate: useRef<HTMLInputElement | null>(null),
     direction: useRef<HTMLInputElement | null>(null),
+  };
+  const textFields = {
+    entryCoordinate: entryCoordinateField,
+    exitCoordinate: exitCoordinateField,
+    direction: directionField,
   };
 
   const openKeyboard = (field: TextFieldType) => {
@@ -50,7 +100,7 @@ export default function SiteSurvey({ monitoring, setMonitoring }: Props) {
   const closeKeyboard = () => setActiveField(null);
 
   const setValue = (field: TextFieldType, value: string) => {
-    setMonitoring({ [field]: value.slice(0, 100) });
+    textFields[field].onChange(value.slice(0, 100));
   };
 
   return (
@@ -67,11 +117,15 @@ export default function SiteSurvey({ monitoring, setMonitoring }: Props) {
                 입수 좌표
               </label>
               <input
-                ref={inputRefs.entryCoordinate}
+                ref={(element) => {
+                  inputRefs.entryCoordinate.current = element;
+                  entryCoordinateField.ref(element);
+                }}
                 className="w-full h-11 rounded-xl border border-gray-200 px-3 text-[14px] outline-none"
-                value={monitoring.entryCoordinate}
+                value={entryCoordinateField.value}
                 readOnly
                 inputMode="none"
+                onBlur={entryCoordinateField.onBlur}
                 onFocus={() => openKeyboard("entryCoordinate")}
                 onClick={() => openKeyboard("entryCoordinate")}
               />
@@ -81,11 +135,15 @@ export default function SiteSurvey({ monitoring, setMonitoring }: Props) {
                 출수 좌표
               </label>
               <input
-                ref={inputRefs.exitCoordinate}
+                ref={(element) => {
+                  inputRefs.exitCoordinate.current = element;
+                  exitCoordinateField.ref(element);
+                }}
                 className="w-full h-11 rounded-xl border border-gray-200 px-3 text-[14px] outline-none"
-                value={monitoring.exitCoordinate}
+                value={exitCoordinateField.value}
                 readOnly
                 inputMode="none"
+                onBlur={exitCoordinateField.onBlur}
                 onFocus={() => openKeyboard("exitCoordinate")}
                 onClick={() => openKeyboard("exitCoordinate")}
               />
@@ -95,11 +153,15 @@ export default function SiteSurvey({ monitoring, setMonitoring }: Props) {
                 진행 방위
               </label>
               <input
-                ref={inputRefs.direction}
+                ref={(element) => {
+                  inputRefs.direction.current = element;
+                  directionField.ref(element);
+                }}
                 className="w-full h-11 rounded-xl border border-gray-200 px-3 text-[14px] outline-none"
-                value={monitoring.direction}
+                value={directionField.value}
                 readOnly
                 inputMode="none"
+                onBlur={directionField.onBlur}
                 onFocus={() => openKeyboard("direction")}
                 onClick={() => openKeyboard("direction")}
               />
@@ -114,9 +176,9 @@ export default function SiteSurvey({ monitoring, setMonitoring }: Props) {
         >
           <OptionGrid<TerrainType>
             options={TERRAIN_TYPES}
-            value={monitoring.terrain}
+            value={terrainField.value}
             columns={4}
-            onChange={(opt) => setMonitoring({ terrain: opt })}
+            onChange={terrainField.onChange}
           />
         </SelectCard>
 
@@ -127,9 +189,9 @@ export default function SiteSurvey({ monitoring, setMonitoring }: Props) {
         >
           <OptionGrid<WhiteningLevel>
             options={WHITENING_LEVELS}
-            value={monitoring.barrenExtent}
+            value={barrenExtentField.value}
             columns={3}
-            onChange={(opt) => setMonitoring({ barrenExtent: opt })}
+            onChange={barrenExtentField.onChange}
           />
         </SelectCard>
 
@@ -137,9 +199,9 @@ export default function SiteSurvey({ monitoring, setMonitoring }: Props) {
         <SelectCard title="조식동물 분포">
           <OptionGrid<GrazerDistribution>
             options={GRAZER_DISTRIBUTIONS}
-            value={monitoring.grazerDistribution}
+            value={grazerDistributionField.value}
             columns={3}
-            onChange={(opt) => setMonitoring({ grazerDistribution: opt })}
+            onChange={grazerDistributionField.onChange}
           />
         </SelectCard>
 
@@ -147,9 +209,9 @@ export default function SiteSurvey({ monitoring, setMonitoring }: Props) {
         <SelectCard title="암반 특성">
           <OptionGrid<RockCharacteristic>
             options={ROCK_CHARACTERISTICS}
-            value={monitoring.rockFeatures[0] ?? "매끈"}
+            value={rockFeaturesField.value[0] ?? "매끈"}
             columns={3}
-            onChange={(opt) => setMonitoring({ rockFeatures: [opt] })}
+            onChange={(opt) => rockFeaturesField.onChange([opt])}
           />
         </SelectCard>
 
@@ -157,9 +219,9 @@ export default function SiteSurvey({ monitoring, setMonitoring }: Props) {
         <SelectCard title="해조 이식 적합성">
           <OptionGrid<TransplantSuitability>
             options={TRANSPLANT_SUITABILITIES}
-            value={monitoring.suitability}
+            value={suitabilityField.value}
             columns={2}
-            onChange={(opt) => setMonitoring({ suitability: opt })}
+            onChange={suitabilityField.onChange}
           />
         </SelectCard>
       </div>
@@ -168,7 +230,7 @@ export default function SiteSurvey({ monitoring, setMonitoring }: Props) {
       {activeField && (
         <CheonjiinKeyboardSheet
           key={activeField}
-          baseValue={monitoring[activeField]}
+          baseValue={textFields[activeField].value}
           onChange={(value) => setValue(activeField, value)}
           onClose={closeKeyboard}
         />
