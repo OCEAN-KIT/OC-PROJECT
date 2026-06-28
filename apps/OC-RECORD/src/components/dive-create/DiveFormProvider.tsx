@@ -8,7 +8,7 @@ export type SubmissionFormValues = OcRecordForm & {
   details: string;
 };
 
-const createDefaultForm = (): OcRecordForm => ({
+export const createDefaultForm = (): OcRecordForm => ({
   basic: {
     siteName: "",
     date: new Date().toISOString().slice(0, 10),
@@ -73,7 +73,7 @@ const createDefaultForm = (): OcRecordForm => ({
   },
 });
 
-const createDefaultFormValues = (): SubmissionFormValues => ({
+export const createDefaultFormValues = (): SubmissionFormValues => ({
   ...createDefaultForm(),
   details: "",
 });

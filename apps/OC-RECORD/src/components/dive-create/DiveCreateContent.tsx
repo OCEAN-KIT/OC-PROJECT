@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { ClipLoader } from "react-spinners";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 
 import {
   generateDraftId,
@@ -24,7 +24,11 @@ import CommonWrapper from "@/components/dive-create/common-section/CommonWrapper
 import UnsavedChangesModal from "@/components/ui/UnsavedChangesModal";
 import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 import { useIsLoggined } from "@/hooks/useIsLoggined";
-import type { SubmissionFormValues } from "./DiveFormProvider";
+import {
+  createDefaultForm,
+  createDefaultFormValues,
+  type SubmissionFormValues,
+} from "./DiveFormProvider";
 
 const buildAttachmentMeta = (attachments: File[]) =>
   attachments.map((file) => ({
@@ -45,10 +49,66 @@ const buildDraftSnapshot = (
     attachments: buildAttachmentMeta(targetAttachments),
   });
 
+type WatchedSubmissionFormValues = {
+  details?: SubmissionFormValues["details"];
+  basic?: Partial<SubmissionFormValues["basic"]>;
+  env?: Partial<SubmissionFormValues["env"]>;
+  transplant?: Partial<SubmissionFormValues["transplant"]>;
+  grazing?: Partial<SubmissionFormValues["grazing"]>;
+  substrate?: Partial<SubmissionFormValues["substrate"]>;
+  monitoring?: Partial<SubmissionFormValues["monitoring"]>;
+  cleanup?: Partial<SubmissionFormValues["cleanup"]>;
+};
+
+const completeSubmissionFormValues = (
+  values?: WatchedSubmissionFormValues,
+): SubmissionFormValues => {
+  const defaults = createDefaultFormValues();
+
+  return {
+    details: values?.details ?? defaults.details,
+    basic: {
+      ...defaults.basic,
+      ...(values?.basic ?? {}),
+    },
+    env: {
+      ...defaults.env,
+      ...(values?.env ?? {}),
+    },
+    transplant: {
+      ...defaults.transplant,
+      ...(values?.transplant ?? {}),
+    },
+    grazing: {
+      ...defaults.grazing,
+      ...(values?.grazing ?? {}),
+    },
+    substrate: {
+      ...defaults.substrate,
+      ...(values?.substrate ?? {}),
+    },
+    monitoring: {
+      ...defaults.monitoring,
+      ...(values?.monitoring ?? {}),
+    },
+    cleanup: {
+      ...defaults.cleanup,
+      ...(values?.cleanup ?? {}),
+    },
+  };
+};
+
 export default function DiveCreateContent() {
   const router = useRouter();
   const isLoggedIn = useIsLoggined();
-  const { getValues, setValue } = useFormContext<SubmissionFormValues>();
+  const { getValues, setValue, reset, control } =
+    useFormContext<SubmissionFormValues>();
+
+  const watchedValues = completeSubmissionFormValues(
+    useWatch<SubmissionFormValues>({ control }),
+  );
+
+  const { details, ...form } = watchedValues;
 
   useEffect(() => {
     router.prefetch("/dive-drafts");
@@ -136,7 +196,11 @@ export default function DiveCreateContent() {
     const existing = fromParam ? getDraftById(fromParam) : null;
     const baseForm = createDefaultForm();
     if (!existing) {
-      setSavedSnapshot(buildDraftSnapshot(baseForm, "", []));
+      const defaultValues = createDefaultFormValues();
+      const { details: defaultDetails, ...defaultForm } = defaultValues;
+
+      reset(defaultValues);
+      setSavedSnapshot(buildDraftSnapshot(defaultForm, defaultDetails, []));
       return;
     }
 
@@ -180,96 +244,63 @@ export default function DiveCreateContent() {
         : baseForm.cleanup,
     };
 
-    setBasic(loadedForm.basic);
-    setEnv(loadedForm.env);
-    setTransplant(loadedForm.transplant);
-    setGrazing(loadedForm.grazing);
-    setSubstrate(loadedForm.substrate);
-    setMonitoring(loadedForm.monitoring);
-    setCleanup(loadedForm.cleanup);
+    const loadedValues: SubmissionFormValues = {
+      ...loadedForm,
+      details: loadedDetails,
+    };
 
-    // workType에 따라 해당 섹션만 복원
-    switch (existing.workType) {
-      case "이식":
-        if (existing.transplant) {
-          setTransplant(loadedForm.transplant);
-        }
-        break;
-      case "조식동물 작업":
-        if (existing.grazing) {
-          setGrazing(loadedForm.grazing);
-        }
-        break;
-      case "부착기질 개선":
-        if (existing.substrate) {
-          setSubstrate(loadedForm.substrate);
-        }
-        break;
-      case "모니터링":
-        if (existing.monitoring) {
-          setMonitoring(loadedForm.monitoring);
-        }
-        break;
-      case "해양정화":
-        if (existing.cleanup) {
-          setCleanup(loadedForm.cleanup);
-        }
-        break;
-    }
-
-    setDetails(loadedDetails);
-    setSavedSnapshot(
-      buildDraftSnapshot(loadedForm, loadedDetails, attachments),
-    );
-    // attachments(File)은 localStorage 복원 불가 → 유지 안 함
+    reset(loadedValues);
+    setSavedSnapshot(buildDraftSnapshot(loadedForm, loadedDetails, []));
   }, []);
 
   // ========= 임시저장 =========
   const handleSaveDraft = (opts: { silent?: boolean } = {}) => {
     const nowIso = new Date().toISOString();
+    const values = getValues();
+    const { details: draftDetails, ...draftForm } = values;
 
     const baseDraft = {
       id: draftId || generateDraftId(),
       // basic
-      siteName: form.basic.siteName,
-      date: form.basic.date,
-      time: form.basic.time,
-      diveRound: form.basic.diveRound,
-      workType: form.basic.workType,
-      workers: form.basic.workers,
+      siteName: draftForm.basic.siteName,
+      date: draftForm.basic.date,
+      time: draftForm.basic.time,
+      diveRound: draftForm.basic.diveRound,
+      workType: draftForm.basic.workType,
+      workers: draftForm.basic.workers,
 
       // env
-      avgDepthM: form.env.avgDepthM,
-      maxDepthM: form.env.maxDepthM,
-      waterTempC: form.env.waterTempC,
-      visibilityStatus: form.env.visibilityStatus,
-      waveStatus: form.env.waveStatus,
-      surgeStatus: form.env.surgeStatus,
-      currentStatus: form.env.currentStatus,
+      avgDepthM: draftForm.env.avgDepthM,
+      maxDepthM: draftForm.env.maxDepthM,
+      waterTempC: draftForm.env.waterTempC,
+      visibilityStatus: draftForm.env.visibilityStatus,
+      waveStatus: draftForm.env.waveStatus,
+      surgeStatus: draftForm.env.surgeStatus,
+      currentStatus: draftForm.env.currentStatus,
 
       // details
-      details,
+      details: draftDetails,
 
       updatedAt: nowIso,
     };
 
     // workType에 따라 해당 섹션만 저장
     let sectionData = {};
-    switch (form.basic.workType) {
+    switch (draftForm.basic.workType) {
       case "이식":
-        sectionData = { transplant: form.transplant };
+        sectionData = { transplant: draftForm.transplant };
         break;
       case "조식동물 작업":
-        sectionData = { grazing: form.grazing };
+        sectionData = { grazing: draftForm.grazing };
         break;
       case "부착기질 개선":
-        sectionData = { substrate: form.substrate };
+        sectionData = { substrate: draftForm.substrate };
         break;
       case "모니터링":
-        sectionData = { monitoring: form.monitoring };
+        sectionData = { monitoring: draftForm.monitoring };
         break;
       case "해양정화":
-        sectionData = { cleanup: form.cleanup };
+        sectionData = { cleanup: draftForm.cleanup };
         break;
     }
 
@@ -288,7 +319,7 @@ export default function DiveCreateContent() {
 
     upsertDraft(finalDraft);
 
-    setSavedSnapshot(buildDraftSnapshot(form, details, attachments));
+    setSavedSnapshot(buildDraftSnapshot(draftForm, draftDetails, attachments));
 
     if (!opts.silent) alert("임시 저장했습니다.");
   };
@@ -336,9 +367,9 @@ export default function DiveCreateContent() {
     }
 
     const values = getValues();
-    const { details, ...formValues } = values;
+    const { details: submitDetails, ...formValues } = values;
 
-    const error = validateSubmission(formValues, details);
+    const error = validateSubmission(formValues, submitDetails);
     if (error) {
       setValidationError(error);
       return;
@@ -348,7 +379,7 @@ export default function DiveCreateContent() {
     submitMutation(
       {
         form: formValues,
-        details,
+        details: submitDetails,
         files: attachments,
       },
       {
@@ -403,7 +434,7 @@ export default function DiveCreateContent() {
 
         <WorkTypeSection />
 
-        <DetailsInput maxLen={DETAILS_MAX} />
+        <DetailsInput />
 
         <MediaUploadSection
           attachments={attachments}
