@@ -1,13 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { ClipLoader } from "react-spinners";
 import { useFormContext } from "react-hook-form";
-
-import { useCreateSubmission } from "@/hooks/useCreateSubmission";
-import { validateSubmission } from "@/utils/validateSubmission";
 
 import WorkTypeSelector from "@/components/dive-create/common-section/WorkTypeSelector";
 import DetailsInput from "@/components/dive-create/common-section/DetailsInput";
@@ -15,14 +11,11 @@ import MediaUploadSection from "@/components/dive-create/common-section/MediaUpl
 import WorkTypeSection from "@/components/dive-create/WorkTypeSection";
 import CommonWrapper from "@/components/dive-create/common-section/CommonWrapper";
 import UnsavedChangesModal from "@/components/ui/UnsavedChangesModal";
-import { useOnlineStatus } from "@/hooks/useOnlineStatus";
-import { useIsLoggined } from "@/hooks/useIsLoggined";
 import { useDiveDraft } from "@/hooks/useDiveDraft";
+import { useSubmitSubmission } from "@/hooks/useSubmitSubmission";
 import type { SubmissionFormValues } from "./DiveFormProvider";
 
 export default function DiveCreateContent() {
-  const router = useRouter();
-  const isLoggedIn = useIsLoggined();
   const { getValues, setValue, reset, control } =
     useFormContext<SubmissionFormValues>();
 
@@ -65,12 +58,6 @@ export default function DiveCreateContent() {
     setAttachments((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  // ========= 유효성 검증 에러 =========
-  const [validationError, setValidationError] = useState<string | null>(null);
-  useEffect(() => {
-    if (validationError) setValidationError(null);
-  }, [currentForm, currentDetails]);
-
   // ========= Date/Time Picker refs + helpers =========
   const dateInputRef = useRef<HTMLInputElement | null>(null);
   const timeInputRef = useRef<HTMLInputElement | null>(null);
@@ -93,53 +80,18 @@ export default function DiveCreateContent() {
     }
   };
 
-  // ========= 제출 =========
-  const { mutate: submitMutation, isPending: loading } = useCreateSubmission();
-  const isOnline = useOnlineStatus();
-  const isSubmitDisabled = loading || !isOnline || !isLoggedIn;
-  const submitDisabledMessages = [
-    !isOnline ? "오프라인 상태에선 제출 불가합니다." : null,
-    !isLoggedIn ? "로그인 후 제출해주세요." : null,
-  ].filter((message): message is string => Boolean(message));
-
-  const handleSubmit = () => {
-    if (!isOnline) {
-      alert("오프라인 상태에선 제출 불가합니다.");
-      return;
-    }
-
-    if (!isLoggedIn) {
-      alert("로그인 후 제출해주세요.");
-      return;
-    }
-
-    const values = getValues();
-    const { details: submitDetails, ...formValues } = values;
-
-    const error = validateSubmission(formValues, submitDetails);
-    if (error) {
-      setValidationError(error);
-      return;
-    }
-    setValidationError(null);
-
-    submitMutation(
-      {
-        form: formValues,
-        details: submitDetails,
-        files: attachments,
-      },
-      {
-        onSuccess: () => {
-          alert("제출이 완료되었습니다.");
-          router.push("/");
-        },
-        onError: (err) => {
-          alert(err.message || "제출 중 오류가 발생했습니다.");
-        },
-      },
-    );
-  };
+  const {
+    loading,
+    isSubmitDisabled,
+    submitDisabledMessages,
+    validationError,
+    handleSubmit,
+  } = useSubmitSubmission({
+    getValues,
+    attachments,
+    currentForm,
+    currentDetails,
+  });
 
   return (
     <div className="relative min-h-dvh ">

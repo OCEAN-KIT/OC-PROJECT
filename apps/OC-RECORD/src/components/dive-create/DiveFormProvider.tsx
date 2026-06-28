@@ -57,7 +57,7 @@ export const createDefaultForm = (): OcRecordForm => ({
     terrain: "암반",
     barrenExtent: "없음",
     grazerDistribution: "낮음",
-    rockFeatures: ["매끈"], // [배열로 변경됨]
+    rockFeatures: ["매끈"],
     suitability: "적합",
     seaweedIdNumber: "",
     seaweedHealthStatus: "양호",
