@@ -49,6 +49,7 @@ jobs:
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           persist-credentials: false
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1
@@ -104,20 +105,106 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build frontend apps
-        run: pnpm build
-
-      - name: Verify CloudFront domain is absent
+      - name: Resolve affected apps
+        id: affected
         shell: bash
         run: |
-          if grep -R --binary-files=without-match -n "d24m5p5t9qbt5o.cloudfront.net" \
-            apps/OC-ADMIN/dist \
-            apps/OC-RECORD/dist; then
-            echo "::error::CloudFront domain remains in admin/record build output."
-            exit 1
+          set -euo pipefail
+
+          force_all=false
+          base_sha="${{ github.event.before }}"
+          head_sha="${{ github.sha }}"
+
+          if [ "${{ github.event_name }}" != "push" ]; then
+            force_all=true
+          elif [ -z "${base_sha}" ] || [[ "${base_sha}" =~ ^0+$ ]]; then
+            force_all=true
+          elif ! git cat-file -e "${base_sha}^{commit}" 2>/dev/null; then
+            force_all=true
+          elif git diff --name-only "${base_sha}" "${head_sha}" | grep -Eq '^(\.github/workflows/frontend-deploy\.yml|package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|turbo\.json|tsconfig\.base\.json)$'; then
+            force_all=true
+          fi
+
+          if [ "${force_all}" = "true" ]; then
+            admin=true
+            record=true
+            dashboard=true
+            echo "Running all frontend apps."
+          else
+            affected_json="$(pnpm turbo ls --filter="...[${base_sha}...${head_sha}]" --output=json)"
+            echo "${affected_json}"
+
+            admin=false
+            record=false
+            dashboard=false
+
+            if grep -q '@ocean-kit/oc-admin' <<< "${affected_json}"; then
+              admin=true
+            fi
+
+            if grep -q '@ocean-kit/oc-record' <<< "${affected_json}"; then
+              record=true
+            fi
+
+            if grep -q '@ocean-kit/oc-dashboard' <<< "${affected_json}"; then
+              dashboard=true
+            fi
+          fi
+
+          build_filters=()
+
+          if [ "${admin}" = "true" ]; then
+            build_filters+=("--filter=@ocean-kit/oc-admin")
+          fi
+
+          if [ "${record}" = "true" ]; then
+            build_filters+=("--filter=@ocean-kit/oc-record")
+          fi
+
+          if [ "${dashboard}" = "true" ]; then
+            build_filters+=("--filter=@ocean-kit/oc-dashboard")
+          fi
+
+          if [ "${#build_filters[@]}" -gt 0 ]; then
+            any=true
+          else
+            any=false
+          fi
+
+          {
+            echo "admin=${admin}"
+            echo "record=${record}"
+            echo "dashboard=${dashboard}"
+            echo "any=${any}"
+            echo "build_filters=${build_filters[*]}"
+          } >> "${GITHUB_OUTPUT}"
+
+          printf 'Affected apps: admin=%s record=%s dashboard=%s\n' "${admin}" "${record}" "${dashboard}"
+
+      - name: Build affected frontend apps
+        if: steps.affected.outputs.any == 'true'
+        run: pnpm turbo run build ${{ steps.affected.outputs.build_filters }}
+
+      - name: Verify CloudFront domain is absent
+        if: steps.affected.outputs.admin == 'true' || steps.affected.outputs.record == 'true'
+        shell: bash
+        run: |
+          if [ "${{ steps.affected.outputs.admin }}" = "true" ]; then
+            if grep -R --binary-files=without-match -n "d24m5p5t9qbt5o.cloudfront.net" apps/OC-ADMIN/dist; then
+              echo "::error::CloudFront domain remains in admin build output."
+              exit 1
+            fi
+          fi
+
+          if [ "${{ steps.affected.outputs.record }}" = "true" ]; then
+            if grep -R --binary-files=without-match -n "d24m5p5t9qbt5o.cloudfront.net" apps/OC-RECORD/dist; then
+              echo "::error::CloudFront domain remains in record build output."
+              exit 1
+            fi
           fi
 
       - name: Verify static asset references
+        if: steps.affected.outputs.admin == 'true' || steps.affected.outputs.record == 'true'
         shell: bash
         run: |
           verify_assets() {
@@ -140,10 +227,16 @@ jobs:
             done
           }
 
-          verify_assets "admin" "apps/OC-ADMIN/dist" "admin"
-          verify_assets "record" "apps/OC-RECORD/dist" "record"
+          if [ "${{ steps.affected.outputs.admin }}" = "true" ]; then
+            verify_assets "admin" "apps/OC-ADMIN/dist" "admin"
+          fi
+
+          if [ "${{ steps.affected.outputs.record }}" = "true" ]; then
+            verify_assets "record" "apps/OC-RECORD/dist" "record"
+          fi
 
       - name: Configure AWS credentials
+        if: steps.affected.outputs.any == 'true'
         uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -151,12 +244,19 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Upload static frontend artifacts to S3
+        if: steps.affected.outputs.admin == 'true' || steps.affected.outputs.record == 'true'
         shell: bash
         run: |
-          aws s3 sync apps/OC-ADMIN/dist/ "s3://${FRONTEND_S3_BUCKET}/admin/" --delete
-          aws s3 sync apps/OC-RECORD/dist/ "s3://${FRONTEND_S3_BUCKET}/record/" --delete
+          if [ "${{ steps.affected.outputs.admin }}" = "true" ]; then
+            aws s3 sync apps/OC-ADMIN/dist/ "s3://${FRONTEND_S3_BUCKET}/admin/" --delete
+          fi
+
+          if [ "${{ steps.affected.outputs.record }}" = "true" ]; then
+            aws s3 sync apps/OC-RECORD/dist/ "s3://${FRONTEND_S3_BUCKET}/record/" --delete
+          fi
 
       - name: Allow runner SSH access
+        if: steps.affected.outputs.any == 'true'
         id: ssh_access
         shell: bash
         run: |
@@ -177,6 +277,7 @@ jobs:
           fi
 
       - name: Prepare SSH
+        if: steps.affected.outputs.any == 'true'
         id: prepare_ssh
         shell: bash
         run: |
@@ -232,6 +333,7 @@ jobs:
           exit 1
 
       - name: Deploy static frontend on EC2
+        if: steps.affected.outputs.admin == 'true' || steps.affected.outputs.record == 'true'
         shell: bash
         run: |
           ssh_key_path="${HOME}/.ssh/oceancampus-frontend-cd"
@@ -256,6 +358,7 @@ jobs:
             sudo chmod 644 '/var/www/oceancampus/record/current/record/sw.js'"
 
       - name: Deploy dashboard to EC2
+        if: steps.affected.outputs.dashboard == 'true'
         shell: bash
         run: |
           ssh_key_path="${HOME}/.ssh/oceancampus-frontend-cd"
@@ -322,49 +425,59 @@ jobs:
             "sudo install -m 600 -o root -g root /tmp/oceancampus-dashboard.env '${DASHBOARD_REMOTE_ROOT}/.env' && rm -f /tmp/oceancampus-dashboard.env && sudo systemctl restart oceancampus-dashboard && sudo systemctl is-active oceancampus-dashboard"
 
       - name: Smoke test production endpoints
+        if: steps.affected.outputs.any == 'true'
         shell: bash
         run: |
-          curl -fsSIL https://admin.oceancampus.kr/
-          curl -fsSIL https://record.oceancampus.kr/
-          curl -fsSIL https://dashboard.oceancampus.kr/dashboard
           curl -fsS https://api.oceancampus.kr/actuator/health | grep -q '"status":"UP"'
-          curl -fsSI https://record.oceancampus.kr/record/manifest.webmanifest \
-            | grep -iq 'content-type: application/manifest+json'
 
-          warn_record_no_cache() {
-            local url="$1"
+          if [ "${{ steps.affected.outputs.admin }}" = "true" ]; then
+            curl -fsSIL https://admin.oceancampus.kr/
+          fi
 
-            if ! curl -fsSI "${url}" | tr -d '\r' | grep -iq '^cache-control: .*no-cache'; then
-              echo "::warning::Missing no-cache Cache-Control header: ${url}"
+          if [ "${{ steps.affected.outputs.record }}" = "true" ]; then
+            curl -fsSIL https://record.oceancampus.kr/
+            curl -fsSI https://record.oceancampus.kr/record/manifest.webmanifest \
+              | grep -iq 'content-type: application/manifest+json'
+
+            warn_record_no_cache() {
+              local url="$1"
+
+              if ! curl -fsSI "${url}" | tr -d '\r' | grep -iq '^cache-control: .*no-cache'; then
+                echo "::warning::Missing no-cache Cache-Control header: ${url}"
+              fi
+            }
+
+            warn_record_no_cache https://record.oceancampus.kr/record/
+            warn_record_no_cache https://record.oceancampus.kr/record/index.html
+            warn_record_no_cache https://record.oceancampus.kr/record/manifest.webmanifest
+            warn_record_no_cache https://record.oceancampus.kr/record/sw.js
+
+            record_entry_asset="$(
+              grep -oE "/record/assets/[^\"'<>[:space:]]+\.js" \
+                apps/OC-RECORD/dist/index.html \
+                | head -n 1
+            )"
+
+            if [ -z "${record_entry_asset}" ]; then
+              echo "::error::Unable to find OC-RECORD entry asset in dist/index.html."
+              exit 1
             fi
-          }
 
-          warn_record_no_cache https://record.oceancampus.kr/record/
-          warn_record_no_cache https://record.oceancampus.kr/record/index.html
-          warn_record_no_cache https://record.oceancampus.kr/record/manifest.webmanifest
-          warn_record_no_cache https://record.oceancampus.kr/record/sw.js
+            curl -fsS https://record.oceancampus.kr/record/sw.js -o record-sw.js
 
-          record_entry_asset="$(
-            grep -oE "/record/assets/[^\"'<>[:space:]]+\.js" \
-              apps/OC-RECORD/dist/index.html \
-              | head -n 1
-          )"
+            if ! grep -Fq "${record_entry_asset#/record/}" record-sw.js; then
+              echo "::error::OC-RECORD service worker does not reference the current build asset: ${record_entry_asset}"
+              exit 1
+            fi
 
-          if [ -z "${record_entry_asset}" ]; then
-            echo "::error::Unable to find OC-RECORD entry asset in dist/index.html."
-            exit 1
+            if grep -Fq "d24m5p5t9qbt5o.cloudfront.net" record-sw.js; then
+              echo "::error::CloudFront domain remains in deployed OC-RECORD service worker."
+              exit 1
+            fi
           fi
 
-          curl -fsS https://record.oceancampus.kr/record/sw.js -o record-sw.js
-
-          if ! grep -Fq "${record_entry_asset#/record/}" record-sw.js; then
-            echo "::error::OC-RECORD service worker does not reference the current build asset: ${record_entry_asset}"
-            exit 1
-          fi
-
-          if grep -Fq "d24m5p5t9qbt5o.cloudfront.net" record-sw.js; then
-            echo "::error::CloudFront domain remains in deployed OC-RECORD service worker."
-            exit 1
+          if [ "${{ steps.affected.outputs.dashboard }}" = "true" ]; then
+            curl -fsSIL https://dashboard.oceancampus.kr/dashboard
           fi
 
       - name: Revoke runner SSH access
