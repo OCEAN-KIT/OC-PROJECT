@@ -2,8 +2,10 @@
 
 import MultiOptionGrid from "@/components/ui/MultiOptionGrid";
 import { Trash2 } from "lucide-react";
+import { useController } from "react-hook-form";
 
-import type { OcRecordForm, CleanupType } from "@ocean-kit/submission-domain/types/form";
+import type { CleanupType } from "@ocean-kit/submission-domain/types/form";
+import type { SubmissionFormValues } from "../DiveFormProvider";
 
 const CLEANUP_TYPES: CleanupType[] = [
   "그물",
@@ -14,12 +16,14 @@ const CLEANUP_TYPES: CleanupType[] = [
   "기타",
 ];
 
-type Props = {
-  wasteTypes: OcRecordForm["cleanup"]["wasteTypes"];
-  setCleanup: (patch: Partial<OcRecordForm["cleanup"]>) => void;
-};
+export default function CleanupTypeSelector() {
+  const { field } = useController<
+    SubmissionFormValues,
+    "cleanup.wasteTypes"
+  >({
+    name: "cleanup.wasteTypes",
+  });
 
-export default function CleanupTypeSelector({ wasteTypes, setCleanup }: Props) {
   return (
     <section>
       <div className="flex items-center gap-2 mb-2">
@@ -32,9 +36,9 @@ export default function CleanupTypeSelector({ wasteTypes, setCleanup }: Props) {
 
       <MultiOptionGrid<CleanupType>
         options={CLEANUP_TYPES}
-        value={wasteTypes}
+        value={field.value}
         columns={3}
-        onChange={(selected) => setCleanup({ wasteTypes: selected })}
+        onChange={field.onChange}
       />
     </section>
   );

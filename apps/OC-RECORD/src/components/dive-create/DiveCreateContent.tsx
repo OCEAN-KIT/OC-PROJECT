@@ -518,10 +518,7 @@ export default function DiveCreateContent() {
 
         <WorkTypeSelector />
 
-        <WorkTypeSection
-          form={form}
-          setCleanup={setCleanup}
-        />
+        <WorkTypeSection />
 
         <DetailsInput maxLen={DETAILS_MAX} />
 
