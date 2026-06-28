@@ -6,13 +6,16 @@ import { useController } from "react-hook-form";
 import type { SubmissionFormValues } from "../DiveFormProvider";
 import { cardCls } from "../styles";
 
+const WORKER_INPUT_SEPARATOR_REGEX = /\s/;
+const WORKER_STORAGE_SEPARATOR_REGEX = /[\s,]+/;
+
 function normalizeName(s: string) {
   return s.replace(/\s+/g, " ").trim();
 }
 
 function parseWorkersToChips(workers: string) {
   return workers
-    .split(",")
+    .split(WORKER_STORAGE_SEPARATOR_REGEX)
     .map((x) => normalizeName(x))
     .filter(Boolean);
 }
@@ -31,7 +34,7 @@ export default function WorkersInput() {
   const [draft, setDraft] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const workersString = useMemo(() => chips.join(", "), [chips]);
+  const workersString = useMemo(() => chips.join(" "), [chips]);
 
   // 외부에서 workers가 바뀌는 케이스(초기 로드/리셋) 대비
   useEffect(() => {
@@ -55,15 +58,15 @@ export default function WorkersInput() {
     });
   };
 
-  // ✅ 콤마가 입력되면: 콤마 이전 토큰들은 칩으로 확정하고, 마지막 토큰만 draft로 남김
   const onDraftChange = (raw: string) => {
-    if (raw.includes(",")) {
-      const parts = raw.split(",");
-      const last = parts.pop() ?? "";
+    if (WORKER_INPUT_SEPARATOR_REGEX.test(raw)) {
+      const lastCharacter = raw[raw.length - 1] ?? "";
+      const endsWithSeparator = WORKER_INPUT_SEPARATOR_REGEX.test(lastCharacter);
+      const parts = raw.split(WORKER_STORAGE_SEPARATOR_REGEX).filter(Boolean);
+      const last = endsWithSeparator ? "" : parts.pop() ?? "";
 
       for (const p of parts) commitToken(p);
 
-      // 콤마까지 포함된 입력은 draft에 남기지 않음 (즉시 사라짐)
       setDraft(normalizeName(last));
       return;
     }
@@ -107,7 +110,7 @@ export default function WorkersInput() {
         </div>
 
         <span className="text-[12px] text-gray-500">
-          쉼표(,)로 입력하면 박스로 분리돼요
+          띄어쓰기로 입력하면 박스로 분리돼요
         </span>
       </div>
 
@@ -138,7 +141,7 @@ export default function WorkersInput() {
             value={draft}
             onChange={(e) => onDraftChange(e.target.value)}
             onKeyDown={onKeyDown}
-            placeholder={chips.length ? "" : "예) 홍길동, 김철수, 박영희"}
+            placeholder={chips.length ? "" : "예) 홍길동 김철수 박영희"}
             className="flex-1 min-w-[120px] bg-transparent outline-none text-[15px] text-gray-800 placeholder:text-gray-400 h-[40px]"
             inputMode="text"
           />
