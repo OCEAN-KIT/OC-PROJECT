@@ -2,8 +2,10 @@
 
 import MultiOptionGrid from "@/components/ui/MultiOptionGrid";
 import { Fish } from "lucide-react";
+import { useController } from "react-hook-form";
 
-import type { OcRecordForm, GrazingTarget } from "@ocean-kit/submission-domain/types/form";
+import type { GrazingTarget } from "@ocean-kit/submission-domain/types/form";
+import type { SubmissionFormValues } from "../DiveFormProvider";
 
 const GRAZING_TARGETS: GrazingTarget[] = [
   "성게",
@@ -13,12 +15,14 @@ const GRAZING_TARGETS: GrazingTarget[] = [
   "기타",
 ];
 
-type Props = {
-  targetSpecies: OcRecordForm["grazing"]["targetSpecies"];
-  setGrazing: (patch: Partial<OcRecordForm["grazing"]>) => void;
-};
+export default function GrazingTargetSelector() {
+  const { field } = useController<
+    SubmissionFormValues,
+    "grazing.targetSpecies"
+  >({
+    name: "grazing.targetSpecies",
+  });
 
-export default function GrazingTargetSelector({ targetSpecies, setGrazing }: Props) {
   return (
     <section>
       <div className="flex items-center gap-2 mb-2">
@@ -31,9 +35,9 @@ export default function GrazingTargetSelector({ targetSpecies, setGrazing }: Pro
 
       <MultiOptionGrid<GrazingTarget>
         options={GRAZING_TARGETS}
-        value={targetSpecies}
+        value={field.value}
         columns={3}
-        onChange={(selected) => setGrazing({ targetSpecies: selected })}
+        onChange={field.onChange}
       />
     </section>
   );

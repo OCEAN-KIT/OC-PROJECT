@@ -520,7 +520,6 @@ export default function DiveCreateContent() {
 
         <WorkTypeSection
           form={form}
-          setGrazing={setGrazing}
           setSubstrate={setSubstrate}
           setMonitoring={setMonitoring}
           setCleanup={setCleanup}
