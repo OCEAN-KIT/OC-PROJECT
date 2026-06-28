@@ -2,26 +2,27 @@
 
 import { useRef, useState } from "react";
 import { ClipboardList } from "lucide-react";
+import { useController } from "react-hook-form";
+import type { SubmissionFormValues } from "../DiveFormProvider";
 import { inputCls } from "../styles";
 import CheonjiinKeyboardSheet from "../CheonjiinKeyboardSheet";
 
 type Props = {
-  value: string;
-  onChange: (v: string) => void;
   maxLen?: number;
 };
 
-export default function DetailsInput({
-  value,
-  onChange,
-  maxLen = 2000,
-}: Props) {
+export default function DetailsInput({ maxLen = 2000 }: Props) {
+  const { field } = useController<SubmissionFormValues, "details">({
+    name: "details",
+  });
   const [open, setOpen] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
+  const value = field.value;
+
   const setValue = (next: string) => {
     const clipped = next.slice(0, maxLen);
-    onChange(clipped);
+    field.onChange(clipped);
   };
 
   const openKeyboard = () => {
@@ -46,12 +47,16 @@ export default function DetailsInput({
 
         <label className="block">
           <textarea
-            ref={textareaRef}
+            ref={(element) => {
+              textareaRef.current = element;
+              field.ref(element);
+            }}
             className={`${inputCls} h-44 resize-none`}
             placeholder="수중에서 관찰한 사실, 판단 근거, 특이사항을 기록하세요."
             value={value}
             readOnly
             inputMode="none"
+            onBlur={field.onBlur}
             onFocus={openKeyboard}
             onClick={openKeyboard}
           />

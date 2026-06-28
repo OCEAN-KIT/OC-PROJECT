@@ -1,14 +1,11 @@
 "use client";
 
 import { Calendar as CalendarIcon, Clock3 } from "lucide-react";
-import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
+import { useController } from "react-hook-form";
+import type { SubmissionFormValues } from "../DiveFormProvider";
 import { cardCls } from "../styles";
 
 type Props = {
-  date: OcRecordForm["basic"]["date"];
-  time: OcRecordForm["basic"]["time"];
-  setBasic: (patch: Partial<OcRecordForm["basic"]>) => void;
-
   isMobile: boolean;
   openDatePicker: () => void;
   openTimePicker: () => void;
@@ -18,15 +15,25 @@ type Props = {
 };
 
 export default function DateTimeInput({
-  date,
-  time,
-  setBasic,
   isMobile,
   openDatePicker,
   openTimePicker,
   dateInputRef,
   timeInputRef,
 }: Props) {
+  const { field: dateField } = useController<
+    SubmissionFormValues,
+    "basic.date"
+  >({
+    name: "basic.date",
+  });
+  const { field: timeField } = useController<
+    SubmissionFormValues,
+    "basic.time"
+  >({
+    name: "basic.time",
+  });
+
   return (
     <section className="mb-7">
       <div className="flex items-center gap-2 mb-3">
@@ -48,14 +55,15 @@ export default function DateTimeInput({
             </div>
             <div className="flex items-center gap-2 text-[15px] text-gray-800">
               <CalendarIcon className="h-4 w-4 shrink-0" />
-              <span>{date}</span>
+              <span>{dateField.value}</span>
             </div>
 
             <input
               ref={dateInputRef}
               type="date"
-              value={date}
-              onChange={(e) => setBasic({ date: e.target.value })}
+              value={dateField.value}
+              onBlur={dateField.onBlur}
+              onChange={dateField.onChange}
               className={
                 isMobile
                   ? "absolute inset-0 h-full w-full opacity-0 cursor-pointer"
@@ -80,14 +88,15 @@ export default function DateTimeInput({
 
             <div className="flex items-center gap-2 text-[15px] text-gray-800">
               <Clock3 className="h-4 w-4 shrink-0" />
-              <span>{time}</span>
+              <span>{timeField.value}</span>
             </div>
 
             <input
               ref={timeInputRef}
               type="time"
-              value={time}
-              onChange={(e) => setBasic({ time: e.target.value })}
+              value={timeField.value}
+              onBlur={timeField.onBlur}
+              onChange={timeField.onChange}
               className={
                 isMobile
                   ? "absolute inset-0 h-full w-full opacity-0 cursor-pointer"

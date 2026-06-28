@@ -1,7 +1,9 @@
 "use client";
 
 import { ClipboardList } from "lucide-react";
-import type { OcRecordForm, WorkType } from "@ocean-kit/submission-domain/types/form";
+import { useController } from "react-hook-form";
+import type { WorkType } from "@ocean-kit/submission-domain/types/form";
+import type { SubmissionFormValues } from "../DiveFormProvider";
 import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
 
@@ -14,12 +16,11 @@ const WORK_TYPES: WorkType[] = [
   "기타",
 ];
 
-type Props = {
-  workType: OcRecordForm["basic"]["workType"];
-  setBasic: (patch: Partial<OcRecordForm["basic"]>) => void;
-};
+export default function WorkTypeSelector() {
+  const { field } = useController<SubmissionFormValues, "basic.workType">({
+    name: "basic.workType",
+  });
 
-export default function WorkTypeSelector({ workType, setBasic }: Props) {
   return (
     <SelectCard
       className="mb-7"
@@ -28,9 +29,9 @@ export default function WorkTypeSelector({ workType, setBasic }: Props) {
     >
       <OptionGrid
         options={WORK_TYPES}
-        value={workType}
+        value={field.value}
         columns={3}
-        onChange={(opt) => setBasic({ workType: opt })}
+        onChange={field.onChange}
       />
     </SelectCard>
   );

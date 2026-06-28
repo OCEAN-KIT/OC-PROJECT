@@ -3,17 +3,21 @@
 import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
 import { Activity } from "lucide-react";
+import { useController } from "react-hook-form";
 
-import type { OcRecordForm, GrazingDensity } from "@ocean-kit/submission-domain/types/form";
+import type { GrazingDensity } from "@ocean-kit/submission-domain/types/form";
+import type { SubmissionFormValues } from "../DiveFormProvider";
 
 const DENSITIES: GrazingDensity[] = ["적음", "보통", "많음"];
 
-type Props = {
-  densityBeforeWork: OcRecordForm["grazing"]["densityBeforeWork"];
-  setGrazing: (patch: Partial<OcRecordForm["grazing"]>) => void;
-};
+export default function GrazingDensitySelector() {
+  const { field } = useController<
+    SubmissionFormValues,
+    "grazing.densityBeforeWork"
+  >({
+    name: "grazing.densityBeforeWork",
+  });
 
-export default function GrazingDensitySelector({ densityBeforeWork, setGrazing }: Props) {
   return (
     <SelectCard
       title="작업 전 체감 밀도"
@@ -21,9 +25,9 @@ export default function GrazingDensitySelector({ densityBeforeWork, setGrazing }
     >
       <OptionGrid<GrazingDensity>
         options={DENSITIES}
-        value={densityBeforeWork}
+        value={field.value}
         columns={3}
-        onChange={(opt) => setGrazing({ densityBeforeWork: opt })}
+        onChange={field.onChange}
       />
     </SelectCard>
   );

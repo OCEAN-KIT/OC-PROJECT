@@ -4,7 +4,9 @@ import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
 import { Sprout } from "lucide-react";
 
-import type { OcRecordForm, TransplantType } from "@ocean-kit/submission-domain/types/form";
+import type { TransplantType } from "@ocean-kit/submission-domain/types/form";
+import { useController } from "react-hook-form";
+import type { SubmissionFormValues } from "../DiveFormProvider";
 
 const TRANSPLANT_TYPES: TransplantType[] = [
   "감태",
@@ -15,15 +17,14 @@ const TRANSPLANT_TYPES: TransplantType[] = [
   "기타",
 ];
 
-type Props = {
-  speciesType: OcRecordForm["transplant"]["speciesType"];
-  setTransplant: (patch: Partial<OcRecordForm["transplant"]>) => void;
-};
+export default function TransplantTypeSelector() {
+  const { field } = useController<
+    SubmissionFormValues,
+    "transplant.speciesType"
+  >({
+    name: "transplant.speciesType",
+  });
 
-export default function TransplantTypeSelector({
-  speciesType,
-  setTransplant,
-}: Props) {
   return (
     <SelectCard
       title="이식 대상 종류"
@@ -31,9 +32,9 @@ export default function TransplantTypeSelector({
     >
       <OptionGrid<TransplantType>
         options={TRANSPLANT_TYPES}
-        value={speciesType}
+        value={field.value}
         columns={3}
-        onChange={(opt) => setTransplant({ speciesType: opt })}
+        onChange={field.onChange}
       />
     </SelectCard>
   );

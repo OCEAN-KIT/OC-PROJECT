@@ -1,7 +1,5 @@
 "use client";
 
-import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
-
 import SiteNameInput from "./SiteNameInput";
 import DateTimeInput from "./DateTimeInput";
 import DiveRoundSelector from "./DiveRoundSelector";
@@ -13,11 +11,6 @@ import SurgeSelector from "./SurgeSelector";
 import WorkersInput from "./WorkerInput";
 
 type Props = {
-  form: OcRecordForm;
-
-  setBasic: (patch: Partial<OcRecordForm["basic"]>) => void;
-  setEnv: (patch: Partial<OcRecordForm["env"]>) => void;
-
   // Date/TimeInput에서 쓰는 값들
   isMobile: boolean;
   openDatePicker: () => void;
@@ -27,9 +20,6 @@ type Props = {
 };
 
 export default function CommonWrapper({
-  form,
-  setBasic,
-  setEnv,
   isMobile,
   openDatePicker,
   openTimePicker,
@@ -38,15 +28,9 @@ export default function CommonWrapper({
 }: Props) {
   return (
     <>
-      <SiteNameInput
-        siteName={form.basic.siteName}
-        onChange={(v) => setBasic({ siteName: v })}
-      />
+      <SiteNameInput />
 
       <DateTimeInput
-        date={form.basic.date}
-        time={form.basic.time}
-        setBasic={setBasic}
         isMobile={isMobile}
         openDatePicker={openDatePicker}
         openTimePicker={openTimePicker}
@@ -54,27 +38,16 @@ export default function CommonWrapper({
         timeInputRef={timeInputRef}
       />
 
-      <DiveRoundSelector diveRound={form.basic.diveRound} setBasic={setBasic} />
+      <DiveRoundSelector />
 
-      <WorkersInput workers={form.basic.workers} setBasic={setBasic} />
+      <WorkersInput />
 
-      <DepthTempInput
-        avgDepthM={form.env.avgDepthM}
-        maxDepthM={form.env.maxDepthM}
-        waterTempC={form.env.waterTempC}
-        setEnv={setEnv}
-      />
+      <DepthTempInput />
       <div className="grid grid-cols-4 gap-2">
-        <VisibilitySelector
-          visibilityStatus={form.env.visibilityStatus}
-          setEnv={setEnv}
-        />
-        <WaveSelector waveStatus={form.env.waveStatus} setEnv={setEnv} />
-        <SurgeSelector surgeStatus={form.env.surgeStatus} setEnv={setEnv} />
-        <CurrentSelector
-          currentStatus={form.env.currentStatus}
-          setEnv={setEnv}
-        />
+        <VisibilitySelector />
+        <WaveSelector />
+        <SurgeSelector />
+        <CurrentSelector />
       </div>
     </>
   );

@@ -4,18 +4,27 @@ import { useRef, useState } from "react";
 import { Activity } from "lucide-react";
 import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
+import { useController } from "react-hook-form";
 import CheonjiinKeyboardSheet from "../CheonjiinKeyboardSheet";
 
-import type { OcRecordForm, AlgaeCondition } from "@ocean-kit/submission-domain/types/form";
+import type { AlgaeCondition } from "@ocean-kit/submission-domain/types/form";
+import type { SubmissionFormValues } from "../DiveFormProvider";
 
 const ALGAE_CONDITIONS: AlgaeCondition[] = ["양호", "쇠약", "탈락"];
 
-type Props = {
-  monitoring: OcRecordForm["monitoring"];
-  setMonitoring: (patch: Partial<OcRecordForm["monitoring"]>) => void;
-};
-
-export default function AlgaeStatus({ monitoring, setMonitoring }: Props) {
+export default function AlgaeStatus() {
+  const { field: seaweedIdField } = useController<
+    SubmissionFormValues,
+    "monitoring.seaweedIdNumber"
+  >({
+    name: "monitoring.seaweedIdNumber",
+  });
+  const { field: seaweedHealthField } = useController<
+    SubmissionFormValues,
+    "monitoring.seaweedHealthStatus"
+  >({
+    name: "monitoring.seaweedHealthStatus",
+  });
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -27,7 +36,7 @@ export default function AlgaeStatus({ monitoring, setMonitoring }: Props) {
   const closeKeyboard = () => setOpen(false);
 
   const setValue = (value: string) => {
-    setMonitoring({ seaweedIdNumber: value.slice(0, 50) });
+    seaweedIdField.onChange(value.slice(0, 50));
   };
 
   return (
@@ -44,11 +53,15 @@ export default function AlgaeStatus({ monitoring, setMonitoring }: Props) {
                 측정 식별번호
               </label>
               <input
-                ref={inputRef}
+                ref={(element) => {
+                  inputRef.current = element;
+                  seaweedIdField.ref(element);
+                }}
                 className="w-full h-11 rounded-xl border border-gray-200 px-3 text-[14px] outline-none"
-                value={monitoring.seaweedIdNumber}
+                value={seaweedIdField.value}
                 readOnly
                 inputMode="none"
+                onBlur={seaweedIdField.onBlur}
                 onFocus={openKeyboard}
                 onClick={openKeyboard}
               />
@@ -60,9 +73,9 @@ export default function AlgaeStatus({ monitoring, setMonitoring }: Props) {
         <SelectCard title="생육 상태">
           <OptionGrid<AlgaeCondition>
             options={ALGAE_CONDITIONS}
-            value={monitoring.seaweedHealthStatus}
+            value={seaweedHealthField.value}
             columns={3}
-            onChange={(opt) => setMonitoring({ seaweedHealthStatus: opt })}
+            onChange={seaweedHealthField.onChange}
           />
         </SelectCard>
       </div>
@@ -70,7 +83,7 @@ export default function AlgaeStatus({ monitoring, setMonitoring }: Props) {
       {/* 키보드 */}
       {open && (
         <CheonjiinKeyboardSheet
-          baseValue={monitoring.seaweedIdNumber}
+          baseValue={seaweedIdField.value}
           onChange={setValue}
           onClose={closeKeyboard}
         />

@@ -2,16 +2,19 @@
 
 import { useState } from "react";
 import { Eye, ChevronDown } from "lucide-react";
-import type { OcRecordForm, Rating3 } from "@ocean-kit/submission-domain/types/form";
-
-type Props = {
-  visibilityStatus: OcRecordForm["env"]["visibilityStatus"];
-  setEnv: (patch: Partial<OcRecordForm["env"]>) => void;
-};
+import { useController } from "react-hook-form";
+import type { Rating3 } from "@ocean-kit/submission-domain/types/form";
+import type { SubmissionFormValues } from "../DiveFormProvider";
 
 const OPTIONS: Rating3[] = ["나쁨", "보통", "좋음"];
 
-export default function VisibilitySelector({ visibilityStatus, setEnv }: Props) {
+export default function VisibilitySelector() {
+  const { field } = useController<
+    SubmissionFormValues,
+    "env.visibilityStatus"
+  >({
+    name: "env.visibilityStatus",
+  });
   const [open, setOpen] = useState(false);
 
   return (
@@ -42,7 +45,7 @@ export default function VisibilitySelector({ visibilityStatus, setEnv }: Props) 
 
         <div className="mt-1 flex items-center justify-between">
           <span className="text-[13px] font-semibold text-sky-700 truncate">
-            {visibilityStatus}
+            {field.value}
           </span>
           <ChevronDown
             className={[
@@ -61,14 +64,14 @@ export default function VisibilitySelector({ visibilityStatus, setEnv }: Props) 
         >
           <div className="grid grid-cols-1 gap-2">
             {OPTIONS.map((opt) => {
-              const active = visibilityStatus === opt;
+              const active = field.value === opt;
 
               return (
                 <button
                   key={opt}
                   type="button"
                   onClick={() => {
-                    setEnv({ visibilityStatus: opt });
+                    field.onChange(opt);
                     setOpen(false);
                   }}
                   className={[

@@ -3,20 +3,18 @@
 import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
 import { Truck } from "lucide-react";
+import { useController } from "react-hook-form";
 
-import type { OcRecordForm, LiftingMethod } from "@ocean-kit/submission-domain/types/form";
+import type { LiftingMethod } from "@ocean-kit/submission-domain/types/form";
+import type { SubmissionFormValues } from "../DiveFormProvider";
 
 const LIFTING_METHODS: LiftingMethod[] = ["수작업", "인양백", "크레인"];
 
-type Props = {
-  method: OcRecordForm["cleanup"]["method"];
-  setCleanup: (patch: Partial<OcRecordForm["cleanup"]>) => void;
-};
+export default function LiftingMethodSelector() {
+  const { field } = useController<SubmissionFormValues, "cleanup.method">({
+    name: "cleanup.method",
+  });
 
-export default function LiftingMethodSelector({
-  method,
-  setCleanup,
-}: Props) {
   return (
     <SelectCard
       title="인양 방식"
@@ -24,9 +22,9 @@ export default function LiftingMethodSelector({
     >
       <OptionGrid<LiftingMethod>
         options={LIFTING_METHODS}
-        value={method}
+        value={field.value}
         columns={3}
-        onChange={(opt) => setCleanup({ method: opt })}
+        onChange={field.onChange}
       />
     </SelectCard>
   );

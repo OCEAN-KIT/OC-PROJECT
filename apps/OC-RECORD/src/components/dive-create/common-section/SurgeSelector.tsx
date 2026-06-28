@@ -2,16 +2,16 @@
 
 import { useState } from "react";
 import { Activity, ChevronDown } from "lucide-react";
-import type { OcRecordForm, Rating3 } from "@ocean-kit/submission-domain/types/form";
-
-type Props = {
-  surgeStatus: OcRecordForm["env"]["surgeStatus"];
-  setEnv: (patch: Partial<OcRecordForm["env"]>) => void;
-};
+import { useController } from "react-hook-form";
+import type { Rating3 } from "@ocean-kit/submission-domain/types/form";
+import type { SubmissionFormValues } from "../DiveFormProvider";
 
 const OPTIONS: Rating3[] = ["나쁨", "보통", "좋음"];
 
-export default function SurgeSelector({ surgeStatus, setEnv }: Props) {
+export default function SurgeSelector() {
+  const { field } = useController<SubmissionFormValues, "env.surgeStatus">({
+    name: "env.surgeStatus",
+  });
   const [open, setOpen] = useState(false);
 
   return (
@@ -42,7 +42,7 @@ export default function SurgeSelector({ surgeStatus, setEnv }: Props) {
 
         <div className="mt-1 flex items-center justify-between">
           <span className="text-[13px] font-semibold text-sky-700 truncate">
-            {surgeStatus}
+            {field.value}
           </span>
           <ChevronDown
             className={[
@@ -61,14 +61,14 @@ export default function SurgeSelector({ surgeStatus, setEnv }: Props) {
         >
           <div className="grid grid-cols-1 gap-2">
             {OPTIONS.map((opt) => {
-              const active = surgeStatus === opt;
+              const active = field.value === opt;
 
               return (
                 <button
                   key={opt}
                   type="button"
                   onClick={() => {
-                    setEnv({ surgeStatus: opt });
+                    field.onChange(opt);
                     setOpen(false);
                   }}
                   className={[

@@ -1,22 +1,30 @@
 "use client";
 
 import { Gauge } from "lucide-react";
-import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
+import { useController } from "react-hook-form";
+import type { SubmissionFormValues } from "../DiveFormProvider";
 import { inputCls } from "../styles";
 
-type Props = {
-  avgDepthM: OcRecordForm["env"]["avgDepthM"];
-  maxDepthM: OcRecordForm["env"]["maxDepthM"];
-  waterTempC: OcRecordForm["env"]["waterTempC"];
-  setEnv: (patch: Partial<OcRecordForm["env"]>) => void;
-};
+export default function DepthTempInput() {
+  const { field: avgDepthField } = useController<
+    SubmissionFormValues,
+    "env.avgDepthM"
+  >({
+    name: "env.avgDepthM",
+  });
+  const { field: maxDepthField } = useController<
+    SubmissionFormValues,
+    "env.maxDepthM"
+  >({
+    name: "env.maxDepthM",
+  });
+  const { field: waterTempField } = useController<
+    SubmissionFormValues,
+    "env.waterTempC"
+  >({
+    name: "env.waterTempC",
+  });
 
-export default function DepthTempInput({
-  avgDepthM,
-  maxDepthM,
-  waterTempC,
-  setEnv,
-}: Props) {
   return (
     <section className="mb-7">
       <div className="flex items-center gap-2 mb-3">
@@ -29,10 +37,12 @@ export default function DepthTempInput({
         {/* 평균수심 */}
         <label className="relative block">
           <input
+            ref={avgDepthField.ref}
             className={inputCls + " pr-12"}
             placeholder="평균 수심"
-            value={avgDepthM}
-            onChange={(e) => setEnv({ avgDepthM: e.target.value })}
+            value={avgDepthField.value}
+            onBlur={avgDepthField.onBlur}
+            onChange={avgDepthField.onChange}
             inputMode="decimal"
           />
           <span className="pointer-events-none absolute right-3 top-[13px] text-gray-500 select-none">
@@ -43,14 +53,16 @@ export default function DepthTempInput({
         {/* 수온 (2행 차지) */}
         <label className="relative block row-span-2">
           <input
+            ref={waterTempField.ref}
             className={
               inputCls +
               " peer pr-12 h-full w-full text-7xl text-center leading-none py-0 " +
               "placeholder:text-transparent"
             }
             placeholder="수온"
-            value={waterTempC}
-            onChange={(e) => setEnv({ waterTempC: e.target.value })}
+            value={waterTempField.value}
+            onBlur={waterTempField.onBlur}
+            onChange={waterTempField.onChange}
             inputMode="decimal"
           />
 
@@ -75,10 +87,12 @@ export default function DepthTempInput({
         {/* 최대수심 */}
         <label className="relative block">
           <input
+            ref={maxDepthField.ref}
             className={inputCls + " pr-12"}
             placeholder="최대 수심"
-            value={maxDepthM}
-            onChange={(e) => setEnv({ maxDepthM: e.target.value })}
+            value={maxDepthField.value}
+            onBlur={maxDepthField.onBlur}
+            onChange={maxDepthField.onChange}
             inputMode="decimal"
           />
           <span className="pointer-events-none absolute right-3 top-[13px] text-gray-500 select-none">

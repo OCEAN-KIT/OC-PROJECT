@@ -2,13 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Users, X } from "lucide-react";
-import type { OcRecordForm } from "@ocean-kit/submission-domain/types/form";
+import { useController } from "react-hook-form";
+import type { SubmissionFormValues } from "../DiveFormProvider";
 import { cardCls } from "../styles";
-
-type Props = {
-  workers: OcRecordForm["basic"]["workers"];
-  setBasic: (patch: Partial<OcRecordForm["basic"]>) => void;
-};
 
 function normalizeName(s: string) {
   return s.replace(/\s+/g, " ").trim();
@@ -21,7 +17,14 @@ function parseWorkersToChips(workers: string) {
     .filter(Boolean);
 }
 
-export default function WorkersInput({ workers, setBasic }: Props) {
+export default function WorkersInput() {
+  const { field } = useController<
+    SubmissionFormValues,
+    "basic.workers"
+  >({
+    name: "basic.workers",
+  });
+  const workers = field.value;
   const [chips, setChips] = useState<string[]>(() =>
     parseWorkersToChips(workers),
   );
@@ -39,9 +42,8 @@ export default function WorkersInput({ workers, setBasic }: Props) {
 
   // chips -> workers 문자열 동기화
   useEffect(() => {
-    setBasic({ workers: workersString });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workersString]);
+    field.onChange(workersString);
+  }, [field, workersString]);
 
   const commitToken = (token: string) => {
     const v = normalizeName(token);

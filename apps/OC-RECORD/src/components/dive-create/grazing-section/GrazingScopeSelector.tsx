@@ -1,36 +1,42 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import SelectCard from "@/components/ui/SelectCard";
 import OptionGrid from "@/components/ui/OptionGrid";
 import { MapPin } from "lucide-react";
+import { useController } from "react-hook-form";
 
-import type { OcRecordForm, GrazingScope } from "@ocean-kit/submission-domain/types/form";
+import type { GrazingScope } from "@ocean-kit/submission-domain/types/form";
+import type { SubmissionFormValues } from "../DiveFormProvider";
 import CheonjiinKeyboardSheet from "../CheonjiinKeyboardSheet";
 
 const SCOPES: GrazingScope[] = ["국소", "구역", "광범위"];
 
 type Props = {
-  workScope: OcRecordForm["grazing"]["workScope"];
-  note: OcRecordForm["grazing"]["note"];
-  setGrazing: (patch: Partial<OcRecordForm["grazing"]>) => void;
   maxLen?: number;
 };
 
-export default function GrazingScopeSelector({
-  workScope,
-  note,
-  setGrazing,
-  maxLen = 100,
-}: Props) {
+export default function GrazingScopeSelector({ maxLen = 100 }: Props) {
+  const { field: scopeField } = useController<
+    SubmissionFormValues,
+    "grazing.workScope"
+  >({
+    name: "grazing.workScope",
+  });
+  const { field: noteField } = useController<
+    SubmissionFormValues,
+    "grazing.note"
+  >({
+    name: "grazing.note",
+  });
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const value = useMemo(() => note ?? "", [note]);
+  const value = noteField.value ?? "";
 
   const setValue = (next: string) => {
     const clipped = next.slice(0, maxLen);
-    setGrazing({ note: clipped });
+    noteField.onChange(clipped);
   };
 
   const openKeyboard = () => {
@@ -48,18 +54,22 @@ export default function GrazingScopeSelector({
       >
         <OptionGrid<GrazingScope>
           options={SCOPES}
-          value={workScope}
+          value={scopeField.value}
           columns={3}
-          onChange={(opt) => setGrazing({ workScope: opt })}
+          onChange={scopeField.onChange}
         />
         <div className="mt-3">
           <input
-            ref={inputRef}
+            ref={(element) => {
+              inputRef.current = element;
+              noteField.ref(element);
+            }}
             className="w-full h-11 rounded-xl border border-gray-200 px-3 text-[14px] outline-none"
             placeholder="보충 설명 (선택)"
             value={value}
             readOnly
             inputMode="none"
+            onBlur={noteField.onBlur}
             onFocus={openKeyboard}
             onClick={openKeyboard}
           />

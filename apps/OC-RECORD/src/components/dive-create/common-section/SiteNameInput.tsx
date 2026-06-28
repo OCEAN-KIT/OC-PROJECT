@@ -1,15 +1,16 @@
 import { MapPin } from "lucide-react";
+import { useController } from "react-hook-form";
+import type { SubmissionFormValues } from "../DiveFormProvider";
 import { inputCls } from "../styles";
 
-type SiteNameInputProps = {
-  siteName: string;
-  onChange: (next: string) => void;
-};
+export default function SiteNameInput() {
+  const { field } = useController<
+    SubmissionFormValues,
+    "basic.siteName"
+  >({
+    name: "basic.siteName",
+  });
 
-export default function SiteNameInput({
-  siteName,
-  onChange,
-}: SiteNameInputProps) {
   return (
     <section className="mb-7">
       <div className="flex items-center gap-2 mb-2">
@@ -20,10 +21,12 @@ export default function SiteNameInput({
 
       <label className="block">
         <input
+          ref={field.ref}
           className={inputCls}
           placeholder="울진 A 구역"
-          value={siteName}
-          onChange={(e) => onChange(e.target.value)}
+          value={field.value}
+          onBlur={field.onBlur}
+          onChange={field.onChange}
           autoComplete="off"
         />
       </label>
