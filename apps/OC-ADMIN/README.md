@@ -1,204 +1,157 @@
-Welcome to your new TanStack Start app! 
+# OC-ADMIN
 
-# Getting Started
+![Vite](https://img.shields.io/badge/Vite-8.x-646CFF?logo=vite&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=111111)
+![TanStack Router](https://img.shields.io/badge/TanStack%20Router-1.x-FF4154)
+![TanStack Query](https://img.shields.io/badge/TanStack%20Query-5.x-FF4154)
 
-To run this application:
+오션캠퍼스 관리자 콘솔입니다. `OC-RECORD`에서 제출된 현장 활동 데이터를 검토하고, 공개 대시보드에 연결되는 복원 작업영역 데이터를 관리합니다.
+
+운영 경로는 `/admin/`입니다.
+
+## 목차
+
+- [주요 기능](#주요-기능)
+- [화면 구성](#화면-구성)
+- [기술 스택](#기술-스택)
+- [프로젝트 구조](#프로젝트-구조)
+- [환경 변수](#환경-변수)
+- [실행 방법](#실행-방법)
+- [검증](#검증)
+- [배포 메모](#배포-메모)
+
+## 주요 기능
+
+- 관리자 로그인, 인증 가드, 내 프로필 조회/수정
+- 제출 목록 조회, 검색/필터, 페이지네이션
+- 제출 단건 승인/반려/삭제
+- 제출 다중 선택, 일괄 승인/반려, CSV 내보내기
+- 제출 상세 확인, 활동 유형별 상세 섹션 표시
+- 첨부 사진 갤러리, 라이트박스, 다운로드
+- 작업영역 목록 조회, 신규 작업영역 생성
+- 작업영역 기본 정보, 이식 기록, 성장 기록, 환경 기록, 미디어 로그 관리
+- 대시보드에서 사용할 종 데이터 생성/수정/삭제
+
+## 화면 구성
+
+| 경로 | 역할 |
+| --- | --- |
+| `/admin/login` | 관리자 로그인 |
+| `/admin/` | 제출 검토 목록 |
+| `/admin/review/$submissionId` | 제출 상세 검토 |
+| `/admin/dashboard` | 복원 작업영역 목록 |
+| `/admin/dashboard/create` | 새 작업영역 등록 |
+| `/admin/dashboard/$areaId` | 작업영역 상세 관리 |
+| `/admin/dashboard/speciesCreate` | 종 관리 |
+| `/admin/profile` | 관리자 프로필 |
+
+## 기술 스택
+
+- Vite + React 19
+- TypeScript
+- TanStack Router file-based routing
+- TanStack Query
+- Tailwind CSS
+- Axios
+- Vitest
+- `@ocean-kit/dashboard-domain`
+- `@ocean-kit/submission-domain`
+- `@ocean-kit/shared-auth`
+- `@ocean-kit/shared-s3`
+
+## 프로젝트 구조
+
+```txt
+src/
+  routes/                 TanStack Router route 파일
+  pages/
+    home/                 제출 검토 목록
+    review-detail/        제출 상세 검토
+    dashboard/            작업영역/종 관리
+    login/                로그인
+    profile/              프로필
+  shared/
+    auth/                 인증 가드와 사용자 정보 hook
+    analytics/            Google Analytics 초기화
+    components/           공통 UI
+    providers/            QueryProvider
+    query/                queryClient, 공통 query key
+```
+
+앱 내부 화면은 라우팅과 사용자 상호작용을 담당하고, API 요청/응답 타입은 workspace 패키지에서 가져옵니다.
+
+## 환경 변수
+
+`vite.config.ts`에서 다음 값을 필수로 검사합니다.
+
+```bash
+API_BASE_URL=https://api.oceancampus.kr
+S3_PUBLIC_BASE=https://api.oceancampus.kr
+```
+
+선택 값:
+
+```bash
+VITE_ADMIN_GA_MEASUREMENT_ID=G-...
+```
+
+## 실행 방법
+
+루트에서 의존성을 설치합니다.
 
 ```bash
 pnpm install
-pnpm dev
 ```
 
-# Building For Production
+개발 서버:
 
-To build this application for production:
+```bash
+pnpm dev:admin
+```
+
+직접 실행:
+
+```bash
+pnpm --filter @ocean-kit/oc-admin dev
+```
+
+기본 주소:
+
+```txt
+http://localhost:3001/admin/
+```
+
+프로덕션 빌드:
+
+```bash
+pnpm --filter @ocean-kit/oc-admin build
+```
+
+번들 분석:
+
+```bash
+pnpm --filter @ocean-kit/oc-admin build:analyze
+```
+
+## 검증
+
+```bash
+pnpm --filter @ocean-kit/oc-admin lint
+pnpm --filter @ocean-kit/oc-admin test
+pnpm --filter @ocean-kit/oc-admin check
+```
+
+루트 통합 검증:
 
 ```bash
 pnpm build
-```
-
-## Testing
-
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
-
-```bash
-pnpm test
-```
-
-## Styling
-
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
-
-### Removing Tailwind CSS
-
-If you prefer not to use Tailwind CSS:
-
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `pnpm add @tailwindcss/vite tailwindcss --dev`
-
-## Linting & Formatting
-
-
-This project uses [eslint](https://eslint.org/) and [prettier](https://prettier.io/) for linting and formatting. Eslint is configured using [tanstack/eslint-config](https://tanstack.com/config/latest/docs/eslint). The following scripts are available:
-
-```bash
 pnpm lint
-pnpm format
-pnpm check
 ```
 
+## 배포 메모
 
-
-## Routing
-
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Server Functions
-
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
-
-```tsx
-import { createServerFn } from '@tanstack/react-start'
-
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
-
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
-}
-```
-
-## API Routes
-
-You can create API routes by using the `server` property in your route definitions:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
-
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
-}
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
-
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+- Vite `base`는 `/admin/`입니다.
+- TanStack Router `basepath`는 `/admin`입니다.
+- 빌드 결과물은 `apps/OC-ADMIN/dist`에 생성됩니다.
+- GitHub Actions는 Admin 변경이 감지되면 빌드 후 S3의 `admin/` prefix에 업로드합니다.
+- nginx 설정은 `/admin/` 하위 경로에서 SPA fallback을 적용합니다.
