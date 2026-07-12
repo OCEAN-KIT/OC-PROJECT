@@ -2,7 +2,23 @@
 
 import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import type { AreaSummary } from "@ocean-kit/dashboard-domain/types/areas";
 import AreaItemCard from "./areaItemCard";
+
+export type AreaGroup = {
+  stage: string;
+  color?: string;
+  items: AreaSummary[];
+};
+
+type Props = {
+  grouped: AreaGroup[];
+  onSelectArea: (area: AreaSummary) => void;
+  activeRegion: boolean;
+  areaLoading: boolean;
+  areaLoadFailed: boolean;
+  workingArea: AreaSummary | null;
+};
 
 export default function AreaGroupsList({
   grouped,
@@ -11,8 +27,8 @@ export default function AreaGroupsList({
   areaLoading,
   areaLoadFailed,
   workingArea,
-}) {
-  const [expanded, setExpanded] = useState(() =>
+}: Props) {
+  const [expanded, setExpanded] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(grouped.map((g) => [g.stage, true])),
   );
 
@@ -20,7 +36,8 @@ export default function AreaGroupsList({
     setExpanded(Object.fromEntries(grouped.map((g) => [g.stage, true])));
   }, [grouped, activeRegion]);
 
-  const toggle = (stage) => setExpanded((s) => ({ ...s, [stage]: !s[stage] }));
+  const toggle = (stage: string) =>
+    setExpanded((s) => ({ ...s, [stage]: !s[stage] }));
 
   return (
     <div className="max-h-[56vh] overflow-auto px-2 py-2">

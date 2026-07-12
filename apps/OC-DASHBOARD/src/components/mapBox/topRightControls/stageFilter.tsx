@@ -1,10 +1,20 @@
 "use client";
 
+import type { Dispatch, SetStateAction } from "react";
+
+type StageMeta = Record<string, { color: string }>;
+
+type Props = {
+  activeStage: string | null;
+  setActiveStage: Dispatch<SetStateAction<string | null>>;
+  stageMeta: StageMeta;
+};
+
 export default function StageFilter({
   activeStage,
   setActiveStage,
   stageMeta,
-}) {
+}: Props) {
   return (
     <div className="mt-2 flex gap-2">
       {Object.keys(stageMeta).map((stage) => {

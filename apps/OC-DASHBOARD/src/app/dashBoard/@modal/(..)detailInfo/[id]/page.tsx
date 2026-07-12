@@ -3,11 +3,15 @@ import DetailInfoModalRoute from "@/components/detail-info/detail-info-modal-rou
 
 export const revalidate = 600;
 
-export function generateStaticParams() {
+type Props = {
+  params: Promise<{ id: string }>;
+};
+
+export function generateStaticParams(): { id: string }[] {
   return [];
 }
 
-function parseAreaId(id) {
+function parseAreaId(id: string) {
   if (!/^\d+$/.test(id)) {
     notFound();
   }
@@ -21,7 +25,7 @@ function parseAreaId(id) {
   return areaId;
 }
 
-export default async function Page({ params }) {
+export default async function Page({ params }: Props) {
   const { id } = await params;
   const areaId = parseAreaId(id);
 

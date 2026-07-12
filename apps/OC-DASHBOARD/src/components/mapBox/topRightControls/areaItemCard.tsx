@@ -1,11 +1,20 @@
 "use client";
 
+import type { AreaSummary } from "@ocean-kit/dashboard-domain/types/areas";
+
+type Props = {
+  area: AreaSummary;
+  color?: string;
+  onClick: () => void;
+  isActive?: boolean;
+};
+
 export default function AreaItemCard({
   area,
   color,
   onClick,
   isActive = false,
-}) {
+}: Props) {
   const start =
     Array.isArray(area.startDate) && area.startDate.length >= 3
       ? `${area.startDate[0]}년 ${area.startDate[1]}월 ${area.startDate[2]}일`

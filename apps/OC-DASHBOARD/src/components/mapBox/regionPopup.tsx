@@ -1,10 +1,23 @@
-// RegionPopup.jsx
+// RegionPopup.tsx
 "use client";
 
 import { STAGE_META, getStageColor } from "@/constants/stageMeta";
+import type { MouseEvent } from "react";
+import type { AreaSummary } from "@ocean-kit/dashboard-domain/types/areas";
+
+type RegionPopupProps = {
+  region: AreaSummary | null;
+  onOpen: () => void;
+};
+
+type Rgb = {
+  r: number;
+  g: number;
+  b: number;
+};
 
 // ----- 작은 색 유틸: hex → rgba, lighten -----
-function hexToRgb(hex) {
+function hexToRgb(hex: string): Rgb | null {
   if (!hex) return null;
   const h = hex.replace("#", "");
   if (![3, 6].includes(h.length)) return null;
@@ -21,21 +34,21 @@ function hexToRgb(hex) {
   return { r, g, b };
 }
 
-function rgba(hex, alpha = 1) {
+function rgba(hex: string, alpha = 1) {
   const rgb = hexToRgb(hex);
   if (!rgb) return `rgba(229,231,235,${alpha})`; // fallback slate-200
   const { r, g, b } = rgb;
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 /** 흰색과 섞어서 밝게 만들기 (t: 0~1) */
-function lighten(hex, t = 0.35) {
+function lighten(hex: string, t = 0.35) {
   const rgb = hexToRgb(hex) ?? { r: 229, g: 231, b: 235 }; // slate-200 fallback
-  const mix = (c) => Math.round(c + (255 - c) * t);
+  const mix = (c: number) => Math.round(c + (255 - c) * t);
   return `rgb(${mix(rgb.r)}, ${mix(rgb.g)}, ${mix(rgb.b)})`;
 }
 
 /** stage → 팝업 스타일 계산 (constants는 그대로) **/
-function getPopupStyle(stage) {
+function getPopupStyle(stage: string) {
   const base = getStageColor(stage); // STAGE_META의 color 사용
   const text = lighten(base, 0.4);
   const bg = rgba(base, 0.22);
@@ -44,18 +57,34 @@ function getPopupStyle(stage) {
   return { text, bg, ring, dot };
 }
 
-function formatDate(ymd) {
+function formatDate(ymd: unknown) {
   if (!Array.isArray(ymd)) return "-";
   const [y, m, d] = ymd;
   if (!y || !m || !d) return "-";
   return `${y}년 ${m}월 ${d}일`;
 }
 
-export default function RegionPopup({ region, onOpen }) {
+function setButtonHoverStyle(
+  event: MouseEvent<HTMLButtonElement>,
+  isHovering: boolean,
+) {
+  event.currentTarget.style.transform = isHovering
+    ? "translateY(-1px)"
+    : "translateY(0)";
+  event.currentTarget.style.background = isHovering
+    ? "rgba(129,140,248,.34)"
+    : "rgba(99,102,241,.24)";
+  event.currentTarget.style.boxShadow = isHovering
+    ? "inset 0 1px 0 rgba(255,255,255,.28), 0 12px 22px rgba(79,70,229,.35)"
+    : "inset 0 1px 0 rgba(255,255,255,.25)";
+}
+
+export default function RegionPopup({ region, onOpen }: RegionPopupProps) {
   if (!region) return null;
 
   const { name, startDate, level, depth, habitat } = region;
-  const stageCfg = getPopupStyle(level);
+  const stage = String(level);
+  const stageCfg = getPopupStyle(stage);
 
   return (
     <div
@@ -110,7 +139,7 @@ export default function RegionPopup({ region, onOpen }) {
             letterSpacing: ".02em",
           }}
         >
-          {STAGE_META[level] ? level : "단계 미지정"}
+          {stage in STAGE_META ? stage : "단계 미지정"}
         </span>
       </div>
 
@@ -181,18 +210,8 @@ export default function RegionPopup({ region, onOpen }) {
             transition:
               "transform 180ms ease, box-shadow 180ms ease, background 180ms ease",
           }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = "translateY(-1px)";
-            e.currentTarget.style.background = "rgba(129,140,248,.34)";
-            e.currentTarget.style.boxShadow =
-              "inset 0 1px 0 rgba(255,255,255,.28), 0 12px 22px rgba(79,70,229,.35)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = "translateY(0)";
-            e.currentTarget.style.background = "rgba(99,102,241,.24)";
-            e.currentTarget.style.boxShadow =
-              "inset 0 1px 0 rgba(255,255,255,.25)";
-          }}
+          onMouseEnter={(event) => setButtonHoverStyle(event, true)}
+          onMouseLeave={(event) => setButtonHoverStyle(event, false)}
           onClick={onOpen}
         >
           <span>상세 보기</span>

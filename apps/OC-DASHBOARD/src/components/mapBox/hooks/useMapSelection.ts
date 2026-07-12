@@ -1,14 +1,14 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import type { AreaSummary, ProjectLevel } from "@ocean-kit/dashboard-domain/types/areas";
+import type { AreaSummary } from "@ocean-kit/dashboard-domain/types/areas";
 import type { Region } from "@/constants/regions";
 import type { AreasByRegion } from "../types";
 
 export default function useMapSelection(initialAreasByRegion: AreasByRegion) {
   const [currentLocation, setCurrentLocation] = useState<Region | null>(null);
   const [workingArea, setWorkingArea] = useState<AreaSummary | null>(null);
-  const [activeStage, setActiveStage] = useState<ProjectLevel | null>(null);
+  const [activeStage, setActiveStage] = useState<string | null>(null);
 
   const areas = useMemo(() => {
     if (!currentLocation) return [];

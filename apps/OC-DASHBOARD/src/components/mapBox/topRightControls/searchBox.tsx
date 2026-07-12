@@ -3,7 +3,13 @@
 import { forwardRef } from "react";
 import { Search } from "lucide-react";
 
-const SearchBox = forwardRef(function SearchBox(
+type Props = {
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+};
+
+const SearchBox = forwardRef<HTMLInputElement, Props>(function SearchBox(
   { value, onChange, placeholder = "작업영역/해역유형 검색" },
   ref,
 ) {

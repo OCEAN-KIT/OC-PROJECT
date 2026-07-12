@@ -9,8 +9,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "**/*.js", // ⬅ 추가
-    "**/*.jsx", // ⬅ 추가
+    "**/*.js",
     ".next/types/**/*.ts"
   ],
   "exclude": ["node_modules"]

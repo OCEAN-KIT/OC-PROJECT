@@ -1,8 +1,15 @@
 "use client";
 
+import type { Dispatch, SetStateAction } from "react";
 import { ChevronsUpDown, RotateCcw } from "lucide-react";
 
-export default function ControlsHeader({ open, setOpen, resetView }) {
+type Props = {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  resetView: () => void;
+};
+
+export default function ControlsHeader({ open, setOpen, resetView }: Props) {
   return (
     <div className="flex items-center justify-between px-4 py-3">
       <div>

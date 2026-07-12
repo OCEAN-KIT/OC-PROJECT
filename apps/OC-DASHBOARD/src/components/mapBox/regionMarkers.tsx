@@ -3,25 +3,44 @@
 import { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import { createRoot } from "react-dom/client";
+import type { Root } from "react-dom/client";
+import type { MutableRefObject } from "react";
+import type { AreaSummary } from "@ocean-kit/dashboard-domain/types/areas";
+import type { Region } from "@/constants/regions";
 import RegionPopup from "./regionPopup";
 import { STAGE_META } from "@/constants/stageMeta";
 import { useRouter } from "next/navigation";
 import createMarkerElement from "@/utils/map/createMarkerElement";
 
-function cleanupMarkerEntry(entry) {
+type MarkerEntry = {
+  el: HTMLElement;
+  marker: mapboxgl.Marker;
+  onClick: () => void;
+  popup: mapboxgl.Popup;
+  popupRoot: Root;
+};
+
+type Props = {
+  mapRef: MutableRefObject<mapboxgl.Map | null>;
+  isMapLoaded: boolean;
+  currentLocation: Region | null;
+  areas: AreaSummary[];
+  workingArea: AreaSummary | null;
+  onSelectArea: (area: AreaSummary) => void;
+};
+
+function cleanupMarkerEntry(entry: MarkerEntry | undefined) {
   if (!entry) return;
 
-  entry.el?.removeEventListener("click", entry.onClick);
-  entry.marker?.remove();
-  entry.popup?.remove();
-  if (entry.popupRoot) {
-    setTimeout(() => entry.popupRoot.unmount(), 0);
-  }
+  entry.el.removeEventListener("click", entry.onClick);
+  entry.marker.remove();
+  entry.popup.remove();
+  setTimeout(() => entry.popupRoot.unmount(), 0);
 }
 
-function getMarkerLngLat(area) {
-  const lon = Number(area?.lon);
-  const lat = Number(area?.lat);
+function getMarkerLngLat(area: AreaSummary): [number, number] | null {
+  const lon = Number(area.lon);
+  const lat = Number(area.lat);
 
   if (
     !Number.isFinite(lon) ||
@@ -44,19 +63,24 @@ export default function RegionMarkers({
   areas,
   workingArea,
   onSelectArea,
-}) {
+}: Props) {
   const router = useRouter();
-  const markerEntriesRef = useRef(new Map());
-  const selectedMarkerIdRef = useRef(null);
+  const markerEntriesRef = useRef<Map<number, MarkerEntry>>(new Map());
+  const selectedMarkerIdRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!isMapLoaded || !mapRef.current) return;
 
     const map = mapRef.current;
-    const markerEntries = new Map();
+    const markerEntries = new Map<number, MarkerEntry>();
 
-    const getMarkerColor = (area) =>
-      STAGE_META[area?.level]?.color ?? currentLocation?.color ?? "#ef4444";
+    const getMarkerColor = (area: AreaSummary) => {
+      const level = String(area.level);
+
+      return level in STAGE_META
+        ? STAGE_META[level as keyof typeof STAGE_META].color
+        : currentLocation?.color ?? "#ef4444";
+    };
 
     if (currentLocation && areas.length) {
       areas.forEach((a) => {
@@ -89,16 +113,16 @@ export default function RegionMarkers({
             anchor: "left",
             closeButton: false,
             closeOnClick: true,
-            offset: [30, 0, 30, 0],
+            offset: [30, 0],
             className: "region-popup no-tip",
           }).setDOMContent(popupNode);
 
           const markerEl = createMarkerElement({
             color: getMarkerColor(a),
-            label: a?.name ?? "상세 보기",
+            label: a.name ?? "상세 보기",
           });
-          markerEl.dataset.areaId = String(a?.id ?? "");
-          markerEl.dataset.areaName = a?.name ?? "";
+          markerEl.dataset.areaId = String(a.id ?? "");
+          markerEl.dataset.areaName = a.name ?? "";
 
           const marker = new mapboxgl.Marker({
             element: markerEl,

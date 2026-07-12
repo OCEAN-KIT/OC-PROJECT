@@ -1,8 +1,14 @@
 "use client";
 
-import { REGIONS } from "@/constants/regions";
+import { REGIONS, type Region } from "@/constants/regions";
+import type { RestorationRegion } from "@ocean-kit/dashboard-domain/types/areas";
 
-export default function RegionSelector({ activeId, onSelect }) {
+type Props = {
+  activeId?: RestorationRegion;
+  onSelect: (region: Region) => void;
+};
+
+export default function RegionSelector({ activeId, onSelect }: Props) {
   return (
     <div className="flex max-w-[58%] gap-2 overflow-x-auto pr-1">
       {REGIONS.map((r) => {

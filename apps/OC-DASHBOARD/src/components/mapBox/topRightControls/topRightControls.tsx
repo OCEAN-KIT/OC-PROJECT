@@ -1,8 +1,12 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
+import type { Dispatch, SetStateAction } from "react";
+import type { AreaSummary } from "@ocean-kit/dashboard-domain/types/areas";
+import type { Region } from "@/constants/regions";
 import ControlsHeader from "./controlsHeader";
 import RegionSelector from "./regionSelector";
+import type { AreaGroup } from "./areaGroupList";
 import AreaGroupsList from "./areaGroupList";
 import { STAGE_META, STAGE_ORDER } from "@/constants/stageMeta";
 import Image from "next/image";
@@ -10,6 +14,19 @@ import StageFilter from "./stageFilter";
 import SearchBox from "./searchBox";
 import BottomSheet, { SNAP_PEEK, SNAP_HALF } from "@/components/ui/BottomSheet";
 import { Search } from "lucide-react";
+
+type Props = {
+  currentLocation: Region | null;
+  areas: AreaSummary[];
+  workingArea: AreaSummary | null;
+  activeStage: string | null;
+  setActiveStage: Dispatch<SetStateAction<string | null>>;
+  areaLoading: boolean;
+  areaLoadFailed: boolean;
+  onSelectRegion: (region: Region) => void;
+  onSelectArea: (area: AreaSummary) => void;
+  resetView: () => void;
+};
 
 export default function TopRightControls({
   currentLocation,
@@ -22,21 +39,21 @@ export default function TopRightControls({
   onSelectRegion,
   onSelectArea,
   resetView,
-}) {
+}: Props) {
   const [open, setOpen] = useState(true);
   const [query, setQuery] = useState("");
   const [mobileSnap, setMobileSnap] = useState(SNAP_PEEK);
-  const searchRef = useRef(null);
+  const searchRef = useRef<HTMLInputElement>(null);
 
-  const handleRegion = (region) => {
+  const handleRegion = (region: Region) => {
     onSelectRegion(region);
   };
 
-  const handleArea = (area) => {
+  const handleArea = (area: AreaSummary) => {
     onSelectArea(area);
   };
 
-  const grouped = useMemo(() => {
+  const grouped = useMemo<AreaGroup[]>(() => {
     if (!areas.length) return [];
     const q = query.trim().toLowerCase();
 
@@ -52,7 +69,7 @@ export default function TopRightControls({
     return STAGE_ORDER.map((stage) => ({
       stage,
       color: STAGE_META[stage]?.color,
-      items: items.filter((a) => a.level === stage),
+      items: items.filter((a) => String(a.level) === stage),
     })).filter((g) => g.items.length > 0);
   }, [areas, activeStage, query]);
 
