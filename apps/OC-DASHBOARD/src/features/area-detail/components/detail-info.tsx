@@ -4,18 +4,14 @@ import StatusTab from "./tabs/status-tab";
 import EcologyTab from "./tabs/ecology-tab";
 import EnvironmentTab from "./tabs/environment-tab";
 import PhotosTab from "./tabs/photos-tab";
-import { getAreaDetail } from "@ocean-kit/dashboard-domain/api/areaDetail";
+import { getAreaDetailOrNotFound } from "../server/get-area-detail-or-not-found";
 
 type Props = {
   areaId: number;
 };
 
 export default async function DetailInfo({ areaId }: Props) {
-  const { data: area } = await getAreaDetail(areaId);
-
-  if (!area) {
-    throw new Error(`Area detail not found. id: ${areaId}`);
-  }
+  const area = await getAreaDetailOrNotFound(areaId);
 
   return (
     <div className="min-h-screen bg-transparent text-white">
