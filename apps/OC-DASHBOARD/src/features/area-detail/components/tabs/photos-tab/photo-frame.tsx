@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { ClipLoader } from "react-spinners";
-import { keyToPublicUrl } from "@/utils/s3";
+import { keyToPublicUrl } from "../../../lib/public-image-url";
 import type { OpenPhoto } from "./types";
 
 type LoadState = "empty" | "loading" | "loaded" | "error";

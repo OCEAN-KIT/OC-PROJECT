@@ -2,14 +2,14 @@
 
 import Image from "next/image";
 import "mapbox-gl/dist/mapbox-gl.css";
-import RegionMarkers from "./regionMarkers";
-import TopRightControls from "@/components/mapBox/topRightControls/topRightControls";
-import useAppHeightCssVar from "./hooks/useAppHeightCssVar";
-import useAreasByRegion from "./hooks/useAreasByRegion";
-import useMapboxMap from "./hooks/useMapboxMap";
-import useMapCamera from "./hooks/useMapCamera";
-import useMapSelection from "./hooks/useMapSelection";
-import useRegionMarkerLayer from "./hooks/useRegionMarkerLayer";
+import RegionMarkers from "./region-markers";
+import TopRightControls from "./top-right-controls/top-right-controls";
+import useAppHeightCssVar from "../hooks/use-app-height-css-var";
+import useAreasByRegion from "../hooks/use-areas-by-region";
+import useMapboxMap from "../hooks/use-mapbox-map";
+import useMapCamera from "../hooks/use-map-camera";
+import useMapSelection from "../hooks/use-map-selection";
+import useRegionMarkerLayer from "../hooks/use-region-marker-layer";
 
 export default function MapView() {
   useAppHeightCssVar();

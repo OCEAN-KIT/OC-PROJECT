@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import type { AreaSummary } from "@ocean-kit/dashboard-domain/types/areas";
-import AreaItemCard from "./areaItemCard";
+import AreaItemCard from "./area-item-card";
 
 export type AreaGroup = {
   stage: string;

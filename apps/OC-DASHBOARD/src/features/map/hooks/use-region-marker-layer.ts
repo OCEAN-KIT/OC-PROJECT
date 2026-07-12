@@ -3,8 +3,8 @@
 import { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import type { MutableRefObject } from "react";
-import { REGIONS, type Region } from "@/constants/regions";
-import createMarkerElement from "@/utils/map/createMarkerElement";
+import { REGIONS, type Region } from "../model/regions";
+import createMarkerElement from "../lib/mapbox/create-marker-element";
 
 type MarkerEntry = {
   el: HTMLElement;

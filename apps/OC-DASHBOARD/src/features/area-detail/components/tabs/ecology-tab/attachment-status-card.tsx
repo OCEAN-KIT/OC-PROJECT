@@ -1,4 +1,4 @@
-import { getMethodMeta } from "@/constants/method";
+import { getMethodMeta } from "../../../model/method-meta";
 
 type AttachmentStatus = {
   method: string;

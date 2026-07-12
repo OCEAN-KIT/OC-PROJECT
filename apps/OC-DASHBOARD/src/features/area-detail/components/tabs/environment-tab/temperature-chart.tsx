@@ -1,5 +1,5 @@
 import type { ChartData } from "@ocean-kit/dashboard-domain/types/areaDetail";
-import SvgReveal from "@/components/charts/SvgReveal";
+import SvgReveal from "../../charts/svg-reveal";
 
 type Props = {
   chart: ChartData;

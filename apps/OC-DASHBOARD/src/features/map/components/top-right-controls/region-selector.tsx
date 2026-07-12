@@ -1,6 +1,6 @@
 "use client";
 
-import { REGIONS, type Region } from "@/constants/regions";
+import { REGIONS, type Region } from "../../model/regions";
 import type { RestorationRegion } from "@ocean-kit/dashboard-domain/types/areas";
 
 type Props = {

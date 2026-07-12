@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
-import { keyToPublicUrl } from "@/utils/s3";
+import { keyToPublicUrl } from "../../../lib/public-image-url";
 import PhotoFrame from "./photo-frame";
 import type { OpenPhoto } from "./types";
 

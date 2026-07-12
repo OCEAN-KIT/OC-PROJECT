@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
-import { COORDS } from "@/constants/regions";
+import { COORDS } from "../model/regions";
 
 export default function useMapboxMap() {
   const mapRef = useRef<mapboxgl.Map | null>(null);

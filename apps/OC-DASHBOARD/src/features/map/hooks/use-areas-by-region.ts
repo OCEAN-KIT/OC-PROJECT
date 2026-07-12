@@ -1,8 +1,8 @@
 "use client";
 
 import type { RestorationRegion } from "@ocean-kit/dashboard-domain/types/areas";
-import { useAreas } from "@/hooks/useAreas";
-import type { AreasByRegion } from "../types";
+import { useAreas } from "./use-areas";
+import type { AreasByRegion } from "../model/types";
 
 export default function useAreasByRegion() {
   const pohangQuery = useAreas("POHANG");

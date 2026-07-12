@@ -4,8 +4,8 @@ import { useCallback, useEffect, useRef } from "react";
 import type mapboxgl from "mapbox-gl";
 import type { MutableRefObject } from "react";
 import type { AreaSummary } from "@ocean-kit/dashboard-domain/types/areas";
-import type { Region } from "@/constants/regions";
-import changeCameraView from "@/utils/map/changeCameraView";
+import type { Region } from "../model/regions";
+import changeCameraView from "../lib/mapbox/change-camera-view";
 
 const OVERVIEW_CAMERA = {
   center: [129.38, 36.5] as [number, number],

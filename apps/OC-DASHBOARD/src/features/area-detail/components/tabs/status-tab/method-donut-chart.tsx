@@ -1,5 +1,5 @@
 import type { AreaDetail } from "@ocean-kit/dashboard-domain/types/areaDetail";
-import { getMethodMeta } from "@/constants/method";
+import { getMethodMeta } from "../../../model/method-meta";
 
 type Props = {
   distribution: AreaDetail["status"]["methodDistribution"];

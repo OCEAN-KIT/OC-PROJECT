@@ -13,7 +13,6 @@ import PhotoLightbox from "./tabs/photos-tab/photo-lightbox";
 import TimelineView from "./tabs/photos-tab/timeline-view";
 import type { PhotoPreview } from "./tabs/photos-tab/types";
 import type { AreaDetail } from "@ocean-kit/dashboard-domain/types/areaDetail";
-// import { revalidateFullRouteCache } from "@/server/revalidateFullRouteCache";
 
 type Props = {
   areaId: number;
@@ -24,15 +23,7 @@ export default function DetailInfoModal({ area }: Props) {
   const router = useRouter();
   const [tab, setTab] = useState<TabKey>("overview");
   const [preview, setPreview] = useState<PhotoPreview | null>(null);
-  // const [isRefreshPending, startRefreshTransition] = useTransition();
   const closePreview = useCallback(() => setPreview(null), []);
-
-  // const handleRefresh = useCallback(() => {
-  //   startRefreshTransition(async () => {
-  //     await revalidateFullRouteCache(`/detailInfo/${area.id}`);
-  //     router.refresh();
-  //   });
-  // }, [area.id, router]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && router.back();
@@ -55,9 +46,6 @@ export default function DetailInfoModal({ area }: Props) {
         <div className="max-md:flex max-md:flex-col max-md:h-full">
           <Header
             overview={area.overview}
-            // 데이터 정합성 확인 전까지 수동 revalidate 버튼 비활성화.
-            // isRefreshing={isRefreshPending}
-            // onRefresh={handleRefresh}
             onClose={() => router.back()}
           />
 

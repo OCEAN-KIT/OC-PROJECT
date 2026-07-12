@@ -1,5 +1,5 @@
-import MapView from "@/components/mapBox/mapView";
-import MapViewErrorBoundary from "@/components/mapBox/mapViewErrorBoundary";
+import MapView from "@/features/map/components/map-view";
+import MapViewErrorBoundary from "@/features/map/components/map-view-error-boundary";
 
 export const dynamic = "force-dynamic";
 

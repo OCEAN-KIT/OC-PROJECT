@@ -3,16 +3,16 @@
 import { useMemo, useRef, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import type { AreaSummary } from "@ocean-kit/dashboard-domain/types/areas";
-import type { Region } from "@/constants/regions";
-import ControlsHeader from "./controlsHeader";
-import RegionSelector from "./regionSelector";
-import type { AreaGroup } from "./areaGroupList";
-import AreaGroupsList from "./areaGroupList";
-import { STAGE_META, STAGE_ORDER } from "@/constants/stageMeta";
+import type { Region } from "../../model/regions";
+import ControlsHeader from "./controls-header";
+import RegionSelector from "./region-selector";
+import type { AreaGroup } from "./area-group-list";
+import AreaGroupsList from "./area-group-list";
+import { STAGE_META, STAGE_ORDER } from "@/shared/model/stage-meta";
 import Image from "next/image";
-import StageFilter from "./stageFilter";
-import SearchBox from "./searchBox";
-import BottomSheet, { SNAP_PEEK, SNAP_HALF } from "@/components/ui/BottomSheet";
+import StageFilter from "./stage-filter";
+import SearchBox from "./search-box";
+import BottomSheet, { SNAP_PEEK, SNAP_HALF } from "../bottom-sheet";
 import { Search } from "lucide-react";
 
 type Props = {

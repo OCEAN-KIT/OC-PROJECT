@@ -1,7 +1,7 @@
 // RegionPopup.tsx
 "use client";
 
-import { STAGE_META, getStageColor } from "@/constants/stageMeta";
+import { STAGE_META, getStageColor } from "@/shared/model/stage-meta";
 import type { MouseEvent } from "react";
 import type { AreaSummary } from "@ocean-kit/dashboard-domain/types/areas";
 

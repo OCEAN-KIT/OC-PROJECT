@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import DetailInfoModalRoute from "@/components/detail-info/detail-info-modal-route";
+import DetailInfoModalRoute from "@/features/area-detail/components/detail-info-modal-route";
 
 export const revalidate = 600;
 

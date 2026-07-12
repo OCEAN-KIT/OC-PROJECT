@@ -4,21 +4,16 @@ import type { CSSProperties } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import type { AreaDetail } from "@ocean-kit/dashboard-domain/types/areaDetail";
-import { getStageColor } from "@/constants/stageMeta";
-import RefreshButton from "./refresh-button";
+import { getStageColor } from "@/shared/model/stage-meta";
 
 type Props = {
   overview: AreaDetail["overview"];
   onClose?: () => void;
-  onRefresh?: () => void;
-  isRefreshing?: boolean;
 };
 
 export default function Header({
   overview,
   onClose,
-  onRefresh,
-  isRefreshing = false,
 }: Props) {
   const router = useRouter();
   const startLine = `${overview.startDate[0]}.${overview.startDate[1]}.${overview.startDate[2]}`;
@@ -68,9 +63,6 @@ export default function Header({
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
-        {onRefresh ? (
-          <RefreshButton isRefreshing={isRefreshing} onRefresh={onRefresh} />
-        ) : null}
         <button
           type="button"
           onClick={handleClose}

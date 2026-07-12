@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import DetailInfo from "@/components/detail-info/detail-info";
-import DetailInfoLoading from "@/components/detail-info/detail-info-loading";
+import DetailInfo from "@/features/area-detail/components/detail-info";
+import DetailInfoLoading from "@/features/area-detail/components/detail-info-loading";
 
 export const revalidate = 600;
 

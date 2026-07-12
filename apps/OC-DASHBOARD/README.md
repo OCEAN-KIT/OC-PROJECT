@@ -60,21 +60,30 @@ Next.js `basePath`가 `/dashboard`로 설정되어 있으므로 로컬과 운영
 
 ```txt
 src/
-  app/                         Next.js App Router
-    (map)/page.tsx             지도 메인
-    detailInfo/[id]/page.tsx   작업영역 상세
-    layout.tsx                 전역 레이아웃/GA/Provider
-  components/
-    mapBox/                    지도, 지역 마커, 필터/검색 컨트롤
-    detail-info/               상세 정보 탭과 차트
-    ui/                        BottomSheet 등 공통 UI
-  hooks/                       대시보드 query hook
-  server/                      서버 전용 fetch 유틸
-  utils/                       S3, 지도 유틸
+  app/                           Next.js 라우트와 전역 provider
+    (map)/page.tsx               지도 라우트
+    detailInfo/[id]/page.tsx     작업영역 상세 라우트
+    @modal/                      상세 정보 intercepting route
+  features/
+    map/
+      components/                지도, 마커, 검색/필터 컨트롤
+      hooks/                     Mapbox 수명주기와 지도 상태
+      lib/mapbox/                Mapbox DOM/카메라 adapter
+      model/                     지역과 지도 view model
+    area-detail/
+      components/                상세 화면, 모달, 탭과 차트
+      lib/                       상세 전용 이미지 URL 변환
+      model/                     상세 전용 표시 메타데이터
+  shared/
+    analytics/                   Google Analytics
+    model/                       여러 feature가 공유하는 단계 메타
 k6/
   dashboard-detail.js          상세 페이지 부하 테스트
   docker-compose.yml           InfluxDB/Grafana 로컬 스택
 ```
+
+`app`은 URL 연결만 담당하고, 제품 로직과 UI는 `features`가 소유합니다.
+`shared`에는 둘 이상의 feature가 실제로 사용하는 코드만 둡니다.
 
 ## 환경 변수
 

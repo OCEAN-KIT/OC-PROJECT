@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit, Work_Sans } from "next/font/google";
 import "./globals.css";
-import GoogleAnalytics from "./google-analytics";
+import GoogleAnalytics from "@/shared/analytics/google-analytics";
 import Providers from "./providers";
 
 export const metadata: Metadata = {

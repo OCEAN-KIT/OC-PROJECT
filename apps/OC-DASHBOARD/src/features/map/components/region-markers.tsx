@@ -6,11 +6,11 @@ import { createRoot } from "react-dom/client";
 import type { Root } from "react-dom/client";
 import type { MutableRefObject } from "react";
 import type { AreaSummary } from "@ocean-kit/dashboard-domain/types/areas";
-import type { Region } from "@/constants/regions";
-import RegionPopup from "./regionPopup";
-import { STAGE_META } from "@/constants/stageMeta";
+import type { Region } from "../model/regions";
+import RegionPopup from "./region-popup";
+import { STAGE_META } from "@/shared/model/stage-meta";
 import { useRouter } from "next/navigation";
-import createMarkerElement from "@/utils/map/createMarkerElement";
+import createMarkerElement from "../lib/mapbox/create-marker-element";
 
 type MarkerEntry = {
   el: HTMLElement;

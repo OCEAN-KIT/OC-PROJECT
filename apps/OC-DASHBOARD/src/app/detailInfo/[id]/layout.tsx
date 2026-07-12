@@ -1,4 +1,4 @@
-import "@/components/detail-info/page-bg.css";
+import "@/features/area-detail/components/page-bg.css";
 
 export default function DetailInfoRouteLayout({
   children,
